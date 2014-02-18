@@ -1,4 +1,4 @@
-      REAL FUNCTION sexpo()
+      DOUBLE PRECISION FUNCTION sexpo()
 C**********************************************************************C
 C                                                                      C
 C                                                                      C
@@ -29,14 +29,14 @@ C     (HERE 8) IS DETERMINED BY Q(N)=1.0 WITHIN STANDARD PRECISION
 C
 C     JJV added a Save statement for q (in Data statement)
 C     .. Local Scalars ..
-      REAL a,q1,u,umin,ustar
+      DOUBLE PRECISION a,q1,u,umin,ustar
       INTEGER i
 C     ..
 C     .. Local Arrays ..
-      REAL q(8)
+      DOUBLE PRECISION q(8)
 C     ..
 C     .. External Functions ..
-      REAL ranf
+      DOUBLE PRECISION ranf
       EXTERNAL ranf
 C     ..
 C     .. Equivalences ..

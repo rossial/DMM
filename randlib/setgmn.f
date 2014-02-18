@@ -52,7 +52,7 @@ C      INTEGER p
 C     ..
 C     .. Array Arguments ..
 C      REAL covm(p,p),meanv(p),parm(p* (p+3)/2+1)
-      REAL covm(ldcovm,p),meanv(p),parm(p* (p+3)/2+1)
+      DOUBLE PRECISION covm(ldcovm,p),meanv(p),parm(p*(p+3)/2+1)
 C     ..
 C     .. Local Scalars ..
       INTEGER i,icount,info,j

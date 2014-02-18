@@ -1,7 +1,7 @@
-      REAL FUNCTION gengam(a,r)
+      DOUBLE PRECISION FUNCTION gengam(a,r)
 C**********************************************************************
 C
-C     REAL FUNCTION GENGAM( A, R )
+C     DOUBLE PRECISION FUNCTION GENGAM( A, R )
 C           GENerates random deviates from GAMma distribution
 C
 C
@@ -12,16 +12,17 @@ C     Generates random deviates from the gamma distribution whose
 C     density is
 C          (A**R)/Gamma(R) * X**(R-1) * Exp(-A*X)
 C
-C
+C     REMARK: to implement NAG G05FFF(a,b), set A=1/b and R=a 
+C       
 C                              Arguments
 C
 C
 C     JJV added the argument ranges supported
 C     A --> Location parameter of Gamma distribution
-C                              REAL A ( A > 0 )
+C                              DOUBLE PRECISION A ( A > 0 )
 C
 C     R --> Shape parameter of Gamma distribution
-C                              REAL R ( R > 0 )
+C                              DOUBLE PRECISION R ( R > 0 )
 C
 C
 C                              Method
@@ -48,10 +49,10 @@ C     Adapted algorithm GS.
 C
 C**********************************************************************
 C     .. Scalar Arguments ..
-      REAL a,r
+      DOUBLE PRECISION a,r
 C     ..
 C     .. External Functions ..
-      REAL sgamma
+      DOUBLE PRECISION sgamma
       EXTERNAL sgamma
 C     ..
 C     .. Executable Statements ..
@@ -65,7 +66,7 @@ C     JJV added argument value checker
 C     JJV end addition
 
  10   gengam = sgamma(r)/a
-C      gengam = gengam/a
+
       RETURN
 
       END

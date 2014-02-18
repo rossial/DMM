@@ -1,4 +1,4 @@
-      REAL FUNCTION snorm()
+      DOUBLE PRECISION FUNCTION snorm()
 C**********************************************************************C
 C                                                                      C
 C                                                                      C
@@ -28,14 +28,14 @@ C     THE DEFINITIONS OF THE CONSTANTS A(K), D(K), T(K) AND
 C     H(K) ARE ACCORDING TO THE ABOVEMENTIONED ARTICLE
 C
 C     .. Local Scalars ..
-      REAL aa,s,tt,u,ustar,w,y
+      DOUBLE PRECISION aa,s,tt,u,ustar,w,y
       INTEGER i
 C     ..
 C     .. Local Arrays ..
-      REAL a(32),d(31),h(31),t(31)
+      DOUBLE PRECISION a(32),d(31),h(31),t(31)
 C     ..
 C     .. External Functions ..
-      REAL ranf
+      DOUBLE PRECISION ranf
       EXTERNAL ranf
 C     ..
 C     .. Intrinsic Functions ..

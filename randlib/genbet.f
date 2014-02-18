@@ -1,7 +1,7 @@
-      REAL FUNCTION genbet(aa,bb)
+      DOUBLE PRECISION FUNCTION genbet(aa,bb)
 C**********************************************************************
 C
-C     REAL FUNCTION GENBET( A, B )
+C     DOUBLE PRECISION FUNCTION GENBET( A, B )
 C               GeNerate BETa random deviate
 C
 C
@@ -17,11 +17,11 @@ C                              Arguments
 C
 C
 C     A --> First parameter of the beta distribution
-C                         REAL A
+C                         DOUBLE PRECISION A
 C     JJV                 (A > 1.0E-37)
 C
 C     B --> Second parameter of the beta distribution
-C                         REAL B
+C                         DOUBLE PRECISION B
 C     JJV                 (B > 1.0E-37)
 C
 C
@@ -36,27 +36,27 @@ C
 C**********************************************************************
 C     .. Parameters ..
 C     Close to the largest number that can be exponentiated
-      REAL expmax
+      DOUBLE PRECISION expmax
 C     JJV changed this - 89 was too high, and LOG(1.0E38) = 87.49823
       PARAMETER (expmax=87.49823)
 C     Close to the largest representable single precision number
-      REAL infnty
-      PARAMETER (infnty=1.0E38)
+      DOUBLE PRECISION infnty
+      PARAMETER (infnty=1.0D38)
 C     JJV added the parameter minlog
 C     Close to the smallest number of which a LOG can be taken.
-      REAL minlog
-      PARAMETER (minlog=1.0E-37)
+      DOUBLE PRECISION minlog
+      PARAMETER (minlog=1.0D-37)
 C     ..
 C     .. Scalar Arguments ..
-      REAL aa,bb
+      DOUBLE PRECISION aa,bb
 C     ..
 C     .. Local Scalars ..
-      REAL a,alpha,b,beta,delta,gamma,k1,k2,olda,oldb,r,s,t,u1,u2,v,w,y,
-     +     z
+      DOUBLE PRECISION a,alpha,b,beta,delta,gamma,k1,k2,olda,oldb,r,s,
+     + t,u1,u2,v,w,y,z
       LOGICAL qsame
 C     ..
 C     .. External Functions ..
-      REAL ranf
+      DOUBLE PRECISION ranf
       EXTERNAL ranf
 C     ..
 C     .. Intrinsic Functions ..

@@ -1,7 +1,7 @@
-      REAL FUNCTION gennor(av,sd)
+      DOUBLE PRECISION FUNCTION gennor(av,sd)
 C**********************************************************************
 C
-C     REAL FUNCTION GENNOR( AV, SD )
+C     DOUBLE PRECISION FUNCTION GENNOR( AV, SD )
 C
 C         GENerate random deviate from a NORmal distribution
 C
@@ -42,10 +42,10 @@ C
 C
 C**********************************************************************
 C     .. Scalar Arguments ..
-      REAL av,sd
+      DOUBLE PRECISION av,sd
 C     ..
 C     .. External Functions ..
-      REAL snorm
+      DOUBLE PRECISION snorm
       EXTERNAL snorm
 C     ..
 C     .. Executable Statements ..

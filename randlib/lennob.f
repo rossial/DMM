@@ -21,9 +21,9 @@ C                is returned.
 C
 C**********************************************************************
       CHARACTER*(*) string
-
-      end = len(string)
-      DO 20,i = end,1,-1
+      INTEGER fine,i
+      fine = len(string)
+      DO 20,i = fine,1,-1
           IF (.NOT. (string(i:i).NE.' ')) GO TO 10
           lennob = i
           RETURN

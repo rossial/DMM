@@ -1,5 +1,5 @@
-      REAL FUNCTION sdot(n,sx,incx,sy,incy)
-      REAL sx(1),sy(1),stemp
+      DOUBLE PRECISION FUNCTION sdot(n,sx,incx,sy,incy)
+      DOUBLE PRECISION sx(1),sy(1),stemp
       INTEGER i,incx,incy,ix,iy,m,mp1,n
 
       stemp = 0.0E0

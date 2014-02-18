@@ -1,7 +1,7 @@
-      REAL FUNCTION genunf(low,high)
+      DOUBLE PRECISION FUNCTION genunf(low,high)
 C**********************************************************************
 C
-C     REAL FUNCTION GENUNF( LOW, HIGH )
+C     DOUBLE PRECISION FUNCTION GENUNF( LOW, HIGH )
 C
 C               GeNerate Uniform Real between LOW and HIGH
 C
@@ -23,10 +23,10 @@ C                         REAL HIGH
 C
 C**********************************************************************
 C     .. Scalar Arguments ..
-      REAL high,low
+      DOUBLE PRECISION high,low
 C     ..
 C     .. External Functions ..
-      REAL ranf
+      DOUBLE PRECISION ranf
       EXTERNAL ranf
 C     ..
 C     .. Executable Statements ..

@@ -35,14 +35,14 @@ C     3) trans(A)E + MEANV ~ N(MEANV,COVM)
 C
 C**********************************************************************
 C     .. Array Arguments ..
-      REAL parm(*),work(*),x(*)
+      DOUBLE PRECISION parm(*),work(*),x(*)
 C     ..
 C     .. Local Scalars ..
-      REAL ae
+      DOUBLE PRECISION ae
       INTEGER i,icount,j,p
 C     ..
 C     .. External Functions ..
-      REAL snorm
+      DOUBLE PRECISION snorm
       EXTERNAL snorm
 C     ..
 C     .. Intrinsic Functions ..

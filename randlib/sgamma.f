@@ -1,4 +1,4 @@
-      REAL FUNCTION sgamma(a)
+      DOUBLE PRECISION FUNCTION sgamma(a)
 C**********************************************************************C
 C                                                                      C
 C                                                                      C
@@ -51,18 +51,19 @@ C     COEFFICIENTS A(K) - FOR Q = Q0+(T*T/2)*SUM(A(K)*V**K)
 C     COEFFICIENTS E(K) - FOR EXP(Q)-1 = SUM(E(K)*Q**K)
 C
 C     .. Scalar Arguments ..
-      REAL a
+      DOUBLE PRECISION a
 C     ..
 C     .. Local Scalars .. (JJV added B0 to fix rare and subtle bug)
-      REAL a1,a2,a3,a4,a5,a6,a7,aa,aaa,b,b0,c,d,e,e1,e2,e3,e4,e5,p,q,q0,
-     +     q1,q2,q3,q4,q5,q6,q7,r,s,s2,si,sqrt32,t,u,v,w,x
+      DOUBLE PRECISION a1,a2,a3,a4,a5,a6,a7,aa,aaa,b,b0,c,d,
+     + e,e1,e2,e3,e4,e5,p,q,q0,q1,q2,q3,q4,q5,q6,q7,r,s,s2,si,sqrt32,
+     + t,u,v,w,x
 C     ..
 C     .. External Functions ..
-      REAL ranf,sexpo,snorm
+      DOUBLE PRECISION ranf,sexpo,snorm
       EXTERNAL ranf,sexpo,snorm
 C     ..
 C     .. Intrinsic Functions ..
-      INTRINSIC abs,alog,exp,sign,sqrt
+C      INTRINSIC abs,alog,exp,sign,sqrt
 C     ..
 C     .. Save statement ..
 C     JJV added Save statement for vars in Data satatements
@@ -147,16 +148,16 @@ C
 C
 C     STEP  6:  CALCULATION OF V AND QUOTIENT Q
 C
-      v = t/ (s+s)
+      v = t/(s+s)
       IF (abs(v).LE.0.25) GO TO 50
-      q = q0 - s*t + 0.25*t*t + (s2+s2)*alog(1.0+v)
+      q = q0 - s*t + 0.25*t*t + (s2+s2)*dlog(1.0+v)
       GO TO 60
 
    50 q = q0 + 0.5*t*t* ((((((a7*v+a6)*v+a5)*v+a4)*v+a3)*v+a2)*v+a1)*v
 C
 C     STEP  7:  QUOTIENT ACCEPTANCE (Q)
 C
-   60 IF (alog(1.0-u).LE.q) RETURN
+   60 IF (dlog(1.0-u).LE.q) RETURN
 C
 C     STEP  8:  E=STANDARD EXPONENTIAL DEVIATE
 C               U= 0,1 -UNIFORM DEVIATE
@@ -175,7 +176,7 @@ C     STEP 10:  CALCULATION OF V AND QUOTIENT Q
 C
       v = t/ (s+s)
       IF (abs(v).LE.0.25) GO TO 90
-      q = q0 - s*t + 0.25*t*t + (s2+s2)*alog(1.0+v)
+      q = q0 - s*t + 0.25*t*t + (s2+s2)*dlog(1.0+v)
       GO TO 100
 
    90 q = q0 + 0.5*t*t* ((((((a7*v+a6)*v+a5)*v+a4)*v+a3)*v+a2)*v+a1)*v
@@ -224,12 +225,12 @@ C
  130  b0 = 1.0 + .3678794*a
   140 p = b0*ranf()
       IF (p.GE.1.0) GO TO 150
-      sgamma = exp(alog(p)/a)
+      sgamma = exp(dlog(p)/a)
       IF (sexpo().LT.sgamma) GO TO 140
       RETURN
 
-  150 sgamma = -alog((b0-p)/a)
-      IF (sexpo().LT. (1.0-a)*alog(sgamma)) GO TO 140
+  150 sgamma = -dlog((b0-p)/a)
+      IF (sexpo().LT. (1.0-a)*dlog(sgamma)) GO TO 140
       RETURN
 
       END

@@ -1,7 +1,7 @@
-      REAL FUNCTION ranf()
+      DOUBLE PRECISION FUNCTION ranf()
 C**********************************************************************
 C
-C     REAL FUNCTION RANF()
+C     DOUBLE PRECISION FUNCTION RANF()
 C                RANDom number generator as a Function
 C
 C     Returns a random floating point number from a uniform distribution
@@ -25,7 +25,7 @@ C
 C     4.656613057E-10 is 1/M1  M1 is set in a data statement in IGNLGI
 C      and is currently 2147483563. If M1 changes, change this also.
 C
-      ranf = ignlgi()*4.656613057E-10
+      ranf = ignlgi()*4.656613057D-10
       RETURN
 
       END

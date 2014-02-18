@@ -1,7 +1,7 @@
 *DECK SPOFA
       SUBROUTINE spofa(a,lda,n,info)
       INTEGER lda,n,info
-      REAL a(lda,1)
+      DOUBLE PRECISION a(lda,1)
 C
 C     SPOFA FACTORS A REAL SYMMETRIC POSITIVE DEFINITE MATRIX.
 C
@@ -43,8 +43,8 @@ C     FORTRAN SQRT
 C
 C     INTERNAL VARIABLES
 C
-      REAL sdot,t
-      REAL s
+      DOUBLE PRECISION sdot,t
+      DOUBLE PRECISION s
       INTEGER j,jm1,k
 C     BEGIN BLOCK WITH ...EXITS TO 40
 C
