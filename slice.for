@@ -52,7 +52,7 @@ C LOCALS
 	INTEGER M,J,K,OK
 	DOUBLE PRECISION XOLD,XLB,XUB
 	DOUBLE PRECISION FXOLD,U,Z,L,R,W,FXL,FXR,FXSIM
-	DOUBLE PRECISION G05CAF,PTHETA
+	DOUBLE PRECISION ranf,PTHETA
 
 	NEVAL = 0
 	XOLD  = theta(it)
@@ -67,7 +67,8 @@ C -------------------------------------------------------
 	FXOLD=PTHETA(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk,IYK,
 	1             theta,thetaprior,tipo,pdll)
 	NEVAL = NEVAL + 1
-	Z = FXOLD + DLOG(G05CAF(U))
+      U = ranf()
+	Z = FXOLD + DLOG(U)
 	
 C -------------------------------------------------------------
 C 2. FIND I=(L,R) AROUND X0 THAT CONTAINS S AS MUCH AS POSSIBLE 
@@ -77,7 +78,8 @@ C    M = Limit on steps (-1 = +INF)
 C -------------------------------------------------------------
 	M = -1
 	W = max((XUB-XLB)/10.0,1.D0) 
-	U = G05CAF(U)
+C	U = G05CAF(U)
+      U = ranf()
 	L = XOLD - W*U
 	R = XOLD + W - W*U ! L + W
 	IF (M.EQ.-1) THEN
@@ -97,7 +99,8 @@ C -------------------------------------------------------------
 200	 R = R + W
 210    CONTINUE
 	ELSE
-	 U = G05CAF(U)
+C	 U = G05CAF(U)
+       U = ranf()
 	 J = M*U
 	 K = M-1-J
 	 DO 300 WHILE (J.GT.0)  
@@ -129,7 +132,8 @@ C 3. SAMPLING FROM THE SET A = (I INTERSECT S) = (LA,RA)
 C ------------------------------------------------------
 	OK = 0
 	DO 500 WHILE (OK.EQ.0)
-	 U = G05CAF(U)
+C	 U = G05CAF(U)
+       U = ranf()
 	 XSIM = L + U*(R - L)
 	 theta(it) = XSIM
 	 FXSIM=PTHETA(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk,IYK,

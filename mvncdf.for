@@ -19,19 +19,19 @@ C   Copyright 2005 Alex Strashny (alex@strashny.org)
 C   version 1, April 29, 2005
 C   Recoded in Fortran by A.Rossi, C.Planas and G.Fiorentini 	
 C      
-C In addition, as a special exception, the copyright holders give
-C permission to link the code of portions of this program with the
-C NAG Fortran library under certain conditions as described in each
-C individual source file, and distribute linked combinations including
-C the two.
+C  In addition, as a special exception, the copyright holders give
+C  permission to link the code of portions of this program with the
+C  NAG Fortran library under certain conditions as described in each
+C  individual source file, and distribute linked combinations including
+C  the two.
 C
-C You must obey the GNU General Public License in all respects for all
-C of the code used other than NAG Fortran library. If you modify file(s)
-C with this exception, you may extend this exception to your
-C version of the file(s), but you are not obligated to do so. If
-C you do not wish to do so, delete this exception statement from
-C your version. If you delete this exception statement from all
-C source files in the program, then also delete it here.      
+C  You must obey the GNU General Public License in all respects for all
+C  of the code used other than NAG Fortran library. If you modify file(s)
+C  with this exception, you may extend this exception to your
+C  version of the file(s), but you are not obligated to do so. If
+C  you do not wish to do so, delete this exception statement from
+C  your version. If you delete this exception statement from all
+C  source files in the program, then also delete it here.      
 C ----------------------------------------------------------------------
 	SUBROUTINE mvncdf(LB,UB,MU,SIGMA,K,errMax,Nmax,P,err,N)
 	
@@ -47,7 +47,7 @@ C ----------------------------------------------------------------------
 	INTEGER IFAIL,I,J
 	DOUBLE PRECISION LBC(K),UBC(K),alph,AP((K*(K+1))/2),
 	1 C(K,K),varSum,F(K),E(K),D(K),Y(K),W,DEL,Q
-	DOUBLE PRECISION S15ABF,G05CAF,G01FAF
+	DOUBLE PRECISION S15ABF,ranf,G01FAF
 
 	LBC(:) = LB(:) - MU(:)
 	UBC(:) = UB(:) - MU(:)
@@ -81,7 +81,8 @@ C d is always zero
 	varSum = 0.D0 
 	DO WHILE ((err.GT.errMax).AND.(N.LT.Nmax))
 	 DO 100 I =2,K	
-	   W = G05CAF(W)
+C	   W = G05CAF(W)
+         W = ranf()
 	   IF((D(I-1)+W*F(I-1)).LE.0.D0) THEN
 	    Y(I-1) = -10.D10
 	   ELSEIF ((D(I-1)+W*F(I-1)).GE.1.D0) THEN

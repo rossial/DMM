@@ -1,6 +1,6 @@
 C ------------------------------------------------------------
-C INITRAND initializes the random number generator
-C INITIAL = 0 FIXED SEED
+C INITRAND initializes the random number generator:
+C INITIAL = 0 FIXED SEED, otherwise SEED set according to clock 
 C Developed by A.Rossi, C.Planas and G.Fiorentini     
 C         
 C Copyright (C) 2010-2014 European Commission 
@@ -21,19 +21,11 @@ C ------------------------------------------------------------
       SUBROUTINE INITRAND(INITIAL,DATE_ITIME)
 C Input
       INTEGER INITIAL,DATE_ITIME(8)
-C Local
-      INTEGER is1,is2
-C	DOUBLE PRECISION RA(4)
-C     DATA IA/12937,1202,3228,1411,3973,3123,0,0,0/
-C      DATA RA/259.158447265625,256.0,1.0,-1.0/     
 
       IF(INITIAL.NE.0) THEN
-C      CALL G05CCF()
-C      CALL G05CFF(IA,9,RA,4,IFAIL)
        CALL setall(DATE_ITIME(7),DATE_ITIME(8))      
       ELSE
        CALL setall(12345,54321)
-C      CALL G05CGF(IA,9,RA,4,IFAIL)
       ENDIF
       RETURN
       END

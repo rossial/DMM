@@ -53,20 +53,6 @@ C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
-C      
-C In addition, as a special exception, the copyright holders give
-C permission to link the code of portions of this program with the
-C NAG Fortran library under certain conditions as described in each
-C individual source file, and distribute linked combinations including
-C the two.
-C
-C You must obey the GNU General Public License in all respects for all
-C of the code used other than NAG Fortran library. If you modify file(s)
-C with this exception, you may extend this exception to your
-C version of the file(s), but you are not obligated to do so. If
-C you do not wish to do so, delete this exception statement from
-C your version. If you delete this exception statement from all
-C source files in the program, then also delete it here.      
 C ----------------------------------------------------------------------
 	SUBROUTINE DRAWPSI(nobs,nv,np,INFOS,Z,psiprior,psi0,psi)
 	           
@@ -82,7 +68,8 @@ C LOCALS
 	DOUBLE PRECISION, ALLOCATABLE:: P1(:,:),P2(:,:),P3(:,:),P4(:,:),	
      1 P5(:,:),P6(:,:),PENEW(:),PEOLD(:),GAM(:)
 	DOUBLE PRECISION uv,v,AG
-	DOUBLE PRECISION G05CAF
+      DOUBLE PRECISION ranf,gengam
+C	DOUBLE PRECISION G05CAF
 	
 	ALLOCATE(P1(INFOS(8,1),INFOS(8,1)),
 	1 P2(INFOS(8,2),INFOS(8,2)),P3(INFOS(8,3),INFOS(8,3)),
@@ -103,7 +90,8 @@ C SAMPLING FROM DIRICHLET
 	   DO 5 ii = 1,NSI	   
          AG = SUM(ABS((SEQ(1:nobs,I).EQ.ii)))+psiprior(K+1,ii) 
 	   IFAIL = -1	      
-5	   CALL G05FFF(AG,1.D0,1,GAM(ii),IFAIL) 	    
+C 5      CALL G05FFF(AG,1.D0,1,GAM(ii),IFAIL) 	    
+5        GAM(ii) = gengam(1.D0,AG)           
 	   psi(NN+1:NN+NSI-1)  = GAM(1:NSI-1)/SUM(GAM(1:NSI))	     
          psi0(NN+1:NN+NSI-1) = psi(NN+1:NN+NSI-1)
 	   K  = K + 1       
@@ -118,7 +106,8 @@ C SAMPLING FROM DIRICHLET
 		DO 20 ii = 1,NSI
 		AG = NIJ(ii,jj) + psiprior(K+1,ii) 
 	    IFAIL = -1	      
-20	    CALL G05FFF(AG,1.D0,1,GAM(ii),IFAIL) 
+C20        CALL G05FFF(AG,1.D0,1,GAM(ii),IFAIL) 
+20        GAM(ii) = gengam(1.D0,AG)          
 	    psi(NN+1:NN+NSI-1) = GAM(1:NSI-1)/SUM(GAM(1:NSI))	     
           K  = K + 1       
 50	   NN = NN + NSI-1	    
@@ -152,7 +141,8 @@ C METROPOLIS TO ADJUST INITIAL CONDITION P(S(1)=0|p11,p12,...)
 	    CALL ERGODIC(NSI,P6,PEOLD(1:NSI)) 
 	   ENDIF
 	   uv = min(1.D0,PENEW(SEQ(1,I))/PEOLD(SEQ(1,I))) 
-	   v = G05CAF(v) 
+C	   v = G05CAF(v) 
+         v = ranf()  ! U(0,1)
 	   IF (v.GT.uv) THEN
 	    psi(NN-NSI*(NSI-1)+1:NN) = psi0(NN-NSI*(NSI-1)+1:NN)
 	   ENDIF

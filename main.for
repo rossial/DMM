@@ -33,20 +33,6 @@ C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.  
-C      
-C In addition, as a special exception, the copyright holders give
-C permission to link the code of portions of this program with the
-C NAG Fortran library under certain conditions as described in each
-C individual source file, and distribute linked combinations including
-C the two.
-C
-C You must obey the GNU General Public License in all respects for all
-C of the code used other than NAG Fortran library. If you modify file(s)
-C with this exception, you may extend this exception to your
-C version of the file(s), but you are not obligated to do so. If
-C you do not wish to do so, delete this exception statement from
-C your version. If you delete this exception statement from all
-C source files in the program, then also delete it here.      
 C --------------------------------------------------------------------------------------
       PROGRAM DMM
 	USE dfwin
@@ -111,6 +97,7 @@ C LOCALS
 	CHARACTER*200 FILEIN,NMLNAME,PATH,FILEOUT,DMMTITLE,CURDIR
       CHARACTER*1024 matlaberror
 	EXTERNAL GETARG
+      DOUBLE PRECISION genbet
 C TIME	
       ALLOCATE(np(3),ns(6),INFOS(9,6),IT1(7),IT2(7),DATE_ITIME(8),
      1 REAL_CLOCK(3))      
@@ -120,7 +107,7 @@ C TIME
       IT1(4:7) = DATE_ITIME(5:8)      
       
 C GET the namelist specified by FILEIN
-	DEB = 'R' 
+	DEB = 'D' 
 	IF (DEB.EQ.'R') THEN  
 	 CALL GETARG(1,FILEIN)  ! load name of input file
       ELSE
@@ -151,9 +138,9 @@ C CHECK DLL NAME AND FIND FILE EXTENSION (.dll or .m)
       IF ((DLLEXT.EQ.'M  ').OR.(DLLEXT.EQ.'m  ')) THEN                 
        mfile     = DLLNAME(J+1:I-1)
        pathmfile = DLLNAME(1:J-1)              
-C       DLLNAME   = 'H:\arossi\dmm64\matlabdll\debug\matlabdll.dll' ! provvisorio                             
+       DLLNAME   = 'H:\arossi\dmm64\matlabdll\debug\matlabdll.dll' ! provvisorio                             
        IND = GETCWD(CURDIR)  ! current directory
-       DLLNAME = TRIM(CURDIR) // '\matlabdll.dll'                 ! definitivo
+C       DLLNAME = TRIM(CURDIR) // '\matlabdll.dll'                 ! definitivo
       ENDIF      
  
 C FIND the DLL and LOAD it into the memory
@@ -278,7 +265,7 @@ C SET SHELL title
 	CALL system(DMMTITLE)
 
 C INITIALISE THE RANDOM NUMBER GENERATOR
-      CALL INITRAND(SEED)
+      CALL INITRAND(SEED,DATE_ITIME)
 	
 C ASSIGN DATA and MISSING VALUES
 	ALLOCATE(yk(nobs+nf,ny+nz),IYK(nobs,ny+1))
@@ -346,17 +333,26 @@ C PSI STARTING VALUES
 	K = 0
 	DO 80 J=1,nv
 	 IF (INFOS(9,J).EQ.1) THEN  ! S-IID
-	  CALL G05FEF(1.D0,1.D0,INFOS(8,J)-1,psi0(K+1:K+INFOS(8,J)-1),
-	1              IFAIL) ! beta 
-	  CALL G05FEF(1.D0,1.D0,1,AUX,IFAIL)
+        DO jjj = 1,INFOS(8,J)-1 
+         psi0(K+jjj) = genbet(1.D0,1.D0)   
+        ENDDO
+        AUX = genbet(1.D0,1.D0)   
+c	  CALL G05FEF(1.D0,1.D0,INFOS(8,J)-1,psi0(K+1:K+INFOS(8,J)-1),
+c	1              IFAIL) ! beta 
+c	  CALL G05FEF(1.D0,1.D0,1,AUX,IFAIL)
+
 	  psi0(K+1:K+INFOS(8,J)-1) = psi0(K+1:K+INFOS(8,J)-1)/	  
      #  (SUM(psi0(K+1:K+INFOS(8,J)-1))+AUX) 
 	  K = K + INFOS(8,J)-1
 	 ELSE IF (INFOS(9,J).EQ.2) THEN  ! S-MARKOV
 	  DO I = 1,INFOS(8,J)
-	   CALL G05FEF(1.D0,1.D0,INFOS(8,J)-1,psi0(K+1:K+INFOS(8,J)-1),
-	1               IFAIL)
-	   CALL G05FEF(1.D0,1.D0,1,AUX,IFAIL)
+c	   CALL G05FEF(1.D0,1.D0,INFOS(8,J)-1,psi0(K+1:K+INFOS(8,J)-1),
+c	1               IFAIL)
+c	   CALL G05FEF(1.D0,1.D0,1,AUX,IFAIL)
+         DO jjj = 1,INFOS(8,J)-1 
+          psi0(K+jjj) = genbet(1.D0,1.D0)   
+         ENDDO
+         AUX = genbet(1.D0,1.D0)
 	   psi0(K+1:K+INFOS(8,J)-1) = psi0(K+1:K+INFOS(8,J)-1)/	  
      #   (SUM(psi0(K+1:K+INFOS(8,J)-1))+AUX) 
 	   K = K + INFOS(8,J)-1
@@ -425,7 +421,7 @@ C MAXIMUM LIKELIHOOD ESTIMATION
 	1                path,nmlname)
        ALLOCATE(HESS((nt+np(1))*(nt+np(1)+1)/2))
 	 CALL ML(nobs,d,ny,nz,nx,nu,nt,nv,ns,np(1),INFOS,pdll,INDT,yk,IYK,S,
-	1         thetaprior,theta0,psi0,IMSVAR,HESS,AUX)       
+	1         thetaprior,theta0,psi0,IMSVAR,HESS,AUX)     
 	 ALLOCATE(THETASE(nt),AKMSE(nobs,nx),INN(nobs,ny))
 	 IF (nv.EQ.0) THEN        
         CALL OPG(nobs,d,ny,nz,nx,nu,nt,ns,pdll,yk,IYK,S,
@@ -597,7 +593,7 @@ C MCMC RECORDING phase
 	   DO I = 1,nobs
 	    IF (IYK(I,ny+1).LT.ny) THEN
 		  K = ny-IYK(I,ny+1)	    
-	      CALL MISSING(yk(I,:),ny,nz,nx,nu,nv,ns,nt,K,theta,INFOS,
+	      CALL MISSING(yk(I,:),ny,nz,nx,nu,ns,nt,K,theta,
 	1                  S(I,1:6),STATE(I,:),pdll,ykmis(J:J+K-1))
 	     J = J+K
 	    ENDIF 

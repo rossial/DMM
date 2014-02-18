@@ -34,23 +34,6 @@ C DMM is distributed in the hope that it will be useful,
 C but WITHOUT ANY WARRANTY; without even the implied warranty of
 C MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 C GNU General Public License for more details.
-C
-C You should have received a copy of the GNU General Public License
-C along with DMM.  If not, see <http://www.gnu.org/licenses/>.    
-C      
-C In addition, as a special exception, the copyright holders give
-C permission to link the code of portions of this program with the
-C NAG Fortran library under certain conditions as described in each
-C individual source file, and distribute linked combinations including
-C the two.
-C
-C You must obey the GNU General Public License in all respects for all
-C of the code used other than NAG Fortran library. If you modify file(s)
-C with this exception, you may extend this exception to your
-C version of the file(s), but you are not obligated to do so. If
-C you do not wish to do so, delete this exception statement from
-C your version. If you delete this exception statement from all
-C source files in the program, then also delete it here.
 C ----------------------------------------------------------------------------	
 	SUBROUTINE FORECAST(zk,nf,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                    theta,psi,INFOS,Z,STATE,pdll,FORE)
@@ -81,8 +64,10 @@ C LOCALS
 	1 G(:,:,:),a(:,:),F(:,:,:)
 	DOUBLE PRECISION,ALLOCATABLE:: P1(:,:),P2(:,:),P3(:,:),P4(:,:),
 	1 P5(:,:),P6(:,:),PMAT(:,:),PE(:)
-	DOUBLE PRECISION U,G05CAF,AUX
-	DOUBLE PRECISION WORKU((nu+2)*(nu+1)/2),MED(nu)
+	DOUBLE PRECISION U,AUX
+      DOUBLE PRECISION ranf,gennor
+C	DOUBLE PRECISION WORKU((nu+2)*(nu+1)/2)
+      DOUBLE PRECISION MED(nu)
 	ALLOCATE(R(nx,nu,ns(6)),c(ny,max(nz,1),ns(1)),H(ny,nx,ns(2)),
 	1 G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)))
  
@@ -107,7 +92,8 @@ C ERGODIC solves PE: PE*(I-P') = 0
 C DRAW Z(T+1) ~ Pr[Z(T+1)|Z(T)] 	
 	S(1:6) = 1
 	IF (nv.GT.0) THEN
-	 U = G05CAF(U) ! Sampling U(0,1)  
+C	 U = G05CAF(U) ! Sampling U(0,1)  
+       U = ranf()
 	 ISEQ = 1
 	 AUX  = PMAT(ISEQ,Z)
 	 DO 10 WHILE (AUX.LT.U) 
@@ -121,8 +107,9 @@ C DRAW x(T+1) ~ f(x(T+1)|x(T),Z(T+1))
 	IFAIL = -1
 	MED(:) = 0.D0
 	DO I = 1,nu
-	 CALL G05EAF(MED(I),1,1.D0,1,1.D-14,WORKU,(nu+2)*(nu+1)/2,IFAIL)
-	 CALL G05EZF(MED(I),1,WORKU,(nu+2)*(nu+1)/2,IFAIL)	  
+C	 CALL G05EAF(MED(I),1,1.D0,1,1.D-14,WORKU,(nu+2)*(nu+1)/2,IFAIL)
+C	 CALL G05EZF(MED(I),1,WORKU,(nu+2)*(nu+1)/2,IFAIL)	  
+       MED(I) = gennor(0.D0,1.D0)          
 	END DO
 	DO 20 I=1,nx
 20	FORE(1,ny+I) = a(I,S(4)) + SUM(F(I,1:nx,S(5))*STATE(1:nx))
@@ -137,7 +124,8 @@ C DRAW yk(T+1) ~ f(yk(T+1)|x(T+1),Z(T+1),zk(T+1))
 	DO 100 inf = 2,nf
 C DRAW Z(T+inf) ~ Pr[Z(T+inf)|Z(T+inf-1)] 	
 	 IF (nv.GT.0) THEN
-	  U = G05CAF(U) ! Sampling U(0,1)  
+C	  U = G05CAF(U) ! Sampling U(0,1)  
+        U = ranf()
 	  ISEQ = 1
 	  AUX  = PMAT(ISEQ,FORE(inf-1,nx+ny+1))
 	  DO 40 WHILE (AUX.LT.U) 
@@ -151,8 +139,9 @@ C DRAW x(T+inf) ~ f(x(T+inf)|x(T+inf-1),Z(T+inf))
 	 IFAIL = -1
 	 MED(:) = 0.D0
 	 DO I = 1,nu
-	  CALL G05EAF(MED(I),1,1.D0,1,1.D-14,WORKU,(nu+2)*(nu+1)/2,IFAIL)
-	  CALL G05EZF(MED(I),1,WORKU,(nu+2)*(nu+1)/2,IFAIL)	  
+C	  CALL G05EAF(MED(I),1,1.D0,1,1.D-14,WORKU,(nu+2)*(nu+1)/2,IFAIL)
+C	  CALL G05EZF(MED(I),1,WORKU,(nu+2)*(nu+1)/2,IFAIL)	  
+        MED(I) = gennor(0.D0,1.D0)   
 	 END DO
 	 DO 50 I=1,nx
 50	 FORE(inf,ny+I) = a(I,S(4)) 

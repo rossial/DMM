@@ -45,7 +45,7 @@ C OUTPUT
 C LOCALS
 	INTEGER I,IFAIL
 	DOUBLE PRECISION LB,UB,PLB,PUB
-	DOUBLE PRECISION S15ABF,TNORMI
+	DOUBLE PRECISION S15ABF,TNORMI,gengam,genbet
 
 	INDT(:) = 0
 	ntf     = 0
@@ -56,9 +56,10 @@ C LOCALS
 	  IF (estimation.EQ.'BA') THEN
          IF (tipo(I).EQ.'IG') THEN
 	    IFAIL = -1
-     	    CALL G05FFF(thetaprior(I,2)/2.D0,2.D0/thetaprior(I,1),1,
-	1                theta(I),IFAIL)
-     	    theta(I) = 1.D0/theta(I)
+C   	    CALL G05FFF(thetaprior(I,2)/2.D0,2.D0/thetaprior(I,1),1,
+C    1                theta(I),IFAIL)
+          theta(I) = 1.D0
+     #             / gengam(thetaprior(I,1)/2.D0,thetaprior(I,2)/2.D0) 
 	    IF( (theta(I).LT.thetaprior(I,3)).OR.
      #        (theta(I).GT.thetaprior(I,4)) ) THEN
 	      theta(I) = (thetaprior(I,4)+thetaprior(I,3))/2.D0 
@@ -72,7 +73,8 @@ C LOCALS
 	    theta(I) = thetaprior(I,1)+theta(I)*DSQRT(thetaprior(I,2))	 
 	   ELSEIF (tipo(I).EQ.'BE') THEN 
 	    IFAIL = -1
-	    CALL G05FEF(thetaprior(I,1),thetaprior(I,2),1,theta(I),IFAIL)
+C	    CALL G05FEF(thetaprior(I,1),thetaprior(I,2),1,theta(I),IFAIL)
+          theta(I) = genbet(thetaprior(I,1),thetaprior(I,2))
 	    theta(I) = theta(I)*(thetaprior(I,4)-thetaprior(I,3)) 
      +             + thetaprior(I,3)       
          ENDIF         

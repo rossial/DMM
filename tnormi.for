@@ -37,9 +37,10 @@ C source files in the program, then also delete it here.
 C ----------------------------------------------------------------------
 	DOUBLE PRECISION FUNCTION TNORMI(PHIL,PHIP)
       INTEGER IFAIL
-	DOUBLE PRECISION PHIL, PHIP, T, G05CAF, G01FAF
+	DOUBLE PRECISION PHIL,PHIP,T,G01FAF
 
-	T=G05CAF(T) ! Sampling from U(0,1)
+C	T=G05CAF(T) ! Sampling from U(0,1)
+      T = ranf()  ! Sampling from U(0,1)
       T=PHIL+T*(PHIP-PHIL) ! Rescaling U(PHIL,PHIP)
       TNORMI=G01FAF('L',T,IFAIL) ! INVERSE of N(0,1)
 

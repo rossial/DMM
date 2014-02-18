@@ -90,7 +90,8 @@ C LOCALS
 	1 P2(INFOS(8,2),INFOS(8,2)),P3(INFOS(8,3),INFOS(8,3)),
      2 P4(INFOS(8,4),INFOS(8,4)),P5(INFOS(8,5),INFOS(8,5)),
      3 P6(INFOS(8,6),INFOS(8,6)),PMAT(nstot,nstot),PE(nstot)
-	DOUBLE PRECISION G05CAF,G05DDF	 
+C	DOUBLE PRECISION G05CAF,G05DDF	 
+      DOUBLE PRECISION ranf,gennor
 	DOUBLE PRECISION U,AUX
 	DOUBLE PRECISION,ALLOCATABLE::R(:,:,:),c(:,:,:),H(:,:,:),
 	1 G(:,:,:),a(:,:),F(:,:,:)
@@ -112,7 +113,8 @@ C PALL(i,j) = Pr[Z(t+1)=i|Z(t)=j], Z = S1 x S2 x ... x Snv
 	 CALL PPROD(nv,nstot,INFOS,P1,P2,P3,P4,P5,P6,PMAT)
 C ERGODIC solves PE: PE*(I-P') = 0
        CALL ERGODIC(nstot,PMAT,PE)	     
-	 U = G05CAF(U) ! Sampling from U(0,1)  
+C	 U = G05CAF(U) ! Sampling from U(0,1)  
+       U = ranf()   ! Sampling from U(0,1)  
 	 ISEQ = 1
 	 AUX  = PE(1)
 	 DO 5 WHILE (AUX.LT.U) 
@@ -121,7 +123,8 @@ C ERGODIC solves PE: PE*(I-P') = 0
 	 Z(1) = ISEQ
 	 CALL INT2SEQ(Z(1),nv,INFOS,SEQ,S(1,:))
 	 DO it=2,nobs
-	  U = G05CAF(U) ! Sampling from U(0,1)  
+C	  U = G05CAF(U) ! Sampling from U(0,1)  
+        U = ranf()   ! Sampling from U(0,1)     
 	  ISEQ = 1
 	  AUX  = PMAT(1,Z(it-1))
 	  DO 10 WHILE (AUX.LT.U) 
@@ -156,15 +159,22 @@ C DRAW x(1) ~ N[x(1|0),P(1|0)]
 	 CALL LYAP(nx-d(2),nu,1.D-3,F(d(2)+1:nx,d(2)+1:nx,S(1,5)),
 	1           R(d(2)+1:nx,1:nu,S(1,6)),Pdd(1,d(2)+1:nx,d(2)+1:nx))
 	 IFAIL = -1 
-	 CALL G05EAF(Xdd(1,d(2)+1:nx),nx-d(2),Pdd(1,d(2)+1:nx,d(2)+1:nx),
-	1             nx-d(2),10.D-14,WORK,(nx+2)*(nx+1)/2,IFAIL)	 
-	 CALL G05EZF(STATE(1,d(2)+1:nx),nx-d(2),WORK,(nx+2)*(nx+1)/2,
-	1             IFAIL)	  
+C	 CALL G05EAF(Xdd(1,d(2)+1:nx),nx-d(2),Pdd(1,d(2)+1:nx,d(2)+1:nx),
+C	1             nx-d(2),10.D-14,WORK,(nx+2)*(nx+1)/2,IFAIL)	 
+C	 CALL G05EZF(STATE(1,d(2)+1:nx),nx-d(2),WORK,(nx+2)*(nx+1)/2,
+C	1             IFAIL)	  
+       CALL setgmn(Xdd(1,d(2)+1:nx),Pdd(1,d(2)+1:nx,d(2)+1:nx),nx-d(2),
+     #             nx-d(2),WORK(1:(nx-d(2)+2)*(nx-d(2)+1)/2))
+       CALL genmn(WORK(1:(nx-d(2)+2)*(nx-d(2)+1)/2),STATE(1,d(2)+1:nx),
+     #            WORK1(1:nx-d(2)))
+
       ENDIF
 
 C DRAW u(1)
 	DO 35 J = 1,nu
-35	UP(J) = G05DDF(0.0D0,1.D0)
+C35    UP(J) = G05DDF(0.0D0,1.D0)
+35    UP(J) = gennor(0.0D0,1.D0)
+      
 	
 C COMPUTE y(1)
 	DO 36 K = 1,ny
@@ -175,7 +185,8 @@ C COMPUTE y(1)
 	DO 100 it = 2,nobs
 C DRAW u ~ N(0,I)
 	 DO 40 J = 1,nu
-40	 UP(J) = G05DDF(0.0D0,1.D0)
+C40     UP(J) = G05DDF(0.0D0,1.D0)
+40     UP(J) = gennor(0.0D0,1.D0)       
 
 C COMPUTE x
 	 DO 50 K = 1,nx

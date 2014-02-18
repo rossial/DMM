@@ -37,21 +37,7 @@ C MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
-C along with DMM.  If not, see <http://www.gnu.org/licenses/>.    
-C      
-C In addition, as a special exception, the copyright holders give
-C permission to link the code of portions of this program with the
-C NAG Fortran library under certain conditions as described in each
-C individual source file, and distribute linked combinations including
-C the two.
-C
-C You must obey the GNU General Public License in all respects for all
-C of the code used other than NAG Fortran library. If you modify file(s)
-C with this exception, you may extend this exception to your
-C version of the file(s), but you are not obligated to do so. If
-C you do not wish to do so, delete this exception statement from
-C your version. If you delete this exception statement from all
-C source files in the program, then also delete it here.      
+C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C ----------------------------------------------------------------------
 	SUBROUTINE DRAWTHETA2(nobs,d,ny,nz,nx,nu,nv,ns,nt,INFOS,INDT,
 	1                      MEDT,SIGT,yk,Z,thetaprior,tipo,pdll,
@@ -72,8 +58,9 @@ C LOCALS
 	INTEGER I,J,JJ,NN,IFAIL,SEQ(nv)
 	INTEGER it,S(nobs,6)
 	DOUBLE PRECISION PN,PO,QN,QO,PA,v,AG,WORK((nt+2)*(nt+1)/2),
-	1 SEGA(nt)
-	DOUBLE PRECISION G05CAF,PTHETA2,PRIOR,mvnpdf
+	1 SEGA(nt),WORK2(nt)
+    	DOUBLE PRECISION ranf,ptheta2,prior,mvnpdf
+C     DOUBLE PRECISION G05CAF
 
 	IF (nv.GT.0) THEN
 	 DO 1 I = 1,nobs
@@ -91,17 +78,23 @@ C --------------------------------------------
       IF (JJ.GT.1) THEN ! Draw a set of theta via AMH
 C MH proposal: 
 C theta ~ (1-beta)*N(MEDT,2.38^2*SIGT/JJ) + beta*N(MEDT,.1^2*I/JJ)
-7777	 v = G05CAF(v) ! Sampling U(0,1) 
+C7777	 v = G05CAF(v) ! Sampling U(0,1) 
+7777   v = ranf()    ! Sampling U(0,1)                 
 	 IF (v.LE..95) THEN
 	  IFAIL = -1
-	  CALL G05EAF(MEDT,JJ,2.38**2*SIGT/DFLOAT(JJ),JJ,1.D-14,
-     1              WORK,(nt+2)*(nt+1)/2,IFAIL)
-	  CALL G05EZF(SEGA(1:JJ),JJ,WORK,(nt+2)*(nt+1)/2,IFAIL)	  
+c	  CALL G05EAF(MEDT,JJ,2.38**2*SIGT/DFLOAT(JJ),JJ,1.D-14,
+c     1              WORK,(nt+2)*(nt+1)/2,IFAIL)
+c	  CALL G05EZF(SEGA(1:JJ),JJ,WORK,(nt+2)*(nt+1)/2,IFAIL)	  
+        CALL setgmn(MEDT,2.38**2*SIGT/DFLOAT(JJ),JJ,JJ,
+     #              WORK(1:(JJ+2)*(JJ+1)/2))
+        CALL genmn(WORK(1:(JJ+2)*(JJ+1)/2),SEGA(1:JJ),WORK2(1:JJ))
 	 ELSE
 	  DO I = 1,JJ
-	   CALL G05EAF(MEDT(I),1,1D-2/DFLOAT(JJ),1,1.D-14,
-	1               WORK,(nt+2)*(nt+1)/2,IFAIL)
-	   CALL G05EZF(SEGA(I),1,WORK,(nt+2)*(nt+1)/2,IFAIL)	  
+c	   CALL G05EAF(MEDT(I),1,1D-2/DFLOAT(JJ),1,1.D-14,
+c	1               WORK,(nt+2)*(nt+1)/2,IFAIL)
+c	   CALL G05EZF(SEGA(I),1,WORK,(nt+2)*(nt+1)/2,IFAIL)	           
+         CALL setgmn(MEDT(I),1D-2/DFLOAT(JJ),1,1,WORK(1:3))
+         CALL genmn(WORK(1:3),SEGA(I),WORK2(1))         
         ENDDO
        ENDIF
 	 NN = NN + 1	  
@@ -151,7 +144,8 @@ C q(theta1(old))
 	 QO = .95D0*mvnpdf(theta0(INDT(1:JJ)),MEDT,2.38**2*SIGT/DFLOAT(JJ)
      #	  ,JJ) + .05D0*AG
 	  
-	 v = G05CAF(v) ! Sampling from U(0,1)  
+c	 v = G05CAF(v) ! Sampling from U(0,1)  
+       v = ranf()    ! Sampling U(0,1)        
 	 PA = DEXP(PN-PO)*QO/QN
 	 IF (v.GT.MIN(1.D0,PA)) THEN
 	  theta(INDT(1:JJ)) = theta0(INDT(1:JJ))

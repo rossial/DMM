@@ -75,7 +75,7 @@ C LOCALS
 	1 P2(INFOS(8,2),INFOS(8,2)),P3(INFOS(8,3),INFOS(8,3)),
      2 P4(INFOS(8,4),INFOS(8,4)),P5(INFOS(8,5),INFOS(8,5)),
      3 P6(INFOS(8,6),INFOS(8,6))
-	DOUBLE PRECISION PTHETA2,PRIOR,PRIORDIR,G05CAF
+	DOUBLE PRECISION PTHETA2,PRIOR,PRIORDIR,ranf,gengam
 	DOUBLE PRECISION Ppar(nt+np(1)),Fpar,PS,QS,QPSI,C,DET,TRC,A0
 	DOUBLE PRECISION ERRM,ERR,U,AUX,INDC(1),MUC,SS(2,2),MWNUM,MWDEN
 	DOUBLE PRECISION ZERO,ONE,PI,EPS
@@ -201,10 +201,14 @@ C SAMPLING THETA
 	  INDC(1) = ZERO
 	  IND(1)  = IND(1) + 1
 	  IF (IND(1).GT.G) EXIT
-	  CALL G05EAF(parm(1:NPARTH),NPARTH,SIGM(1:NPARTH,1:NPARTH),
-	1              NPARTH,EPS,R3,(NPARTH+1)*(NPARTH+2)/2,IFAIL)	   
-	  CALL G05EZF(SEGA(1:NPARTH),NPARTH,R3,(NPARTH+1)*(NPARTH+2)/2,
-	1              IFAIL)
+c	  CALL G05EAF(parm(1:NPARTH),NPARTH,SIGM(1:NPARTH,1:NPARTH),
+c	1              NPARTH,EPS,R3,(NPARTH+1)*(NPARTH+2)/2,IFAIL)	   
+c	  CALL G05EZF(SEGA(1:NPARTH),NPARTH,R3,(NPARTH+1)*(NPARTH+2)/2,
+c	1              IFAIL)
+        CALL setgmn(parm(1:NPARTH),SIGM(1:NPARTH,1:NPARTH),NPARTH,
+     1              NPARTH,R3(1:(NPARTH+2)*(NPARTH+1)/2))
+        CALL genmn(R3(1:(NPARTH+2)*(NPARTH+1)/2),SEGA(1:NPARTH),
+     1             WORK(1:NPARTH))
 	  DO  I=1,NPARTH
 	   IF (SEGA(I).LT.thetaprior(NPOS(I),3)) INDC(1)=-1
          IF (SEGA(I).GT.thetaprior(NPOS(I),4)) INDC(1)=-2
@@ -219,7 +223,8 @@ C SAMPLING PSI from Dirichlet(ALPHA)
 	  IF (INFOS(9,I).EQ.1) THEN ! S~IID
 	   DO  ii = 1,NSI	              
 	    IFAIL = -1	      
-	    CALL G05FFF(ALPHA(K+1,ii),1.D0,1,GAM(ii),IFAIL) 	    
+C	    CALL G05FFF(ALPHA(K+1,ii),1.D0,1,GAM(ii),IFAIL) 
+          GAM(ii) = gengam(1.D0,1.D0/ALPHA(K+1,ii))
          ENDDO
 	   SEGA(NN+1:NN+NSI-1) = GAM(1:NSI-1)/SUM(GAM(1:NSI))	     
 	   K  = K + 1       
@@ -228,7 +233,8 @@ C SAMPLING PSI from Dirichlet(ALPHA)
 	   DO jj = 1,NSI
 	    DO ii = 1,NSI
 		 IFAIL = -1	      
-	     CALL G05FFF(ALPHA(K+1,ii),1.D0,1,GAM(ii),IFAIL) 	    
+C	     CALL G05FFF(ALPHA(K+1,ii),1.D0,1,GAM(ii),IFAIL) 	    
+           GAM(ii) = gengam(1.D0,1.D0/ALPHA(K+1,ii))
           ENDDO
 	    SEGA(NN+1:NN+NSI-1) = GAM(1:NSI-1)/SUM(GAM(1:NSI))	     
           K  = K + 1       
@@ -246,7 +252,8 @@ C PMAT(i,j) = Pr[Z(t+1)=i|Z(t)=j], Z = S1 x S2 x ... x Snv
 C ERGODIC solves PE: PE*(I-P') = 0
         CALL ERGODIC(nstot,PMAT,PE)
 C S(1)
-	  U = G05CAF(U) ! Sampling from U(0,1)  
+C	  U = G05CAF(U) ! Sampling from U(0,1)  
+        U = ranf()
 	  ISEQ = 1
 	  AUX  = PTR(1,ISEQ,1)
 	  DO 80 WHILE (AUX.LT.U) 
@@ -258,7 +265,8 @@ C S(1)
 	  ISEQ0 = ISEQ
 C S(2),...,S(nobs)	 
 	  DO 90 K = 2,nobs
-	   U = G05CAF(U) ! Sampling from U(0,1)  
+C	   U = G05CAF(U) ! Sampling from U(0,1)  
+         U = ranf()
 	   ISEQ = 1
 	   AUX  = PTR(K,ISEQ,ISEQ0)
 	   DO 85 WHILE (AUX.LT.U) 

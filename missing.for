@@ -19,23 +19,8 @@ C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.   
-C      
-C In addition, as a special exception, the copyright holders give
-C permission to link the code of portions of this program with the
-C NAG Fortran library under certain conditions as described in each
-C individual source file, and distribute linked combinations including
-C the two.
-C
-C You must obey the GNU General Public License in all respects for all
-C of the code used other than NAG Fortran library. If you modify file(s)
-C with this exception, you may extend this exception to your
-C version of the file(s), but you are not obligated to do so. If
-C you do not wish to do so, delete this exception statement from
-C your version. If you delete this exception statement from all
-C source files in the program, then also delete it here.      
 C --------------------------------------------------------------------	
-	SUBROUTINE MISSING(yk,ny,nz,nx,nu,nv,ns,nt,nmis,
-	1                   theta,INFOS,S,STATE,pdll,ykmis)
+	SUBROUTINE MISSING(yk,ny,nz,nx,nu,ns,nt,nmis,theta,S,STATE,pdll,ykmis)
 
 	USE dfwin
 	INTERFACE
@@ -47,18 +32,19 @@ C --------------------------------------------------------------------
 	 END SUBROUTINE
 	END INTERFACE
 	CHARACTER*1 fittizia
-	POINTER (pdll,fittizia)  ! ASSOCIATE  pointer pdll alla DLL ad una varibile fittizia
+	POINTER (pdll,fittizia)
 	POINTER (pdesign,DESIGN) 
 
 C INPUT
-	INTEGER ny,nz,nx,nu,nv,nt,ns(6),nmis,INFOS(9,6)
+	INTEGER ny,nz,nx,nu,nt,ns(6),nmis
 	DOUBLE PRECISION yk(ny+nz),theta(nt),STATE(nx)
 
 C OUTPUT
 	DOUBLE PRECISION ykmis(nmis)
 C LOCALS
-      INTEGER S(6),SEQ(nv),I,J,K,IFAIL,NIYK(ny)
-	DOUBLE PRECISION U(nu),WORKU(3)
+      INTEGER S(6),I,J,K,IFAIL,NIYK(ny)
+	DOUBLE PRECISION U(nu)
+      DOUBLE PRECISION gennor
 	DOUBLE PRECISION,ALLOCATABLE::R(:,:,:),c(:,:,:),H(:,:,:),
 	1 G(:,:,:),a(:,:),F(:,:,:)
 	
@@ -79,8 +65,10 @@ C SAMPLING U
 	IFAIL = -1
 	U(1:nu) = 0.D0
 	DO 20 I = 1,nu
-	CALL G05EAF(U(I),1,1.D0,1,1.D-14,WORKU,3,IFAIL)
-20	CALL G05EZF(U(I),1,WORKU,3,IFAIL)	  
+c	CALL G05EAF(U(I),1,1.D0,1,1.D-14,WORKU,3,IFAIL)
+c20   CALL G05EZF(U(I),1,WORKU,3,IFAIL)	  
+20    U(I) = gennor(0.D0,1.D0) 
+      
 
 C DRAW yk ~ f(yk|x,S,zk,theta)
 	DO 30 I = 1,nmis

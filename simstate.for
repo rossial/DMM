@@ -83,7 +83,7 @@ C LOCALS
 	1 G(:,:,:),a(:,:),F(:,:,:)
 	DOUBLE PRECISION,ALLOCATABLE:: Xdd(:,:),Pdd(:,:,:),WORK(:),
 	1 FP(:,:),WORK1(:),UP(:)
-	DOUBLE PRECISION G05DDF	
+	DOUBLE PRECISION gennor	
       ALLOCATE (R(nx,nu,ns(6)),c(ny,max(nz,1),ns(1)),H(ny,nx,ns(2)),
 	1 G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)),
      2 ykP(nobs,ny+nz),XP(nobs,nx),XS(nobs,nx),PS(nobs,nx,nx),
@@ -115,14 +115,20 @@ C DRAW x(1)+ FROM N[x(1|0),P(1|0)]
 	 CALL LYAP(nx-d(2),nu,1.D-3,F(d(2)+1:nx,d(2)+1:nx,S(1,5)),
 	1           R(d(2)+1:nx,1:nu,S(1,6)),Pdd(1,d(2)+1:nx,d(2)+1:nx))
 	 IFAIL = -1 
-	 CALL G05EAF(Xdd(1,d(2)+1:nx),nx-d(2),Pdd(1,d(2)+1:nx,d(2)+1:nx),
-	1             nx-d(2),10.D-14,WORK,(nx+2)*(nx+1)/2,IFAIL)	 
-	 CALL G05EZF(XP(1,d(2)+1:nx),nx-d(2),WORK,(nx+2)*(nx+1)/2,IFAIL)	  
+c	 CALL G05EAF(Xdd(1,d(2)+1:nx),nx-d(2),Pdd(1,d(2)+1:nx,d(2)+1:nx),
+c	1             nx-d(2),10.D-14,WORK,(nx+2)*(nx+1)/2,IFAIL)	 
+c	 CALL G05EZF(XP(1,d(2)+1:nx),nx-d(2),WORK,(nx+2)*(nx+1)/2,IFAIL)	 
+       CALL setgmn(Xdd(1,d(2)+1:nx),Pdd(1,d(2)+1:nx,d(2)+1:nx),nx-d(2),
+     #             nx-d(2),WORK(1:(nx-d(2)+2)*(nx-d(2)+1)/2))
+       CALL genmn(WORK(1:(nx-d(2)+2)*(nx-d(2)+1)/2),STATE(1,d(2)+1:nx),
+     #            WORK1(1:nx-d(2)))
+
       ENDIF
 
 C DRAW u(1)+
 	DO 35 J = 1,nu
-35	UP(J) = G05DDF(0.0D0,1.D0)
+C35    UP(J) = G05DDF(0.0D0,1.D0)
+35    UP(J) = gennor(0.0D0,1.D0)      
 	
 C COMPUTE y(1)+
 	DO 36 K = 1,ny
@@ -133,7 +139,8 @@ C COMPUTE y(1)+
 	DO 100 it = 2,nobs
 C DRAW u+ ~ N(0,I)
 	 DO 40 J = 1,nu
-40	 UP(J) = G05DDF(0.0D0,1.D0)
+C40     UP(J) = G05DDF(0.0D0,1.D0)
+40     UP(J) = gennor(0.0D0,1.D0)             
 
 C COMPUTE x+
 	 DO 50 K = 1,nx
