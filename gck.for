@@ -125,7 +125,7 @@ C LOCALS
 	1 XT(:,:),PT(:,:,:),PMUL(:,:,:)
 	DOUBLE PRECISION EPS,ONE,ZERO
 	DATA EPS/1.D-14/,ONE/1.0D0/,ZERO/0.0D0/
-	DOUBLE PRECISION ranf,LEMMA4,MARKOVP
+	DOUBLE PRECISION genunf,LEMMA4,MARKOVP
 
 	pdesign = getprocaddress(pdll, "design_"C)
 	CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
@@ -356,7 +356,7 @@ C To prevent exp overflow
      #                    / SUM(DEXP(PROBL(IFS(1:NIFS))))
 	 
 C	 U = G05CAF(U) ! Sampling from U(0,1)  
-       U = ranf()
+       U = genunf(0.D0,1.D0)
 	 ISEQ = 1
 	 AUX  = PROB(1)
 	 DO 310 WHILE (AUX.LT.U) 

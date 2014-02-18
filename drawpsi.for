@@ -68,7 +68,7 @@ C LOCALS
 	DOUBLE PRECISION, ALLOCATABLE:: P1(:,:),P2(:,:),P3(:,:),P4(:,:),	
      1 P5(:,:),P6(:,:),PENEW(:),PEOLD(:),GAM(:)
 	DOUBLE PRECISION uv,v,AG
-      DOUBLE PRECISION ranf,gengam
+      DOUBLE PRECISION genunf,gengam
 C	DOUBLE PRECISION G05CAF
 	
 	ALLOCATE(P1(INFOS(8,1),INFOS(8,1)),
@@ -142,7 +142,7 @@ C METROPOLIS TO ADJUST INITIAL CONDITION P(S(1)=0|p11,p12,...)
 	   ENDIF
 	   uv = min(1.D0,PENEW(SEQ(1,I))/PEOLD(SEQ(1,I))) 
 C	   v = G05CAF(v) 
-         v = ranf()  ! U(0,1)
+         v = genunf(0.D0,1.D0)  ! U(0,1)
 	   IF (v.GT.uv) THEN
 	    psi(NN-NSI*(NSI-1)+1:NN) = psi0(NN-NSI*(NSI-1)+1:NN)
 	   ENDIF

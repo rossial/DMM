@@ -810,6 +810,7 @@ C MARGINAL LIKELIHOOD
 1119  FORMAT(/,' Maximum Likelihood completed',
      #       /,' CPU-time (sec)=', I10,
      #       /,' Output printed in ',A)
-
+      
+      PAUSE
 	STOP
       END

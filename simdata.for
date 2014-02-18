@@ -91,7 +91,7 @@ C LOCALS
      2 P4(INFOS(8,4),INFOS(8,4)),P5(INFOS(8,5),INFOS(8,5)),
      3 P6(INFOS(8,6),INFOS(8,6)),PMAT(nstot,nstot),PE(nstot)
 C	DOUBLE PRECISION G05CAF,G05DDF	 
-      DOUBLE PRECISION ranf,gennor
+      DOUBLE PRECISION genunf,gennor
 	DOUBLE PRECISION U,AUX
 	DOUBLE PRECISION,ALLOCATABLE::R(:,:,:),c(:,:,:),H(:,:,:),
 	1 G(:,:,:),a(:,:),F(:,:,:)
@@ -114,7 +114,7 @@ C PALL(i,j) = Pr[Z(t+1)=i|Z(t)=j], Z = S1 x S2 x ... x Snv
 C ERGODIC solves PE: PE*(I-P') = 0
        CALL ERGODIC(nstot,PMAT,PE)	     
 C	 U = G05CAF(U) ! Sampling from U(0,1)  
-       U = ranf()   ! Sampling from U(0,1)  
+       U = genunf(0.D0,1.D0)   ! Sampling from U(0,1)  
 	 ISEQ = 1
 	 AUX  = PE(1)
 	 DO 5 WHILE (AUX.LT.U) 
@@ -124,7 +124,7 @@ C	 U = G05CAF(U) ! Sampling from U(0,1)
 	 CALL INT2SEQ(Z(1),nv,INFOS,SEQ,S(1,:))
 	 DO it=2,nobs
 C	  U = G05CAF(U) ! Sampling from U(0,1)  
-        U = ranf()   ! Sampling from U(0,1)     
+        U = genunf(0.D0,1.D0)   ! Sampling from U(0,1)     
 	  ISEQ = 1
 	  AUX  = PMAT(1,Z(it-1))
 	  DO 10 WHILE (AUX.LT.U) 

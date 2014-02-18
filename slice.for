@@ -20,20 +20,6 @@ C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.   
-C
-C In addition, as a special exception, the copyright holders give
-C permission to link the code of portions of this program with the
-C NAG Fortran library under certain conditions as described in each
-C individual source file, and distribute linked combinations including
-C the two.
-C
-C You must obey the GNU General Public License in all respects for all
-C of the code used other than NAG Fortran library. If you modify file(s)
-C with this exception, you may extend this exception to your
-C version of the file(s), but you are not obligated to do so. If
-C you do not wish to do so, delete this exception statement from
-C your version. If you delete this exception statement from all
-C source files in the program, then also delete it here.      
 C -------------------------------------------------------------
 	SUBROUTINE SLICE(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk,IYK,
 	1                 theta,thetaprior,tipo,pdll,NEVAL,XSIM)
@@ -52,7 +38,7 @@ C LOCALS
 	INTEGER M,J,K,OK
 	DOUBLE PRECISION XOLD,XLB,XUB
 	DOUBLE PRECISION FXOLD,U,Z,L,R,W,FXL,FXR,FXSIM
-	DOUBLE PRECISION ranf,PTHETA
+	DOUBLE PRECISION genunf,PTHETA
 
 	NEVAL = 0
 	XOLD  = theta(it)
@@ -67,7 +53,7 @@ C -------------------------------------------------------
 	FXOLD=PTHETA(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk,IYK,
 	1             theta,thetaprior,tipo,pdll)
 	NEVAL = NEVAL + 1
-      U = ranf()
+      U = genunf(0.D0,1.D0)
 	Z = FXOLD + DLOG(U)
 	
 C -------------------------------------------------------------
@@ -79,7 +65,7 @@ C -------------------------------------------------------------
 	M = -1
 	W = max((XUB-XLB)/10.0,1.D0) 
 C	U = G05CAF(U)
-      U = ranf()
+      U = genunf(0.D0,1.D0)
 	L = XOLD - W*U
 	R = XOLD + W - W*U ! L + W
 	IF (M.EQ.-1) THEN
@@ -100,7 +86,7 @@ C	U = G05CAF(U)
 210    CONTINUE
 	ELSE
 C	 U = G05CAF(U)
-       U = ranf()
+       U = genunf(0.D0,1.D0)
 	 J = M*U
 	 K = M-1-J
 	 DO 300 WHILE (J.GT.0)  
@@ -133,7 +119,7 @@ C ------------------------------------------------------
 	OK = 0
 	DO 500 WHILE (OK.EQ.0)
 C	 U = G05CAF(U)
-       U = ranf()
+       U = genunf(0.D0,1.D0)
 	 XSIM = L + U*(R - L)
 	 theta(it) = XSIM
 	 FXSIM=PTHETA(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk,IYK,

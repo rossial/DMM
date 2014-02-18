@@ -65,7 +65,7 @@ C LOCALS
 	DOUBLE PRECISION,ALLOCATABLE:: P1(:,:),P2(:,:),P3(:,:),P4(:,:),
 	1 P5(:,:),P6(:,:),PMAT(:,:),PE(:)
 	DOUBLE PRECISION U,AUX
-      DOUBLE PRECISION ranf,gennor
+      DOUBLE PRECISION genunf,gennor
 C	DOUBLE PRECISION WORKU((nu+2)*(nu+1)/2)
       DOUBLE PRECISION MED(nu)
 	ALLOCATE(R(nx,nu,ns(6)),c(ny,max(nz,1),ns(1)),H(ny,nx,ns(2)),
@@ -93,7 +93,7 @@ C DRAW Z(T+1) ~ Pr[Z(T+1)|Z(T)]
 	S(1:6) = 1
 	IF (nv.GT.0) THEN
 C	 U = G05CAF(U) ! Sampling U(0,1)  
-       U = ranf()
+       U = genunf(0.D0,1.D0)
 	 ISEQ = 1
 	 AUX  = PMAT(ISEQ,Z)
 	 DO 10 WHILE (AUX.LT.U) 
@@ -125,7 +125,7 @@ C DRAW yk(T+1) ~ f(yk(T+1)|x(T+1),Z(T+1),zk(T+1))
 C DRAW Z(T+inf) ~ Pr[Z(T+inf)|Z(T+inf-1)] 	
 	 IF (nv.GT.0) THEN
 C	  U = G05CAF(U) ! Sampling U(0,1)  
-        U = ranf()
+        U = genunf(0.D0,1.D0)
 	  ISEQ = 1
 	  AUX  = PMAT(ISEQ,FORE(inf-1,nx+ny+1))
 	  DO 40 WHILE (AUX.LT.U) 

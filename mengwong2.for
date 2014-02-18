@@ -75,11 +75,11 @@ C LOCALS
 	1 P2(INFOS(8,2),INFOS(8,2)),P3(INFOS(8,3),INFOS(8,3)),
      2 P4(INFOS(8,4),INFOS(8,4)),P5(INFOS(8,5),INFOS(8,5)),
      3 P6(INFOS(8,6),INFOS(8,6))
-	DOUBLE PRECISION PTHETA2,PRIOR,PRIORDIR,ranf,gengam
+	DOUBLE PRECISION PTHETA2,PRIOR,PRIORDIR,genunf,gengam
 	DOUBLE PRECISION Ppar(nt+np(1)),Fpar,PS,QS,QPSI,C,DET,TRC,A0
 	DOUBLE PRECISION ERRM,ERR,U,AUX,INDC(1),MUC,SS(2,2),MWNUM,MWDEN
-	DOUBLE PRECISION ZERO,ONE,PI,EPS
-	DATA ZERO/0.0D0/,ONE/1.0D0/,PI/3.141592653589793D0/,EPS/1.D-30/	
+	DOUBLE PRECISION ZERO,ONE,PI
+	DATA ZERO/0.0D0/,ONE/1.0D0/,PI/3.141592653589793D0/
 
       PAR(:) = GIBPAR(1,:) ! set constant values
 
@@ -205,7 +205,8 @@ c	  CALL G05EAF(parm(1:NPARTH),NPARTH,SIGM(1:NPARTH,1:NPARTH),
 c	1              NPARTH,EPS,R3,(NPARTH+1)*(NPARTH+2)/2,IFAIL)	   
 c	  CALL G05EZF(SEGA(1:NPARTH),NPARTH,R3,(NPARTH+1)*(NPARTH+2)/2,
 c	1              IFAIL)
-        CALL setgmn(parm(1:NPARTH),SIGM(1:NPARTH,1:NPARTH),NPARTH,
+        COM(1:NPARTH,1:NPARTH) = SIGM(1:NPARTH,1:NPARTH)
+        CALL setgmn(parm(1:NPARTH),COM(1:NPARTH,1:NPARTH),NPARTH,
      1              NPARTH,R3(1:(NPARTH+2)*(NPARTH+1)/2))
         CALL genmn(R3(1:(NPARTH+2)*(NPARTH+1)/2),SEGA(1:NPARTH),
      1             WORK(1:NPARTH))
@@ -224,7 +225,7 @@ C SAMPLING PSI from Dirichlet(ALPHA)
 	   DO  ii = 1,NSI	              
 	    IFAIL = -1	      
 C	    CALL G05FFF(ALPHA(K+1,ii),1.D0,1,GAM(ii),IFAIL) 
-          GAM(ii) = gengam(1.D0,1.D0/ALPHA(K+1,ii))
+          GAM(ii) = gengam(1.D0,ALPHA(K+1,ii))
          ENDDO
 	   SEGA(NN+1:NN+NSI-1) = GAM(1:NSI-1)/SUM(GAM(1:NSI))	     
 	   K  = K + 1       
@@ -234,7 +235,7 @@ C	    CALL G05FFF(ALPHA(K+1,ii),1.D0,1,GAM(ii),IFAIL)
 	    DO ii = 1,NSI
 		 IFAIL = -1	      
 C	     CALL G05FFF(ALPHA(K+1,ii),1.D0,1,GAM(ii),IFAIL) 	    
-           GAM(ii) = gengam(1.D0,1.D0/ALPHA(K+1,ii))
+           GAM(ii) = gengam(1.D0,ALPHA(K+1,ii))
           ENDDO
 	    SEGA(NN+1:NN+NSI-1) = GAM(1:NSI-1)/SUM(GAM(1:NSI))	     
           K  = K + 1       
@@ -253,7 +254,7 @@ C ERGODIC solves PE: PE*(I-P') = 0
         CALL ERGODIC(nstot,PMAT,PE)
 C S(1)
 C	  U = G05CAF(U) ! Sampling from U(0,1)  
-        U = ranf()
+        U = genunf(0.D0,1.D0)
 	  ISEQ = 1
 	  AUX  = PTR(1,ISEQ,1)
 	  DO 80 WHILE (AUX.LT.U) 
@@ -266,7 +267,7 @@ C	  U = G05CAF(U) ! Sampling from U(0,1)
 C S(2),...,S(nobs)	 
 	  DO 90 K = 2,nobs
 C	   U = G05CAF(U) ! Sampling from U(0,1)  
-         U = ranf()
+         U = genunf(0.D0,1.D0)
 	   ISEQ = 1
 	   AUX  = PTR(K,ISEQ,ISEQ0)
 	   DO 85 WHILE (AUX.LT.U) 

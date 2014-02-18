@@ -59,7 +59,7 @@ C LOCALS
 	INTEGER it,S(nobs,6)
 	DOUBLE PRECISION PN,PO,QN,QO,PA,v,AG,WORK((nt+2)*(nt+1)/2),
 	1 SEGA(nt),WORK2(nt)
-    	DOUBLE PRECISION ranf,ptheta2,prior,mvnpdf
+    	DOUBLE PRECISION genunf,ptheta2,prior,mvnpdf
 C     DOUBLE PRECISION G05CAF
 
 	IF (nv.GT.0) THEN
@@ -79,7 +79,7 @@ C --------------------------------------------
 C MH proposal: 
 C theta ~ (1-beta)*N(MEDT,2.38^2*SIGT/JJ) + beta*N(MEDT,.1^2*I/JJ)
 C7777	 v = G05CAF(v) ! Sampling U(0,1) 
-7777   v = ranf()    ! Sampling U(0,1)                 
+7777   v = genunf(0.D0,1.D0)    ! Sampling U(0,1)                 
 	 IF (v.LE..95) THEN
 	  IFAIL = -1
 c	  CALL G05EAF(MEDT,JJ,2.38**2*SIGT/DFLOAT(JJ),JJ,1.D-14,
@@ -145,7 +145,7 @@ C q(theta1(old))
      #	  ,JJ) + .05D0*AG
 	  
 c	 v = G05CAF(v) ! Sampling from U(0,1)  
-       v = ranf()    ! Sampling U(0,1)        
+       v = genunf(0.D0,1.D0)    ! Sampling U(0,1)        
 	 PA = DEXP(PN-PO)*QO/QN
 	 IF (v.GT.MIN(1.D0,PA)) THEN
 	  theta(INDT(1:JJ)) = theta0(INDT(1:JJ))

@@ -47,7 +47,7 @@ C ----------------------------------------------------------------------
 	INTEGER IFAIL,I,J
 	DOUBLE PRECISION LBC(K),UBC(K),alph,AP((K*(K+1))/2),
 	1 C(K,K),varSum,F(K),E(K),D(K),Y(K),W,DEL,Q
-	DOUBLE PRECISION S15ABF,ranf,G01FAF
+	DOUBLE PRECISION S15ABF,genunf,G01FAF
 
 	LBC(:) = LB(:) - MU(:)
 	UBC(:) = UB(:) - MU(:)
@@ -82,7 +82,7 @@ C d is always zero
 	DO WHILE ((err.GT.errMax).AND.(N.LT.Nmax))
 	 DO 100 I =2,K	
 C	   W = G05CAF(W)
-         W = ranf()
+         W = genunf(0.D0,1.D0)
 	   IF((D(I-1)+W*F(I-1)).LE.0.D0) THEN
 	    Y(I-1) = -10.D10
 	   ELSEIF ((D(I-1)+W*F(I-1)).GE.1.D0) THEN

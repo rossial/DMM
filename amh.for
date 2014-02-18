@@ -117,7 +117,7 @@ C LOCALS
 	1 XT0(:,:),PT0(:,:,:),PTR2(:,:,:)
 	DOUBLE PRECISION EPS,ONE,ZERO
 	DATA EPS/1.D-14/,ONE/1.0D0/,ZERO/0.0D0/
-	DOUBLE PRECISION LEMMA4,MARKOVP,ranf
+	DOUBLE PRECISION LEMMA4,MARKOVP,genunf
 	
 	dn(1) = 0
 	dn(2) = d(2)
@@ -292,12 +292,12 @@ C First block
 	QN  = 1.D0
 	QO  = 1.D0
 C	vd = G05CAF(vd)  ! For qn(z) = delta*g0(z) + (1-delta)*gn(z)
-	vd = ranf()      ! For qn(z) = delta*g0(z) + (1-delta)*gn(z)      
+	vd = genunf(0.D0,1.D0)      ! For qn(z) = delta*g0(z) + (1-delta)*gn(z)      
 	DO 300 IT = I1,I0,-1
 	 PR(:) = PTR(IT+1,Z(IT+1),:)*PM(IT,:)/PM(IT+1,Z(IT+1))  ! P[Z(j)|Z(j+1)]
 	 IF (vd.GT.delta) THEN  ! sample from gn(x)
 C	  v = G05CAF(v)       
-        v = ranf()
+        v = genunf(0.D0,1.D0)
 	  AUX = PR(1) 
 	  ISEQ = 1
 	  DO 290 WHILE (AUX.LT.v) 
@@ -305,7 +305,7 @@ C	  v = G05CAF(v)
 290	   AUX  = AUX  + PR(ISEQ)
        ELSE
 C	  v = G05CAF(v)       
-        v = ranf()        
+        v = genunf(0.D0,1.D0)
 	  AUX = PM(IT,1) 
 	  ISEQ = 1
 	  DO 291 WHILE (AUX.LT.v) 
@@ -370,7 +370,7 @@ c	 PA = DEXP(PN-PO)*QO/QN
 	 PA = 1.D0 
 	ENDIF
 C	v  = G05CAF(v) 
-      v = ranf()
+      v = genunf(0.D0,1.D0)
 	IF (v.GT.PA) THEN
 	 IACC      = 0 
 	 Z(1:HFIX) = Z0(1:HFIX)
@@ -389,7 +389,7 @@ C Inner blocks
 	 QN  = 1.D0
 	 QO  = 1.D0	 
 C	 vd = G05CAF(vd)  ! For qn(z) = delta*g0(z) + (1-delta)*gn(z)
-       vd = ranf()
+       vd = genunf(0.D0,1.D0)
 	 PTR2(1,:,:) = PTR(I0,:,:) ! q[Z(t+1)|Z(t)]
 	 DO 310 J  = 2,HFIX+1      ! q[Z(t+j)|Z(t)] j = 2,...,HFIX+1
 	 DO 310 IC = 1,nstot
@@ -401,7 +401,7 @@ C	 vd = G05CAF(vd)  ! For qn(z) = delta*g0(z) + (1-delta)*gn(z)
      #        / PTR2(K+1,Z(IT+1),Z(I0-1))
 	  IF (vd.GT.delta) THEN  ! sample from gn(x)
 C	   v = G05CAF(v)
-         v = ranf()
+         v = genunf(0.D0,1.D0)
 	   AUX = PR(1) 
 	   ISEQ = 1
 	   DO 320 WHILE (AUX.LT.v) 
@@ -409,7 +409,7 @@ C	   v = G05CAF(v)
 320	    AUX  = AUX + PR(ISEQ)
  	  ELSE
 C	   v = G05CAF(v)       
-         v = ranf()
+         v = genunf(0.D0,1.D0)
 	   AUX = PM(IT,1) 
 	   ISEQ = 1
 	   DO 322 WHILE (AUX.LT.v) 
@@ -468,7 +468,7 @@ C	  PA = DEXP(PN-PO)*QO/QN
         PA = 1.D0 
 	 ENDIF
 C	 v  = G05CAF(v) 
-       v = ranf()
+       v = genunf(0.D0,1.D0)
 	 IF (v.GT.PA) THEN
 	  Z(I0:I1)   = Z0(I0:I1)
 	  ACCRATE(I0:I1) = ACCRATE(I0:I1) + 1
@@ -486,11 +486,11 @@ C Last block
 	QN = 1.D0
 	QO = 1.D0	 
 C	vd = G05CAF(vd)  ! For qn(z) = delta*g0(z) + (1-delta)*gn(z)
-      vd = ranf()
+      vd = genunf(0.D0,1.D0)
 	DO 500 IT = HFIXL,1,-1
 	 IF (vd.GT.delta) THEN  ! sample from gn(x)
 C	  v = G05CAF(v)
-        v = ranf()
+        v = genunf(0.D0,1.D0)
 	  AUX = PTR(nobs-IT+1,1,Z(nobs-IT))   !nobs-9: nobs
 	  ISEQ = 1
 	  DO 450 WHILE (AUX.LT.v) 
@@ -498,7 +498,7 @@ C	  v = G05CAF(v)
 450	   AUX  = AUX + PTR(nobs-IT+1,ISEQ,Z(nobs-IT))
  	 ELSE
 C	  v = G05CAF(v)       
-        v = ranf()
+        v = genunf(0.D0,1.D0)
 	  AUX = PM(nobs-IT+1,1) 
 	  ISEQ = 1
 	  DO 451 WHILE (AUX.LT.v) 
@@ -548,7 +548,7 @@ C	 PA = DEXP(PN-PO)*QO/QN
        PA = 1.D0 
 	ENDIF	
 C	v = G05CAF(v) 
-      v = ranf()      
+      v = genunf(0.D0,1.D0)
 	IF (v.GT.PA) THEN
 	 Z(I0:I1)   = Z0(I0:I1)
 	 ACCRATE(I0:I1) = ACCRATE(I0:I1) + 1
