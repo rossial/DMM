@@ -68,7 +68,8 @@ C
       IF (.NOT. (p.LE.0)) GO TO 10
       WRITE (*,*) 'P nonpositive in SETGMN'
       WRITE (*,*) 'Value of P: ',p
-      STOP 'P nonpositive in SETGMN'
+      PAUSE
+      STOP
 
    10 parm(1) = p
 C
@@ -84,7 +85,8 @@ C      CALL spofa(covm,p,p,info)
       CALL spofa(covm,ldcovm,p,info)
       IF (.NOT. (info.NE.0)) GO TO 30
       WRITE (*,*) ' COVM not positive definite in SETGMN'
-      STOP ' COVM not positive definite in SETGMN'
+      PAUSE
+      STOP
 
    30 icount = p + 1
 C
