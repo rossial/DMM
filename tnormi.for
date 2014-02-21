@@ -36,13 +36,16 @@ C your version. If you delete this exception statement from all
 C source files in the program, then also delete it here.      
 C ----------------------------------------------------------------------
 	DOUBLE PRECISION FUNCTION TNORMI(PHIL,PHIP)
+C INPUT
+      DOUBLE PRECISION PHIL,PHIP,T
+C EXTERNAL FUNCTIONS      
+      DOUBLE PRECISION genunf,PPND16  
       INTEGER IFAIL
-	DOUBLE PRECISION PHIL,PHIP,T,G01FAF
 
-C	T=G05CAF(T) ! Sampling from U(0,1)
-      T = ranf()  ! Sampling from U(0,1)
-      T=PHIL+T*(PHIP-PHIL) ! Rescaling U(PHIL,PHIP)
-      TNORMI=G01FAF('L',T,IFAIL) ! INVERSE of N(0,1)
+C	T=G05CAF(T)   ! Sampling from U(0,1)
+      T = PHIL+genunf(0.d0,1.d0)*(PHIP-PHIL) ! Rescaling U(PHIL,PHIP)
+C     TNORMI=G01FAF('L',T,IFAIL) ! INVERSE of N(0,1)
+      TNORMI = PPND16(T,IFAIL)
 
       RETURN
       END

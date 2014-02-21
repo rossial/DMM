@@ -38,20 +38,6 @@ C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.    
-C      
-C In addition, as a special exception, the copyright holders give
-C permission to link the code of portions of this program with the
-C NAG Fortran library under certain conditions as described in each
-C individual source file, and distribute linked combinations including
-C the two.
-C
-C You must obey the GNU General Public License in all respects for all
-C of the code used other than NAG Fortran library. If you modify file(s)
-C with this exception, you may extend this exception to your
-C version of the file(s), but you are not obligated to do so. If
-C you do not wish to do so, delete this exception statement from
-C your version. If you delete this exception statement from all
-C source files in the program, then also delete it here.      
 C --------------------------------------------------------------------	
       SUBROUTINE KF2(nobs,d,ny,nz,nx,nu,ns,S,yk,c,H,G,a,F,R,
 	1               XT,PT,LIKE)  
@@ -135,12 +121,19 @@ C  p0 = p1 - (P1*H'+R*G')*Vinv*(P1*H'+R*G')'
 C -------------------------------------------------------------------
        COM(1:ny,1:ny) = V(1:ny,1:ny)
 	 IFAIL = -1
-	 CALL F01ADF(ny,COM(1:ny+1,1:ny),ny+1,IFAIL) 	           
-	 DO 70 I=1,ny
-	   Vinv(I,I) = COM(I+1,I)
-	   DO 70 J=1,I-1
-	   Vinv(I,J) = COM(I+1,J)
-70	   Vinv(J,I) = Vinv(I,J) 
+c	 CALL F01ADF(ny,COM(1:ny+1,1:ny),ny+1,IFAIL) 	
+       CALL DPOTRF('L',ny,COM(1:ny,1:ny),ny,IFAIL) ! COM = L*L'
+       DETV = 1.D0 ! det(L)
+       DO I=1,ny
+	  DETV = DETV*COM(I,I)
+       ENDDO
+       CALL DPOTRI('L',ny,COM(1:ny,1:ny),ny,IFAIL) ! COM = VV^-1
+
+       DO 70 I=1,ny
+	 Vinv(I,I) = COM(I,I)
+	 DO 70 J=1,I-1
+	 Vinv(I,J) = COM(I,J)
+70	 Vinv(J,I) = Vinv(I,J) 
 
 	 DO 90 I=1,nx
 	 DO 90 J=1,ny	 
@@ -161,15 +154,15 @@ C ---------------------------------------------
 C  Log-Likelihood = -(RSS + ln(det(V))/2
 C	        RSS = INN'*Vinv*INN
 C ---------------------------------------------
-	 IFAIL=-1
-       CALL F03ABF(V(1:ny,1:ny),ny,ny,DETV,COM(1:ny,1),IFAIL)
+C	 IFAIL=-1
+C      CALL F03ABF(V(1:ny,1:ny),ny,ny,DETV,COM(1:ny,1),IFAIL)
        
 	 RSS = 0.D0
 	 DO 120 I=1,ny
 	 DO 120 J=1,ny
-120     RSS = RSS + INN(I)*Vinv(I,J)*INN(J)
+120    RSS = RSS + INN(I)*Vinv(I,J)*INN(J)
 
-	 LIKE(imain) = -.5D0*(RSS + DLOG(DETV)) 
+	 LIKE(imain) = -.5D0*(RSS + 2.D0*DLOG(DETV)) 
      #             - ny/2.D0*DLOG(2.*3.141592653589793D0)
 	 
 

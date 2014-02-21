@@ -1,6 +1,6 @@
 C --------------------------------------------------------------------
 C SIMDATA simulates (S, x, yk) given (theta,psi) 
-C C Developed by A.Rossi, C.Planas and G.Fiorentini     
+C Developed by A.Rossi, C.Planas and G.Fiorentini     
 C      
 C State-space format:   y(t) = c(t)z(t) + H(t)x(t)   + G(t)u(t)
 C                       x(t) = a(t)     + F(t)x(t-1) + R(t)u(t)
@@ -46,20 +46,6 @@ C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.    
-C
-C In addition, as a special exception, the copyright holders give
-C permission to link the code of portions of this program with the
-C NAG Fortran library under certain conditions as described in each
-C individual source file, and distribute linked combinations including
-C the two.
-C
-C You must obey the GNU General Public License in all respects for all
-C of the code used other than NAG Fortran library. If you modify file(s)
-C with this exception, you may extend this exception to your
-C version of the file(s), but you are not obligated to do so. If
-C you do not wish to do so, delete this exception statement from
-C your version. If you delete this exception statement from all
-C source files in the program, then also delete it here.
 C --------------------------------------------------------------------	
 	SUBROUTINE SIMDATA(nobs,d,ny,nz,nx,nu,ns,nstot,nt,nv,np,INFOS,
 	1                   pdll,theta,psi,Z,STATE,yk)
@@ -90,13 +76,20 @@ C LOCALS
 	1 P2(INFOS(8,2),INFOS(8,2)),P3(INFOS(8,3),INFOS(8,3)),
      2 P4(INFOS(8,4),INFOS(8,4)),P5(INFOS(8,5),INFOS(8,5)),
      3 P6(INFOS(8,6),INFOS(8,6)),PMAT(nstot,nstot),PE(nstot)
-C	DOUBLE PRECISION G05CAF,G05DDF	 
+
+C EXTERNAL FUNCTIONS
       DOUBLE PRECISION genunf,gennor
+C EXTERNAL SUBROUTINES
+      EXTERNAL DGETRF,DGETRI,DESIGNZ,PPROD,ERGODIC,INT2SEQ,LYAP,SETGMN,
+     1 GENMN
+      
 	DOUBLE PRECISION U,AUX
 	DOUBLE PRECISION,ALLOCATABLE::R(:,:,:),c(:,:,:),H(:,:,:),
 	1 G(:,:,:),a(:,:),F(:,:,:)
 	DOUBLE PRECISION,ALLOCATABLE:: Xdd(:,:),Pdd(:,:,:),WORK(:),
 	1 FP(:,:),WORK1(:),UP(:)
+      
+      
 	ALLOCATE (R(nx,nu,ns(6)),c(ny,max(nz,1),ns(1)),H(ny,nx,ns(2)),
 	1 G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)),
      3 Xdd(MAX(d(1),1),nx),Pdd(MAX(d(1),1),nx,nx),
@@ -149,10 +142,15 @@ C DRAW x(1) ~ N[x(1|0),P(1|0)]
 	   DO 25 I = d(2)+1,nx
 25	   FP(I,I) = 1.D0+FP(I,I)	 
          IFAIL = -1 
-	   CALL F07ADF(nx-d(2),nx-d(2),FP(d(2)+1:nx,d(2)+1:nx),nx-d(2),
+C	   CALL F07ADF(nx-d(2),nx-d(2),FP(d(2)+1:nx,d(2)+1:nx),nx-d(2),
+C	1               IPIV(d(2)+1:nx),IFAIL)
+C	   CALL F07AJF(nx-d(2),FP(d(2)+1:nx,d(2)+1:nx),nx-d(2),
+C	1               IPIV(d(2)+1:nx),WORK1,64*nx,IFAIL)
+	   CALL DGETRF(nx-d(2),nx-d(2),FP(d(2)+1:nx,d(2)+1:nx),nx-d(2),
 	1               IPIV(d(2)+1:nx),IFAIL)
-	   CALL F07AJF(nx-d(2),FP(d(2)+1:nx,d(2)+1:nx),nx-d(2),
+	   CALL DGETRI(nx-d(2),FP(d(2)+1:nx,d(2)+1:nx),nx-d(2),
 	1               IPIV(d(2)+1:nx),WORK1,64*nx,IFAIL)
+         
 	   DO 30 I = d(2)+1,nx
 30	   Xdd(1,I) = SUM(FP(I,d(2)+1:nx)*a(d(2)+1:nx,S(1,4))) ! inv(I-F)*a
        ENDIF

@@ -25,20 +25,6 @@ C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.   
-C      
-C In addition, as a special exception, the copyright holders give
-C permission to link the code of portions of this program with the
-C NAG Fortran library under certain conditions as described in each
-C individual source file, and distribute linked combinations including
-C the two.
-C
-C You must obey the GNU General Public License in all respects for all
-C of the code used other than NAG Fortran library. If you modify file(s)
-C with this exception, you may extend this exception to your
-C version of the file(s), but you are not obligated to do so. If
-C you do not wish to do so, delete this exception statement from
-C your version. If you delete this exception statement from all
-C source files in the program, then also delete it here.      
 C --------------------------------------------------------------------------
 	SUBROUTINE HARMONIC2(G,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                     INFOS,yk,gibpar,gibZ,thetaprior,psiprior,
@@ -61,18 +47,21 @@ C LOCALS
 	DOUBLE PRECISION, ALLOCATABLE:: DEN2(:),ub(:) 
 	INTEGER,ALLOCATABLE::IND(:,:),NIND(:)
 	DOUBLE PRECISION parm(nt),SIGM(nt,nt),pval(11),
-	1 COM(nt+1,nt),ISIGM(nt,nt),DET,WORK(nt),CON(11)
+	1 COM(nt+1,nt),ISIGM(nt,nt),DET,CON(11)
 	DOUBLE PRECISION,ALLOCATABLE:: PTR(:,:,:),PMAT(:,:),PE(:),
 	1 ALPHA(:,:),MOM(:,:)
 	DOUBLE PRECISION P1(INFOS(8,1),INFOS(8,1)),
 	1 P2(INFOS(8,2),INFOS(8,2)),P3(INFOS(8,3),INFOS(8,3)),
      2 P4(INFOS(8,4),INFOS(8,4)),P5(INFOS(8,5),INFOS(8,5)),
      3 P6(INFOS(8,6),INFOS(8,6))
-	DOUBLE PRECISION PTHETA2,PRIOR,PRIORDIR,G01FCF 
 	DOUBLE PRECISION Ppar(nt+np(1)),Fpar,QTHETA,QPSI,PS,QS,QF,A0,SS(1,1)
 	DOUBLE PRECISION ZERO,ONE,PI
 	DATA ZERO/0.0D0/,ONE/1.0D0/,PI/3.141592653589793D0/	
-
+C EXTERNAL FUNCTIONS
+      DOUBLE PRECISION PTHETA2,PRIOR,PRIORDIR   !G01FCF 
+C EXTERNAL SUBROUTINES      
+      EXTERNAL NEWEYWESTCOV2,DPOTRF,DPOTRI,DESIGNZ,PPROD,ERGODIC,INT2SEQ
+      
 	NPARTH = 0
 	DO I = 1,nt
 	 IF (GIBPAR(1,I).NE.GIBPAR(2,I)) THEN
@@ -95,17 +84,24 @@ C LOCALS
 
 	COM(1:NPARTH,1:NPARTH) = SIGM(1:NPARTH,1:NPARTH)
 	IFAIL = -1
-	CALL F01ADF(NPARTH,COM(1:NPARTH+1,1:NPARTH),NPARTH+1,IFAIL) ! Inverse var-covar
-	DO 30 I=1,NPARTH
-	 ISIGM(I,I) = COM(I+1,I)
-	 DO 30 J=1,I-1	
-	  ISIGM(I,J) = COM(I+1,J)
-30	  ISIGM(J,I) = ISIGM(I,J)
+C	CALL F01ADF(NPARTH,COM(1:NPARTH+1,1:NPARTH),NPARTH+1,IFAIL) ! Inverse var-covar
+      CALL DPOTRF('L',NPARTH,COM(1:NPARTH,1:NPARTH),NPARTH,IFAIL) ! COM = L*L'
+      DET = 1.D0 ! det(SIGM)
+      DO I=1,NPARTH
+	 DET = DET*COM(I,I)**2
+      ENDDO
+      CALL DPOTRI('L',NPARTH,COM(1:NPARTH,1:NPARTH),NPARTH,IFAIL) ! COM = VV^-1
 
-	COM(1:NPARTH,1:NPARTH) = SIGM(1:NPARTH,1:NPARTH)
-      IFAIL = -1
-      CALL F03ABF(COM(1:NPARTH,1:NPARTH),NPARTH,NPARTH,DET,
-	1            WORK(1:NPARTH),IFAIL) ! det(SIGM)
+	DO 30 I=1,NPARTH
+	ISIGM(I,I) = COM(I,I)
+	DO 30 J=1,I-1	
+	ISIGM(I,J) = COM(I,J)
+30	ISIGM(J,I) = ISIGM(I,J)
+
+c	COM(1:NPARTH,1:NPARTH) = SIGM(1:NPARTH,1:NPARTH)
+c     IFAIL = -1
+c     CALL F03ABF(COM(1:NPARTH,1:NPARTH),NPARTH,NPARTH,DET,
+c	1            WORK(1:NPARTH),IFAIL) ! det(SIGM)
 	
 C p = .05, .55, ...,1
       NPVAL = 11
@@ -113,8 +109,8 @@ C p = .05, .55, ...,1
 	pval(NPVAL) = 1.D0
 	DO 40 I  = 1,NPVAL-1
        IFAIL   = -1
-	 pval(I) = .05D0 + DFLOAT(I-1)*.1D0 
-40	 ub(I)   = G01FCF(pval(I),DFLOAT(NPARTH),IFAIL)
+	 pval(I) = 0.05D0 + DFLOAT(I-1)*.1D0 
+40	 ub(I)   = 0.D0 ! G01FCF(pval(I),DFLOAT(NPARTH),IFAIL) Da rifare!!!!!!
 	CON(:)   = (2.D0*PI)**(-NPARTH/2.D0)*DET**(-.5D0)/pval(:)    
 	
 	IF (nv.GT.0) THEN	  

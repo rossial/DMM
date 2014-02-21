@@ -4,7 +4,7 @@ C where RR and Ps are symmetric matrices.
 C Developed by DYNARE team 
 C Recoded in Fortran by A.Rossi, C.Planas and G.Fiorentini     
 C         
-C Copyright (C) 2010-2014 European Commission 
+C Copyright (C) DYNARE team 
 C
 C This file is part of Program DMM
 C
@@ -21,20 +21,6 @@ C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.    
-C      
-C In addition, as a special exception, the copyright holders give
-C permission to link the code of portions of this program with the
-C NAG Fortran library under certain conditions as described in each
-C individual source file, and distribute linked combinations including
-C the two.
-C
-C You must obey the GNU General Public License in all respects for all
-C of the code used other than NAG Fortran library. If you modify file(s)
-C with this exception, you may extend this exception to your
-C version of the file(s), but you are not obligated to do so. If
-C you do not wish to do so, delete this exception statement from
-C your version. If you delete this exception statement from all
-C source files in the program, then also delete it here.      
 C -------------------------------------------------------------
 	SUBROUTINE LYAP(nx,nu,compt,F,R,Ps)
 C INPUT
@@ -43,9 +29,12 @@ C INPUT
 C OUTPUT
 	DOUBLE PRECISION Ps(nx,nx)
 C LOCALS
-      INTEGER I,J,JJ,IFAIL,LWORK,IPIV(nx**2)
+      INTEGER I,J,IFAIL,LWORK,IPIV(nx**2)
 	DOUBLE PRECISION, ALLOCATABLE:: WORK(:),RR(:,:),WR(:),WI(:),
 	1 Z(:,:),T(:,:),ZR(:,:),ZRZ(:,:),Q(:,:),WR1(:),Z1(:)
+C EXTERNAL SUBROUTINES
+      EXTERNAL DGETRF,DGETRI,DGEES
+      
 
 C RR = R*R' 
 	ALLOCATE(RR(nx,nx))
@@ -67,7 +56,8 @@ C RR = R*R'
 
 	T(1:nx,1:nx) = F(1:nx,1:nx)
 	IFAIL = -1
-	CALL F02EAF('V',nx,T,nx,WR,WI,Z,nx,WORK,LWORK,IFAIL) ! F = ZTZ'
+C	CALL F02EAF('V',nx,T,nx,WR,WI,Z,nx,WORK,LWORK,IFAIL) ! F = ZTZ'
+      CALL DGEES('V','N',SS,nx,T,nx,0,WR,WI,Z,nx,WORK,LWORK,BWORK,IFAIL) !F = ZTZ'
 	DO I = 1,nx
 	IF (WI(I)**2+WR(I)**2.GE.1.D0) THEN
 	 TYPE *, ' '
@@ -114,9 +104,10 @@ c       i = i - 1;
     
         IFAIL = -1
 	  ZR(1:I,1:I) = Q(1:I,1:I)  
-	  CALL F07ADF(I,I,ZR(1:I,1:I),I,IPIV(1:I),IFAIL)
-	  IFAIL = -1
-	  CALL F07AJF(I,ZR(1:I,1:I),I,IPIV(1:I),WORK(1:64*I),64*I,IFAIL)
+c	  CALL F07ADF(I,I,ZR(1:I,1:I),I,IPIV(1:I),IFAIL)
+c	  CALL F07AJF(I,ZR(1:I,1:I),I,IPIV(1:I),WORK(1:64*I),64*I,IFAIL)
+        CALL DGETRF(I,I,ZR(1:I,1:I),I,IPIV(1:I),IFAIL)
+	  CALL DGETRI(I,ZR(1:I,1:I),I,IPIV(1:I),WORK(1:64*I),64*I,IFAIL)
 	  DO 70 J = 1,I
 70	  Ps(J,I) = SUM(ZR(J,1:I)*(ZRZ(1:I,I)+WR(1:I)))
 	  Ps(I,1:I-1) = Ps(1:I-1,I)
@@ -153,8 +144,11 @@ c            -T(1:i,1:i)*T(i-1,i)     ,   eye(i)-T(1:i,1:i)*T(i-1,i-1) ];
 130	  Q(J,J) = Q(J,J) + 1.D0
 c       z =  q\[ B(1:i,i)+c ; B(1:i,i-1) + c1 ];
         IFAIL = -1
-	  CALL F07ADF(2*I,2*I,Q(1:2*I,1:2*I),2*I,IPIV(1:2*I),IFAIL)
-	  CALL F07AJF(2*I,Q(1:2*I,1:2*I),2*I,IPIV(1:2*I),WORK(1:64*2*I),
+C	  CALL F07ADF(2*I,2*I,Q(1:2*I,1:2*I),2*I,IPIV(1:2*I),IFAIL)
+C	  CALL F07AJF(2*I,Q(1:2*I,1:2*I),2*I,IPIV(1:2*I),WORK(1:64*2*I),
+C     #	          64*2*I,IFAIL)
+	  CALL DGETRF(2*I,2*I,Q(1:2*I,1:2*I),2*I,IPIV(1:2*I),IFAIL)
+	  CALL DGETRI(2*I,Q(1:2*I,1:2*I),2*I,IPIV(1:2*I),WORK(1:64*2*I),
      #	          64*2*I,IFAIL)
 	  
 	  DO 140 J = 1,2*I

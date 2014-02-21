@@ -36,20 +36,6 @@ C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.    
-C      
-C In addition, as a special exception, the copyright holders give
-C permission to link the code of portions of this program with the
-C NAG Fortran library under certain conditions as described in each
-C individual source file, and distribute linked combinations including
-C the two.
-C
-C You must obey the GNU General Public License in all respects for all
-C of the code used other than NAG Fortran library. If you modify file(s)
-C with this exception, you may extend this exception to your
-C version of the file(s), but you are not obligated to do so. If
-C you do not wish to do so, delete this exception statement from
-C your version. If you delete this exception statement from all
-C source files in the program, then also delete it here.      
 C --------------------------------------------------------------------	
       SUBROUTINE INNOV2(nobs,d,ny,nz,nx,nu,ns,nt,S,yk,
 	1                  theta,pdll,INN)  
@@ -160,11 +146,14 @@ C -------------------------------------------------------------------
        IF (ny.GT.0) THEN
 	  COM(1:ny,1:ny) = V(1:ny,1:ny)
 	  IFAIL = -1
-	  CALL F01ADF(ny,COM(1:ny+1,1:ny),ny+1,IFAIL) 	 
+c	  CALL F01ADF(ny,COM(1:ny+1,1:ny),ny+1,IFAIL) 	 
+        CALL DPOTRF('L',ny,COM(1:ny,1:ny),ny,IFAIL) ! COM = L*L'
+        CALL DPOTRI('L',ny,COM(1:ny,1:ny),ny,IFAIL) ! COM = VV^-1
+
 	  DO 70 I=1,ny
-	   Vinv(I,I) = COM(I+1,I)
+	   Vinv(I,I) = COM(I,I)
 	   DO 70 J=1,I-1
-	   Vinv(I,J) = COM(I+1,J)
+	   Vinv(I,J) = COM(I,J)
 70	   Vinv(J,I) = Vinv(I,J) 
 
 	  DO 90 I=1,nx

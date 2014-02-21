@@ -33,20 +33,6 @@ C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
-C      
-C In addition, as a special exception, the copyright holders give
-C permission to link the code of portions of this program with the
-C NAG Fortran library under certain conditions as described in each
-C individual source file, and distribute linked combinations including
-C the two.
-C
-C You must obey the GNU General Public License in all respects for all
-C of the code used other than NAG Fortran library. If you modify file(s)
-C with this exception, you may extend this exception to your
-C version of the file(s), but you are not obligated to do so. If
-C you do not wish to do so, delete this exception statement from
-C your version. If you delete this exception statement from all
-C source files in the program, then also delete it here.      
 C -------------------------------------------------------------
 	SUBROUTINE CHECKDESIGN(ny,nz,nx,nu,ns,nt,d,theta,pdll,PATH,NMLNAME)
 
@@ -68,12 +54,14 @@ C INPUT
 	CHARACTER*200 NMLNAME,PATH,FILEOUT 
 	
 C LOCALS
-	INTEGER I,J,JJ,JJJ,K,maxnz,IFAIL,ESTABLE,SRANK
+	INTEGER I,J,maxnz,IFAIL,ESTABLE
 	DOUBLE PRECISION WORK(4*nx),WR(nx),WI(nx),VR(1),
 	1 VI(1),W(nx)  !WRY(ny),WORK1(64*ny)  
 	DOUBLE PRECISION,ALLOCATABLE::c(:,:,:),H(:,:,:),
 	1 G(:,:,:),a(:,:),F(:,:,:),R(:,:,:)  !,HRG(:,:),HRGRH(:,:)
 	CHARACTER*3 CJ	
+C EXTERNAL SUBROUTINES
+      EXTERNAL DGEEV
 
 	ALLOCATE(c(ny,max(nz,1),ns(1)),H(ny,nx,ns(2)),
 	1 G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)),R(nx,nu,ns(6))) !,HRG(ny,nu),HRGRH(ny,ny))
@@ -196,8 +184,11 @@ C Check unstable eigenvalues of F
       DO J = 1,ns(5)
        IF (d(2).GT.0) THEN
 	  IFAIL=-1
-	  CALL F02EBF('N',d(2),F(1:d(2),1:d(2),J),d(2),
-	1              WR(1:d(2)),WI(1:d(2)),VR,1,VI,1,WORK,4*nx,IFAIL)
+C	  CALL F02EBF('N',d(2),F(1:d(2),1:d(2),J),d(2),
+C	1              WR(1:d(2)),WI(1:d(2)),VR,1,VI,1,WORK,4*nx,IFAIL)
+        CALL DGEEV('N','N',d(2),F(1:d(2),1:d(2),J),d(2),
+     1             WR(1:d(2)),WI(1:d(2)),VR,1,VI,1,WORK,4*nx,IFAIL)
+        
 	  ESTABLE = 0
 	  DO I = 1,d(2)
 	   W(I) = WR(I)**2+WI(I)**2
@@ -215,8 +206,11 @@ C Check unstable eigenvalues of F
 C Check stable eigenvalues of F
        IF (nx-d(2).GT.0) THEN
 	  IFAIL=-1
-	  CALL F02EBF('N',nx-d(2),F(d(2)+1:nx,d(2)+1:nx,J),
-	1              nx-d(2),WR,WI,VR,1,VI,1,WORK,4*nx,IFAIL)
+c	  CALL F02EBF('N',nx-d(2),F(d(2)+1:nx,d(2)+1:nx,J),
+c	1              nx-d(2),WR,WI,VR,1,VI,1,WORK,4*nx,IFAIL)
+        CALL DGEEV('N','N',nx-d(2),F(d(2)+1:nx,d(2)+1:nx,J),
+     #              nx-d(2),WR,WI,VR,1,VI,1,WORK,4*nx,IFAIL)
+
 	  ESTABLE = 0
 	  DO I = 1,nx-d(2)
 	   W(I) = WR(I)**2+WI(I)**2

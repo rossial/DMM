@@ -57,20 +57,6 @@ C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.    
-C      
-C In addition, as a special exception, the copyright holders give
-C permission to link the code of portions of this program with the
-C NAG Fortran library under certain conditions as described in each
-C individual source file, and distribute linked combinations including
-C the two.
-C
-C You must obey the GNU General Public License in all respects for all
-C of the code used other than NAG Fortran library. If you modify file(s)
-C with this exception, you may extend this exception to your
-C version of the file(s), but you are not obligated to do so. If
-C you do not wish to do so, delete this exception statement from
-C your version. If you delete this exception statement from all
-C source files in the program, then also delete it here.      
 C ----------------------------------------------------------------------
 	SUBROUTINE GCK2(nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,yk,
 	1                theta,psi,INFOS,pdll,Z,S)
@@ -151,10 +137,13 @@ C INT2SEQ map from Z(IT+1) to IS = (k1 k2 k3 k4 k5 k6)
 
 	 COM(1:ny,1:ny) = VV(1:ny,1:ny)
 	 IFAIL = -1
-	 CALL F01ADF(ny,COM(1:ny+1,1:ny), ny+1, IFAIL) 
+C	 CALL F01ADF(ny,COM(1:ny+1,1:ny), ny+1, IFAIL) 
+       CALL DPOTRF('L',ny,COM(1:ny,1:ny),ny,IFAIL) ! COM = L*L'
+       CALL DPOTRI('L',ny,COM(1:ny,1:ny),ny,IFAIL) ! COM = VV^-1
+
 	 DO 40 I=1,ny
 	 DO 40 J=1,I
-	 VV(I,J) = COM(I+1,J)
+	 VV(I,J) = COM(I,J)
 40	 VV(J,I) = VV(I,J) ! inv[(HR+G)*(HR+G)'] (ny x ny) 
 
 C B = R*(H*R+G)'*VV (nx x ny)
@@ -186,7 +175,8 @@ C FIND CS such that CS*CS' = RR'-B*HRG*R' (nx x nx)
 90	 CC(I,J) = RR(I,J) - SUM(BHRG(I,1:nu)*R(J,1:nu,IS(6)))
 	 
        IFAIL=-1
-       CALL F02FAF('V','L',nx,CC,nx,LAM,WORK,3*nx,IFAIL)
+C      CALL F02FAF('V','L',nx,CC,nx,LAM,WORK,3*nx,IFAIL)
+       CALL DSYEV( 'V','L',nx,CC,nx,LAM,WORK,3*nx,IFAIL)
 	 DO 100 I=1,nx
 	 IF (LAM(I).LE.EPS) LAM(I)= ZERO
 100	 CS(:,I) = CC(1:nx,I)*DSQRT(LAM(I))
@@ -210,12 +200,15 @@ C DD = I + CS'*OM(+1)*CS (nx x nx)
 130    DD(J,I) = DD(I,J)
        
 C DI = inv(DD) (nx x nx) 	  
-	 COM1(1:nx,:) = DD(:,:)
+	 COM1(1:nx,1:nx) = DD(1:nx,1:nx)
 	 IFAIL = -1
-	 CALL F01ADF(nx,COM1,nx+1,IFAIL) 
+C	 CALL F01ADF(nx,COM1,nx+1,IFAIL) 
+       CALL DPOTRF('L',nx,COM1(1:nx,1:nx),nx,IFAIL) ! COM1 = L*L'
+       CALL DPOTRI('L',nx,COM1(1:nx,1:nx),nx,IFAIL) ! COM1 = DD^-1
+
 	 DO 135 I=1,nx
 	 DO 135 J=1,I
-	 DI(I,J) = COM1(I+1,j)
+	 DI(I,J) = COM1(I,j)
 135	 DI(J,I) = DI(I,J)          
 
 C OMCDIC = I - OM(+1)*CS*DI*CS' (nx x nx)

@@ -56,20 +56,6 @@ C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.    
-C      
-C In addition, as a special exception, the copyright holders give
-C permission to link the code of portions of this program with the
-C NAG Fortran library under certain conditions as described in each
-C individual source file, and distribute linked combinations including
-C the two.
-C
-C You must obey the GNU General Public License in all respects for all
-C of the code used other than NAG Fortran library. If you modify file(s)
-C with this exception, you may extend this exception to your
-C version of the file(s), but you are not obligated to do so. If
-C you do not wish to do so, delete this exception statement from
-C your version. If you delete this exception statement from all
-C source files in the program, then also delete it here.
 C -------------------------------------------------------------------------
       SUBROUTINE KIM(nobs,d,ny,nz,nx,nu,ns,nk,nv,np,INFOS,yk,IYK,
      1 c,H,G,a,F,R,psi,ismoother,XSMOOTH,XSSE,SSMOOTH,INN,LIKE)  
@@ -94,6 +80,10 @@ C LOCALS
      1 SPT1(:,:),XS(:,:,:),PS(:,:,:,:),XSC(:,:),PSC(:,:,:),PTIL(:,:),
      1 FP(:,:),HP1(:,:),RG(:,:),COM(:,:),VINV(:,:),HPV(:,:),W(:),
      1 PP1(:,:),PP2(:,:),PP3(:,:),PP4(:,:),PP5(:,:),PP6(:,:),P(:,:)
+
+C EXTERNAL SUBROUTINES
+      EXTERNAL DESIGNZ,PPROD,ERGODIC,INT2SEQ,IKF2,KF2,DPOTRF,DPOTRI,
+     1 DGETRF,DGETRS
       
       LIKE(:)  = 0.D0
       INN(:,:) = 0.D0
@@ -114,7 +104,7 @@ C X-filter initialization
      1 Pdd(MAX(d(1),1),nx,nx),Xdd(MAX(d(1),1),nx),FP(nx,nx),HP1(ny,nx),
      1 RG(nx,ny),COM(ny+1,ny),VINV(ny,ny),HPV(nx,ny))	
 
-      CALL ergodic(nk,P,fyss(1:nk,1)) 
+      CALL ERGODIC(nk,P,fyss(1:nk,1)) 
       IF (d(1).LE.1) THEN          
         RSS = 0.D0  
         DO J = 1,nk   ! S(d)
@@ -228,11 +218,18 @@ C -------------------------------------------------------------------
         IF (iny.GT.0) THEN
          COM(1:iny,1:iny) = V(1:iny,1:iny)
 	   IFAIL = -1
-	   CALL F01ADF(iny,COM(1:iny+1,1:iny),iny+1,IFAIL) 	 
+C	   CALL F01ADF(iny,COM(1:iny+1,1:iny),iny+1,IFAIL) 	 
+         CALL DPOTRF('L',iny,COM(1:iny,1:iny),iny,IFAIL) ! COM = L*L'
+         DETV = 1.D0 ! det(L)
+         DO K=1,iny
+	    DETV = DETV*COM(K,K)
+         ENDDO
+         CALL DPOTRI('L',iny,COM(1:iny,1:ny),iny,IFAIL) ! COM = VV^-1
+         
 	   DO 70 K=1,iny
-	   VINV(K,K) = COM(K+1,K)
+	   VINV(K,K) = COM(K,K)
 	   DO 70 L=1,K-1
-	   VINV(K,L) = COM(K+1,L)
+	   VINV(K,L) = COM(K,L)
 70	   VINV(L,K) = VINV(K,L) 
 
 	   DO 90 K=1,nx
@@ -255,14 +252,14 @@ C  log f(y(t)|S(t-1)=i,S(t)=j,y^(t-1))
 C  Log-Likelihood = -(RSS + ln(det(V))/2
 C	        RSS = INN'*VINV*INN
 C ---------------------------------------------
-	   IFAIL=-1
-         CALL F03ABF(V(1:iny,1:iny),iny,iny,DETV,COM(1:iny,1),IFAIL)
+C	   IFAIL=-1
+C        CALL F03ABF(V(1:iny,1:iny),iny,iny,DETV,COM(1:iny,1),IFAIL)
 	   RSS = 0.D0
 	   DO 120 K=1,iny
 	   DO 120 L=1,iny
 120      RSS = RSS + INNIJ(K)*VINV(K,L)*INNIJ(L)
        
-         lfy = -.5D0*(RSS + DLOG(DETV)+iny*DLOG(2.*3.141592653589793D0))
+         lfy=-.5D0*(RSS+2.*DLOG(DETV)+iny*DLOG(2.*3.141592653589793D0))
          fyss(I,J) = lfy + DLOG(P(J,I)) + DLOG(SUM(SP0(:,I))) 
         
         ELSE
@@ -366,9 +363,11 @@ C the traspose is stored
 C  P1(imain+1,:,:,J,K) * PTIL'  = PHI((K-1)*nx+1:K*nx,(K-1)*nx+1:K*nx)*PI(imain,:,:,J)'  
 C         nx,nx         nx,nx     nx,nx 
 	    AUX(:,:) = P1(imain+1,:,:,J,K)
-	    CALL F07ADF(nx,nx,AUX,nx,IPIV(1:nx),IFAIL)
-	    CALL F07AEF('N',nx,nx,AUX,nx,IPIV(1:nx),PTIL,nx,IFAIL) ! this gives PTIL'
-
+C	    CALL F07ADF(nx,nx,AUX,nx,IPIV(1:nx),IFAIL)
+C	    CALL F07AEF('N',nx,nx,AUX,nx,IPIV(1:nx),PTIL,nx,IFAIL) ! this gives PTIL'
+          CALL DGETRF(nx,nx,AUX,nx,IPIV(1:nx),IFAIL)
+          CALL DGETRS('N',nx,nx,AUX,nx,IPIV(1:nx),PTIL,nx,IFAIL) ! this gives PTIL'
+          
 C  XS(:,J,K) = XI(imain,:,J) + PTIL*(XSC(:,K)-X1(imain+1,:,J,K)')
 	    DO 190 I=1,nx
 190	    XS(I,J,K) = XI(imain,I,J) 

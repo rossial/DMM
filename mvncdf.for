@@ -19,19 +19,19 @@ C   Copyright 2005 Alex Strashny (alex@strashny.org)
 C   version 1, April 29, 2005
 C   Recoded in Fortran by A.Rossi, C.Planas and G.Fiorentini 	
 C      
-C  In addition, as a special exception, the copyright holders give
-C  permission to link the code of portions of this program with the
-C  NAG Fortran library under certain conditions as described in each
-C  individual source file, and distribute linked combinations including
-C  the two.
+C   In addition, as a special exception, the copyright holders give
+C   permission to link the code of portions of this program with the
+C   NAG Fortran library under certain conditions as described in each
+C   individual source file, and distribute linked combinations including
+C   the two.
 C
-C  You must obey the GNU General Public License in all respects for all
-C  of the code used other than NAG Fortran library. If you modify file(s)
-C  with this exception, you may extend this exception to your
-C  version of the file(s), but you are not obligated to do so. If
-C  you do not wish to do so, delete this exception statement from
-C  your version. If you delete this exception statement from all
-C  source files in the program, then also delete it here.      
+C   You must obey the GNU General Public License in all respects for all
+C   of the code used other than NAG Fortran library. If you modify file(s)
+C   with this exception, you may extend this exception to your
+C   version of the file(s), but you are not obligated to do so. If
+C   you do not wish to do so, delete this exception statement from
+C   your version. If you delete this exception statement from all
+C   source files in the program, then also delete it here.      
 C ----------------------------------------------------------------------
 	SUBROUTINE mvncdf(LB,UB,MU,SIGMA,K,errMax,Nmax,P,err,N)
 	
@@ -45,34 +45,45 @@ C ----------------------------------------------------------------------
 
 ! LOCALS
 	INTEGER IFAIL,I,J
-	DOUBLE PRECISION LBC(K),UBC(K),alph,AP((K*(K+1))/2),
-	1 C(K,K),varSum,F(K),E(K),D(K),Y(K),W,DEL,Q
-	DOUBLE PRECISION S15ABF,genunf,G01FAF
+	DOUBLE PRECISION LBC(K),UBC(K),alph,C(K,K),varSum,
+     1 F(K),E(K),D(K),Y(K),W,DEL,Q      
+
+! EXTERNAL SUBROUTINES
+      EXTERNAL DPOTRF
+! EXTERNAL FUNCTIONS      
+      DOUBLE PRECISION cumnorm,genunf,PPND16
+      
 
 	LBC(:) = LB(:) - MU(:)
 	UBC(:) = UB(:) - MU(:)
 	alph = 2.32634787D0  ! deviate at 99% of N(0,1)
 	
-      DO 10 I = 1,K
-	DO 10 J = 1,I
-10     AP(I+(2*K-J)*(J-1)/2) = SIGMA(I,J)
+C     DO 10 I = 1,K
+C	DO 10 J = 1,I
+C10   AP(I+(2*K-J)*(J-1)/2) = SIGMA(I,J)
       
-	IFAIL = 0
-	CALL F07GDF('L',K,AP,IFAIL) ! SIGMA = C*C'
-	C(:,:) = 0.D0
-      DO 20 I=1,K
-	DO 20 J=1,I
-20    C(I,J) = AP(I+(2*K-J)*(J-1)/2)
-	
+C	IFAIL = 0
+C	CALL F07GDF('L',K,AP,IFAIL) ! SIGMA = C*C'
+C	C(:,:) = 0.D0
+C     DO 20 I=1,K
+C	DO 20 J=1,I
+C20   C(I,J) = AP(I+(2*K-J)*(J-1)/2)
+      
+      C(1:K,1:K) = SIGMA(1:K,1:K)
+	IFAIL = -1
+      CALL DPOTRF('L',K,C,K,IFAIL) ! SIGMA = C*C'
+      	
 C d is always zero
 	F(:) = 0.D0
 	D(:) = 0.D0
 	E(:) = 0.D0
 	Y(:) = 0.D0
 	IFAIL = 0
-	E(1) = S15ABF(UBC(1)/C(1,1), IFAIL) ! CDF
+C	E(1) = S15ABF(UBC(1)/C(1,1), IFAIL) ! CDF
+      E(1) = cumnorm(UBC(1)/C(1,1)) ! CDF
 	IFAIL = 0
-	D(1) = S15ABF(LBC(1)/C(1,1), IFAIL) ! CDF
+C	D(1) = S15ABF(LBC(1)/C(1,1), IFAIL) ! CDF
+      D(1) = cumnorm(LBC(1)/C(1,1)) ! CDF     
 	F(1) = E(1) - D(1)
 	
 	err = 2.D0*errMax
@@ -88,14 +99,17 @@ C	   W = G05CAF(W)
 	   ELSEIF ((D(I-1)+W*F(I-1)).GE.1.D0) THEN
 	    Y(I-1) = 10.D10
 	   ELSE
-	    Y(I-1) = G01FAF('L', D(I-1)+W*F(I-1), IFAIL) 	
+c	    Y(I-1) = G01FAF('L', D(I-1)+W*F(I-1), IFAIL) 	
+          Y(I-1) = PPND16(D(I-1)+W*F(I-1),IFAIL) 	
 	   ENDIF
 	   Q = 0.D0
 	   DO 50 J = 1, I-1
 50	   Q = Q + C(I,J)*Y(J)
-         E(I) =  S15ABF((UBC(I) - Q) / C(I,I),IFAIL)
-		IFAIL = 0
-         D(I) =  S15ABF((LBC(I) - Q) / C(I,I),IFAIL)
+C        E(I) =  S15ABF((UBC(I) - Q) / C(I,I),IFAIL)
+         E(I) =  cumnorm((UBC(I) - Q) / C(I,I))
+	   IFAIL = 0
+C         D(I) =  S15ABF((LBC(I) - Q) / C(I,I),IFAIL)
+         D(I) =  cumnorm((LBC(I) - Q) / C(I,I))
 100      F(I) = (E(I) - D(I))*F(I-1)
        N = N + 1
 	 del = (F(K) - P) / dfloat(N)

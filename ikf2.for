@@ -45,20 +45,6 @@ C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.    
-C      
-C In addition, as a special exception, the copyright holders give
-C permission to link the code of portions of this program with the
-C NAG Fortran library under certain conditions as described in each
-C individual source file, and distribute linked combinations including
-C the two.
-C
-C You must obey the GNU General Public License in all respects for all
-C of the code used other than NAG Fortran library. If you modify file(s)
-C with this exception, you may extend this exception to your
-C version of the file(s), but you are not obligated to do so. If
-C you do not wish to do so, delete this exception statement from
-C your version. If you delete this exception statement from all
-C source files in the program, then also delete it here.      
 C --------------------------------------------------------------------	
       SUBROUTINE IKF2(d,ny,nz,nx,nu,ns,S,yk,c,H,G,a,F,R,
 	1                Xdd,Pdd,LIKE)  
@@ -71,7 +57,7 @@ C OUTPUT
 	DOUBLE PRECISION Pdd(MAX(d(1),1),nx,nx),Xdd(MAX(d(1),1),nx),
 	1 LIKE(MAX(d(1),1))
 C LOCALS
-	INTEGER I,J,IFAIL,imain,FiRANK,NULLITY
+	INTEGER I,J,IFAIL,imain,FiRANK
 	INTEGER IPIV(nx)
 	DOUBLE PRECISION aa(nx),Ps(nx,nx),Pi(nx,nx)
 	DOUBLE PRECISION HPs(ny,nx),HPi(ny,nx),
@@ -79,8 +65,8 @@ C LOCALS
      2 PHFs(nx,ny),PHFi(nx,ny),FFF(ny,ny),Mi(nx,ny),Ci(nx,nx)
       DOUBLE PRECISION W1(ny),WORK(64*nx),WORK1(64*ny),
 	1 PFP(nx,nx),APPO(nx,nx),APPO1(nx,ny),COM(ny+1,ny),RG(nx,ny)
-     	DOUBLE PRECISION ONE,ZERO,EPS,DETV,RSS,SUMW1
-	DATA ONE/1.0D0/,ZERO/0.0D0/,EPS/1.D-14/
+     	DOUBLE PRECISION ONE,ZERO,DETV,RSS,SUMW1
+	DATA ONE/1.0D0/,ZERO/0.0D0/
 	
 C Unconditional mean and variance
 	LIKE(:) = ZERO
@@ -92,8 +78,10 @@ C Unconditional mean and variance
 	  DO 1 I = 1,nx
 1	  APPO(I,I) = 1.D0+APPO(I,I)	 
         IFAIL = -1
-	  CALL F07ADF(nx,nx,APPO,nx,IPIV,IFAIL)
-	  CALL F07AJF(nx,APPO,nx,IPIV,WORK,64*nx,IFAIL)        
+C	  CALL F07ADF(nx,nx,APPO,nx,IPIV,IFAIL)
+C	  CALL F07AJF(nx,APPO,nx,IPIV,WORK,64*nx,IFAIL)        
+	  CALL DGETRF(nx,nx,APPO,nx,IPIV,IFAIL)
+	  CALL DGETRI(nx,APPO,nx,IPIV,WORK,64*nx,IFAIL)        
 	  DO 3 I =1,nx
 3	  Xdd(1,I) = SUM(APPO(I,:)*a(:,S(1,4))) ! inv(I-F)*a
        ENDIF
@@ -114,9 +102,13 @@ C -----------------------------------------------------------
 	   APPO(d(2)+1:nx,d(2)+1:nx) = -F(d(2)+1:nx,d(2)+1:nx,S(1,5))	 
 	   DO 5 I = d(2)+1,nx
 5	   APPO(I,I) = 1.D0+APPO(I,I)	 
-	   CALL F07ADF(nx-d(2),nx-d(2),APPO(d(2)+1:nx,d(2)+1:nx),nx-d(2),
+C	   CALL F07ADF(nx-d(2),nx-d(2),APPO(d(2)+1:nx,d(2)+1:nx),nx-d(2),
+C	1               IPIV(d(2)+1:nx),IFAIL)
+C	   CALL F07AJF(nx-d(2),APPO(d(2)+1:nx,d(2)+1:nx),nx-d(2),
+C	1               IPIV(d(2)+1:nx),WORK,64*nx,IFAIL)
+	   CALL DGETRF(nx-d(2),nx-d(2),APPO(d(2)+1:nx,d(2)+1:nx),nx-d(2),
 	1               IPIV(d(2)+1:nx),IFAIL)
-	   CALL F07AJF(nx-d(2),APPO(d(2)+1:nx,d(2)+1:nx),nx-d(2),
+	   CALL DGETRI(nx-d(2),APPO(d(2)+1:nx,d(2)+1:nx),nx-d(2),
 	1               IPIV(d(2)+1:nx),WORK,64*nx,IFAIL)
 	   DO 6 I = d(2)+1,nx
 6	   aa(I) = SUM(APPO(I,d(2)+1:nx)*a(d(2)+1:nx,S(1,4))) ! inv(I-F)*a
@@ -170,8 +162,9 @@ C --------------------------------------------------------------------------
 	   
 	  IFAIL = -1
 	  COM(1:ny,1:ny) = Fi(1:ny,1:ny)  
-	  CALL F02FAF('N','U',ny,COM(1:ny,1:ny),ny,W1(1:ny),
-	1              WORK1,64*ny,IFAIL)
+C	  CALL F02FAF('N','U',ny,COM(1:ny,1:ny),ny,W1(1:ny),WORK1,64*ny,IFAIL)
+        CALL DSYEV('N','U',ny,COM(1:ny,1:ny),ny,W1(1:ny),WORK1,
+     1             64*ny,IFAIL)
 	  FiRANK = 0
 	  SUMW1  = SUM(ABS(W1(1:ny)))
 	  DO 70 I=1,ny
@@ -183,12 +176,15 @@ C --------------------------------------------------------------------------
 	    Fsm = ZERO
 	    COM(1:ny,1:ny) = Fi(1:ny,1:ny)
 		IFAIL = -1
-		CALL F01ADF(ny,COM(1:ny+1,1:ny),ny+1,IFAIL) 
+C		CALL F01ADF(ny,COM(1:ny+1,1:ny),ny+1,IFAIL) 
+          CALL DPOTRF('L',ny,COM(1:ny,1:ny),ny,IFAIL) ! COM = L*L'
+          CALL DPOTRI('L',ny,COM(1:ny,1:ny),ny,IFAIL) ! COM = VV^-1
+
 		DO 80 I=1,ny
-		 Fim(I,I) = COM(I+1,I)
-		 DO 80 J=1,I-1
-		 Fim(I,J) = COM(I+1,J)
-80		 Fim(J,I) = Fim(I,J)           	   
+       	Fim(I,I) = COM(I,I)
+		DO 80 J=1,I-1
+		Fim(I,J) = COM(I,J)
+80		Fim(J,I) = Fim(I,J)           	   
           
 		DO 81 I=1,ny
 		DO 81 J=1,ny
@@ -274,15 +270,18 @@ C ----------------------------------------------
 C CONTRIBUTE TO THE LIKELIHOOD 1ST d INNOVATIONS
 C ----------------------------------------------
 	  IFAIL = -1
-        CALL F03ABF(Fsm(1:ny,1:ny)+Fim(1:ny,1:ny),ny,ny,
-	1              DETV,WORK1(1:ny),IFAIL)
-	  
+C       CALL F03ABF(Fsm(1:ny,1:ny)+Fim(1:ny,1:ny),ny,ny,
+C	1              DETV,WORK1(1:ny),IFAIL)
+        FFF(1:ny,1:ny) = Fsm(1:ny,1:ny)+Fim(1:ny,1:ny)
+        CALL DPOTRF('L',ny,FFF(1:ny,1:ny),ny,IFAIL) ! FFF = L*L'       
+	  DETV = 1.D0 
 	  RSS = ZERO
 	  DO 155 I=1,ny
+        DETV = DETV*FFF(I,I)    
 	  DO 155 J=1,ny
 155     RSS = RSS + COM(I,1)*Fsm(I,J)*COM(J,1)
 	
-	  LIKE(imain) = -.5D0*(RSS - DLOG(DETV))
+	  LIKE(imain) = -.5D0*(RSS - 2.D0*DLOG(DETV))
 	  IF (LIKE(imain).NE.0.D0) THEN 
 	   LIKE(imain)=LIKE(imain)-ny/2.D0*DLOG(2.*3.141592653589793D0)	    
 	  ENDIF
@@ -332,14 +331,4 @@ C Ci = Mi*Fim*Mi'
       ENDIF
       
       RETURN
-      END   
-
-c	  IF (IFAIL.NE.0) THEN ! pseudo-inverse
-c        IFAIL = -1
-c	   RSS = 1.D-13
-c	   CALL F01BLF(nx,nx,RSS,Ci,nx,WORK(1:nx),IRANK,INC,
-c	1   WORK(nx+1:2*nx),APPO,nx,WORK(2*nx+1:3*nx),IFAIL)
-c	   DO 2 I = 1,nx
-c	   DO 2 J = 1,nx
-c2        APPO(I,J) = Ci(J,I)
-c	  ELSE                 ! normal-inverse
+      END

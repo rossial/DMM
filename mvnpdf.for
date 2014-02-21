@@ -20,23 +20,6 @@ C DMM is distributed in the hope that it will be useful,
 C but WITHOUT ANY WARRANTY; without even the implied warranty of
 C MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 C GNU General Public License for more details.
-C
-C You should have received a copy of the GNU General Public License
-C along with DMM.  If not, see <http://www.gnu.org/licenses/>.    
-C      
-C In addition, as a special exception, the copyright holders give
-C permission to link the code of portions of this program with the
-C NAG Fortran library under certain conditions as described in each
-C individual source file, and distribute linked combinations including
-C the two.
-C
-C You must obey the GNU General Public License in all respects for all
-C of the code used other than NAG Fortran library. If you modify file(s)
-C with this exception, you may extend this exception to your
-C version of the file(s), but you are not obligated to do so. If
-C you do not wish to do so, delete this exception statement from
-C your version. If you delete this exception statement from all
-C source files in the program, then also delete it here.      
 C -------------------------------------------------------------------------- 
 	DOUBLE PRECISION FUNCTION mvnpdf(X,mu,SIG,p)
 
@@ -45,23 +28,33 @@ C INPUT
 	DOUBLE PRECISION X(p),mu(p),SIG(p,p)
 C LOCALS
 	INTEGER I,J,IFAIL
-	DOUBLE PRECISION ISIG(p,p),COM(p+1,p),WKSPCE(p)
+	DOUBLE PRECISION,ALLOCATABLE:: ISIG(:,:),COM(:,:)
 	DOUBLE PRECISION PI,H,DET,KER
 	DATA PI/3.141592653589793D0/,H/-.5D0/	
-
-C INVERT SIG 
+C EXTERNAL SUBROUTINES
+      EXTERNAL DPOTRF,DPOTRI
+      
+      ALLOCATE(ISIG(p,p),COM(p+1,p))
       COM(1:p,1:p) = SIG(1:p,1:p)
 	IFAIL = -1
-	CALL F01ADF(p,COM(1:p+1,1:p),p+1,IFAIL) 
+C	CALL F01ADF(p,COM(1:p+1,1:p),p+1,IFAIL) 
+      CALL DPOTRF('L',p,COM(1:p,1:p),p,IFAIL) ! COM = L*L'
+      DET = 1.D0  ! det(L)
+      DO I =1,p
+       DET = DET*COM(I,I)
+      ENDDO 
+      CALL DPOTRI('L',p,COM(1:p,1:p),p,IFAIL) ! COM = VV^-1
+
 	DO 10 I=1,p
-	DO 10 J=1,I
-	ISIG(I,J) = COM(I+1,J)
+      ISIG(I,I) = COM(I,I)
+	DO 10 J=1,I-1
+	ISIG(I,J) = COM(I,J)
 10	ISIG(J,I) = ISIG(I,J)    
 
 C DETERMINANT of SIG	
-	COM(1:p,1:p) = SIG(1:p,1:p)
-	IFAIL = -1
-      CALL F03ABF(COM(1:p,1:p),p,p,DET,WKSPCE,IFAIL) 
+C	COM(1:p,1:p) = SIG(1:p,1:p)
+C	IFAIL = -1
+C     CALL F03ABF(COM(1:p,1:p),p,p,DET,WKSPCE,IFAIL) 
 
 C QUADRATIC FORM (log)
 	KER = 0.D0
@@ -70,7 +63,8 @@ C QUADRATIC FORM (log)
 20	KER = KER + (X(I)-mu(I))*ISIG(I,J)*(X(J)-mu(J))
 
 C PDF
-	mvnpdf = (2.*PI)**(H*p)*DET**H*DEXP(H*KER)
-	
+	mvnpdf = (2.*PI)**(H*p)*DET**(-1.D0)*DEXP(H*KER)
+      
+      DEALLOCATE(ISIG,COM)
 	RETURN
 	END

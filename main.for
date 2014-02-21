@@ -96,8 +96,12 @@ C LOCALS
       CHARACTER*200 mfile,pathmfile
 	CHARACTER*200 FILEIN,NMLNAME,PATH,FILEOUT,DMMTITLE,CURDIR
       CHARACTER*1024 matlaberror
-	EXTERNAL GETARG
+
+C EXTERNAL SUBROUTINES
+      EXTERNAL GETARG
+C EXTERNAL FUNCTIONS      
       DOUBLE PRECISION genbet
+
 C TIME	
       ALLOCATE(np(3),ns(6),INFOS(9,6),IT1(7),IT2(7),DATE_ITIME(8),
      1 REAL_CLOCK(3))      
@@ -417,11 +421,16 @@ C SIMULATION of DATA and UNOBSERVABLES
 C MAXIMUM LIKELIHOOD ESTIMATION      
 	IF ((estimation.EQ.'ML').OR.(estimation.EQ.'ml').OR.
      &    (estimation.EQ.'Ml').OR.(estimation.EQ.'mL')) THEN
+       TYPE *, ' '  
+       TYPE *, ' Maximum Likelihood inference not allowed '  
+	 TYPE *, ' Program aborting'
+	 PAUSE
+	 STOP
        CALL OPENFILES(estimation,seed,nv,nf,0,datasim,marglik,
 	1                path,nmlname)
        ALLOCATE(HESS((nt+np(1))*(nt+np(1)+1)/2))
-	 CALL ML(nobs,d,ny,nz,nx,nu,nt,nv,ns,np(1),INFOS,pdll,INDT,yk,IYK,S,
-	1         thetaprior,theta0,psi0,IMSVAR,HESS,AUX)     
+c	 CALL ML(nobs,d,ny,nz,nx,nu,nt,nv,ns,np(1),INFOS,pdll,INDT,yk,IYK,S,
+c	1         thetaprior,theta0,psi0,IMSVAR,HESS,AUX)     
 	 ALLOCATE(THETASE(nt),AKMSE(nobs,nx),INN(nobs,ny))
 	 IF (nv.EQ.0) THEN        
         CALL OPG(nobs,d,ny,nz,nx,nu,nt,ns,pdll,yk,IYK,S,

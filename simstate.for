@@ -40,20 +40,6 @@ C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.    
-C
-C In addition, as a special exception, the copyright holders give
-C permission to link the code of portions of this program with the
-C NAG Fortran library under certain conditions as described in each
-C individual source file, and distribute linked combinations including
-C the two.
-C
-C You must obey the GNU General Public License in all respects for all
-C of the code used other than NAG Fortran library. If you modify file(s)
-C with this exception, you may extend this exception to your
-C version of the file(s), but you are not obligated to do so. If
-C you do not wish to do so, delete this exception statement from
-C your version. If you delete this exception statement from all
-C source files in the program, then also delete it here.      
 C --------------------------------------------------------------------	
 	SUBROUTINE SIMSTATE(nobs,d,ny,nz,nx,nu,ns,nt,yk,IYK,
 	1                    theta,S,pdll,STATE)
@@ -83,13 +69,17 @@ C LOCALS
 	1 G(:,:,:),a(:,:),F(:,:,:)
 	DOUBLE PRECISION,ALLOCATABLE:: Xdd(:,:),Pdd(:,:,:),WORK(:),
 	1 FP(:,:),WORK1(:),UP(:)
-	DOUBLE PRECISION gennor	
+C EXTERNAL SUBROUTINES
+      EXTERNAL DGETRF,DGETRI,SETGMN,GENMN,LYAP,KS
+C EXTERNAL FUNCTIONS
+      DOUBLE PRECISION GENNOR 	
+      
       ALLOCATE (R(nx,nu,ns(6)),c(ny,max(nz,1),ns(1)),H(ny,nx,ns(2)),
 	1 G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)),
      2 ykP(nobs,ny+nz),XP(nobs,nx),XS(nobs,nx),PS(nobs,nx,nx),
      3 Xdd(MAX(d(1),1),nx),Pdd(MAX(d(1),1),nx,nx),
      3 WORK((nx+2)*(nx+1)/2),FP(nx,nx),WORK1(64*nx),UP(nu) )
-
+      
 C	pdesign = getprocaddress(pdll, "DESIGN"C)
 	pdesign = getprocaddress(pdll, "design_"C)
       CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
@@ -105,10 +95,14 @@ C DRAW x(1)+ FROM N[x(1|0),P(1|0)]
 	   DO 20 I = d(2)+1,nx
 20	   FP(I,I) = 1.D0+FP(I,I)	 
          IFAIL = -1 
-	   CALL F07ADF(nx-d(2),nx-d(2),FP(d(2)+1:nx,d(2)+1:nx),nx-d(2),
+C	   CALL F07ADF(nx-d(2),nx-d(2),FP(d(2)+1:nx,d(2)+1:nx),nx-d(2),
+C	1               IPIV(d(2)+1:nx),IFAIL)
+C	   CALL F07AJF(nx-d(2),FP(d(2)+1:nx,d(2)+1:nx),nx-d(2),
+C	1               IPIV(d(2)+1:nx),WORK1,64*nx,IFAIL)
+    	   CALL DGETRF(nx-d(2),nx-d(2),FP(d(2)+1:nx,d(2)+1:nx),nx-d(2),
 	1               IPIV(d(2)+1:nx),IFAIL)
-	   CALL F07AJF(nx-d(2),FP(d(2)+1:nx,d(2)+1:nx),nx-d(2),
-	1               IPIV(d(2)+1:nx),WORK1,64*nx,IFAIL)
+	   CALL DGETRI(nx-d(2),FP(d(2)+1:nx,d(2)+1:nx),nx-d(2),
+	1               IPIV(d(2)+1:nx),WORK1,64*nx,IFAIL)         
 	   DO 30 I = d(2)+1,nx
 30	   Xdd(1,I) = SUM(FP(I,d(2)+1:nx)*a(d(2)+1:nx,S(1,4))) ! inv(I-F)*a
        ENDIF
@@ -127,7 +121,7 @@ c	 CALL G05EZF(XP(1,d(2)+1:nx),nx-d(2),WORK,(nx+2)*(nx+1)/2,IFAIL)
 
 C DRAW u(1)+
 	DO 35 J = 1,nu
-C35    UP(J) = G05DDF(0.0D0,1.D0)
+C35   UP(J) = G05DDF(0.0D0,1.D0)
 35    UP(J) = gennor(0.0D0,1.D0)      
 	
 C COMPUTE y(1)+

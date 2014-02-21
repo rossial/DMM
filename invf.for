@@ -29,20 +29,6 @@ C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.   
-C      
-C In addition, as a special exception, the copyright holders give
-C permission to link the code of portions of this program with the
-C NAG Fortran library under certain conditions as described in each
-C individual source file, and distribute linked combinations including
-C the two.
-C
-C You must obey the GNU General Public License in all respects for all
-C of the code used other than NAG Fortran library. If you modify file(s)
-C with this exception, you may extend this exception to your
-C version of the file(s), but you are not obligated to do so. If
-C you do not wish to do so, delete this exception statement from
-C your version. If you delete this exception statement from all
-C source files in the program, then also delete it here.      
 C -----------------------------------------------------------------------                                 
 	SUBROUTINE INVF(A,B,np,nq,Am,Bm,FFF)  
 C INPUT
@@ -58,15 +44,16 @@ C LOCALS
 	DOUBLE PRECISION W(np),WORK(64*np)
 	DOUBLE PRECISION ZERO
 	DATA ZERO/0.0D0/ 
-	EXTERNAL F02FAF
-		 
+      EXTERNAL DSYEV,DGETRF,DGETRI
+      
 	Q1(:,:) = ZERO
 	Q2(:,:) = ZERO
 	V(:,:)  = A(nq+1:np,nq+1:np) ! V = A22 
       
 C [V,W] = eig(A(nq+1:np,nq+1:np))  
 	IFAIL = 0 
-	CALL F02FAF('V','U',np-nq,V,np-nq,W(1:np-nq),WORK,64*np,IFAIL)	
+c	CALL F02FAF('V','U',np-nq,V,np-nq,W(1:np-nq),WORK,64*np,IFAIL)	
+      CALL DSYEV('V','U',np-nq,V,np-nq,W(1:np-nq),WORK,64*np,IFAIL)	
 
 C  Q2(nq+1:np,:) = V*W^-.5  		
       DO 10 J = 1,np-nq
@@ -75,7 +62,8 @@ C  Q2(nq+1:np,:) = V*W^-.5
 c  [VV,W]=eig(B(1:nq,1:nq));
 	VV(:,:) = B(1:nq,1:nq)
 	IFAIL = 0
-	CALL F02FAF('V','U',nq,VV,nq,W(1:nq),WORK,64*np,IFAIL)	
+c	CALL F02FAF('V','U',nq,VV,nq,W(1:nq),WORK,64*np,IFAIL)	
+      CALL DSYEV('V','U',nq,VV,nq,W(1:nq),WORK,64*np,IFAIL)	
 
 C  Q1(1:nq,1:nq) = VV*W^-.5;
 	DO 20 I = 1,nq
@@ -87,9 +75,12 @@ c M =-Q1(1:nq,:)'*A(1:nq,nq+1:np)*Q2(nq+1:np,:)*inv(A(nq+1:np,nq+1:np)*Q2(nq+1:n
 30	AQ2(I,J) = SUM(A(I+nq,1+nq:np)*Q2(1+nq:np,J))
 
 	IFAIL = 0
-	CALL F07ADF(np-nq,np-nq,AQ2,np-nq,IPIV(1:np-nq),IFAIL)
-	CALL F07AJF(np-nq,AQ2,np-nq,IPIV(1:np-nq),WORK,64*np,IFAIL)
-	AQ2inv(:,:) = AQ2(:,:)  
+C	CALL F07ADF(np-nq,np-nq,AQ2,np-nq,IPIV(1:np-nq),IFAIL)
+C	CALL F07AJF(np-nq,AQ2,np-nq,IPIV(1:np-nq),WORK,64*np,IFAIL)
+	CALL DGETRF(np-nq,np-nq,AQ2,np-nq,IPIV(1:np-nq),IFAIL)
+	CALL DGETRI(np-nq,AQ2,np-nq,IPIV(1:np-nq),WORK,64*np,IFAIL)
+      
+      AQ2inv(:,:) = AQ2(:,:)  
 
 	DO 40 I=1,nq
 	DO 40 J=1,np-nq	

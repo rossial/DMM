@@ -1,5 +1,5 @@
 C --------------------------------------------------------------------
-C SIMPRIOR SIMULATES theta FROM THE PRIOR DISTRIBUTION 
+C SIMPRIOR SIMULATES theta from the PRIOR pdf
 C Developed by A.Rossi, C.Planas and G.Fiorentini     
 C         
 C Copyright (C) 2010-2014 European Commission 
@@ -19,20 +19,6 @@ C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.    
-C
-C In addition, as a special exception, the copyright holders give
-C permission to link the code of portions of this program with the
-C NAG Fortran library under certain conditions as described in each
-C individual source file, and distribute linked combinations including
-C the two.
-C
-C You must obey the GNU General Public License in all respects for all
-C of the code used other than NAG Fortran library. If you modify file(s)
-C with this exception, you may extend this exception to your
-C version of the file(s), but you are not obligated to do so. If
-C you do not wish to do so, delete this exception statement from
-C your version. If you delete this exception statement from all
-C source files in the program, then also delete it here.      
 C --------------------------------------------------------------------	
 	SUBROUTINE SIMPRIOR(estimation,nt,thetaprior,tipo,ntf,INDT,theta)
 C INPUT
@@ -45,8 +31,9 @@ C OUTPUT
 C LOCALS
 	INTEGER I,IFAIL
 	DOUBLE PRECISION LB,UB,PLB,PUB
-	DOUBLE PRECISION S15ABF,TNORMI,gengam,genbet
-
+C EXTERNAL FUNCTIONS      
+	DOUBLE PRECISION cumnorm,TNORMI,gengam,genbet
+      
 	INDT(:) = 0
 	ntf     = 0
 	DO I = 1,nt
@@ -67,8 +54,10 @@ C    1                theta(I),IFAIL)
          ELSEIF (tipo(I).EQ.'NT') THEN  
 	    LB = (thetaprior(I,3)-thetaprior(I,1))/DSQRT(thetaprior(I,2))
 	    UB = (thetaprior(I,4)-thetaprior(I,1))/DSQRT(thetaprior(I,2))
-	    PLB = S15ABF(LB,IFAIL)
-	    PUB = S15ABF(UB,IFAIL)
+c	    PLB = S15ABF(LB,IFAIL)
+c	    PUB = S15ABF(UB,IFAIL)
+	    PLB = cumnorm(LB)
+	    PUB = cumnorm(UB)          
 	    theta(I) = TNORMI(PLB,PUB)
 	    theta(I) = thetaprior(I,1)+theta(I)*DSQRT(thetaprior(I,2))	 
 	   ELSEIF (tipo(I).EQ.'BE') THEN 

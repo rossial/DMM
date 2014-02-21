@@ -65,14 +65,19 @@ C LOCALS
 	DOUBLE PRECISION,ALLOCATABLE:: P1(:,:),P2(:,:),P3(:,:),P4(:,:),
 	1 P5(:,:),P6(:,:),PMAT(:,:),PE(:)
 	DOUBLE PRECISION U,AUX
-      DOUBLE PRECISION genunf,gennor
-C	DOUBLE PRECISION WORKU((nu+2)*(nu+1)/2)
       DOUBLE PRECISION MED(nu)
+C	DOUBLE PRECISION WORKU((nu+2)*(nu+1)/2)
+
+C EXTERNAL FUNCTIONS      
+      DOUBLE PRECISION genunf,gennor
+C EXTERNAL SUBROUTINES      
+      EXTERNAL DESIGNZ,PPROD,ERGODIC,INT2SEQ
+
+      
 	ALLOCATE(R(nx,nu,ns(6)),c(ny,max(nz,1),ns(1)),H(ny,nx,ns(2)),
 	1 G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)))
  
 C Call DESIGN
-C	pdesign = getprocaddress(pdll, "DESIGN"C)
 	pdesign = getprocaddress(pdll, "design_"C)
 	CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 
@@ -105,10 +110,7 @@ C	 U = G05CAF(U) ! Sampling U(0,1)
 
 C DRAW x(T+1) ~ f(x(T+1)|x(T),Z(T+1))
 	IFAIL = -1
-	MED(:) = 0.D0
 	DO I = 1,nu
-C	 CALL G05EAF(MED(I),1,1.D0,1,1.D-14,WORKU,(nu+2)*(nu+1)/2,IFAIL)
-C	 CALL G05EZF(MED(I),1,WORKU,(nu+2)*(nu+1)/2,IFAIL)	  
        MED(I) = gennor(0.D0,1.D0)          
 	END DO
 	DO 20 I=1,nx
@@ -136,11 +138,7 @@ C	  U = G05CAF(U) ! Sampling U(0,1)
 	 ENDIF
 
 C DRAW x(T+inf) ~ f(x(T+inf)|x(T+inf-1),Z(T+inf))
-	 IFAIL = -1
-	 MED(:) = 0.D0
 	 DO I = 1,nu
-C	  CALL G05EAF(MED(I),1,1.D0,1,1.D-14,WORKU,(nu+2)*(nu+1)/2,IFAIL)
-C	  CALL G05EZF(MED(I),1,WORKU,(nu+2)*(nu+1)/2,IFAIL)	  
         MED(I) = gennor(0.D0,1.D0)   
 	 END DO
 	 DO 50 I=1,nx

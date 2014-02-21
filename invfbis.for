@@ -29,20 +29,6 @@ C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.    
-C      
-C In addition, as a special exception, the copyright holders give
-C permission to link the code of portions of this program with the
-C NAG Fortran library under certain conditions as described in each
-C individual source file, and distribute linked combinations including
-C the two.
-C
-C You must obey the GNU General Public License in all respects for all
-C of the code used other than NAG Fortran library. If you modify file(s)
-C with this exception, you may extend this exception to your
-C version of the file(s), but you are not obligated to do so. If
-C you do not wish to do so, delete this exception statement from
-C your version. If you delete this exception statement from all
-C source files in the program, then also delete it here.      
 C -----------------------------------------------------------------------                                 
 	SUBROUTINE INVFBIS(A,B,np,nq,Am,Bm,FFF)  
 C INPUT
@@ -58,7 +44,7 @@ C LOCALS
 	DOUBLE PRECISION DM(np),PM(np,np),PMA(np,np),COM(np,np),
 	1 WORK(3*np),W(np)
 	
-	EXTERNAL F02FAF
+	EXTERNAL DSYEV
 	DATA ZERO/0.0D0/ 		 
 	
 C Inverse of     A + k*M, A, M NxN, A psd, M pd
@@ -76,7 +62,8 @@ C ---------------------------------------------
 C  [COM DM] = eig(M) 
 	IFAIL = -1
 	PM(:,:) = A(:,:)
-	CALL F02FAF('V','U',np,PM,np,DM,WORK,3*np,IFAIL)  ! COM = P
+C	CALL F02FAF('V','U',np,PM,np,DM,WORK,3*np,IFAIL)  ! COM = P
+      CALL DSYEV('V','U',np,PM,np,DM,WORK,3*np,IFAIL)  ! COM = P
 
 C  PM = PM * DM^-.5
       DO 10 J = 1,np
@@ -98,7 +85,8 @@ C  Q = (PM*DM^-.5)'*FI*(PM*DM^-.5)
 
 C [PMA,W] = eig(A2)    
 	IFAIL = -1
-	CALL F02FAF('V','U',np,PMA,np,W,WORK,3*np,IFAIL)
+C	CALL F02FAF('V','U',np,PMA,np,W,WORK,3*np,IFAIL)
+      CALL DSYEV('V','U',np,PMA,np,W,WORK,3*np,IFAIL)
 C Q = PM*DM^-.5*PMA      
       Q(:,:)=ZERO
       DO 40 I = 1,np
