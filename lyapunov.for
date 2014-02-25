@@ -4,7 +4,8 @@ C where RR and Ps are symmetric matrices.
 C Developed by DYNARE team 
 C Recoded in Fortran by A.Rossi, C.Planas and G.Fiorentini     
 C         
-C Copyright (C) DYNARE team 
+C Copyright (C) 2006-2012 Dynare Team
+C Copyright (C) 2010-2014 European Commission 
 C
 C This file is part of Program DMM
 C
