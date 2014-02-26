@@ -1,121 +1,93 @@
 C ----------------------------------------------------------------------
-C   MVNCDF Multivariate normal cumulative distribution function
-C   P = MVNCDF(LB,UB,MU,SIGMA) computes the multivariate normal cdf 
-C   F(LB,UB) with mean vector MU and variance matrix SIGMA 
+C MVNCDF Multivariate normal cumulative distribution function
+C computes the multivariate Normal cumulative distribution 
+C function with mean vector MU, variance matrix SIGMA inside 
+C LB and UB. Algorithm due to Alan Genz (1992): 
+C "Numerical Computation of Multivariate Normal Probabilities", 
+C Journal of Computational and Graphical Statistics, pp. 141-149.
+C   
+C Copyright (C) 2010-2014 European Commission 
 C
-C   P = MVNCDF(LB, UB, MU,SIGMA,ERRMAX,CI,NMAX) uses additional control 
-C   parameters. The difference between P and the true value of the
-C   cdf is less than ERRMAX CI percent of the time. NMAX is the 
-C   maximum number of iterations that the algorithm makes. By 
-C   default, ERRMAX is 0.01, CI is 99, and NMAX is 300.
+C This file is part of Program DMM
 C
-C   [P,ERR,N] = MVNCDF(...) also returns the estimated error and the
-C   number of iterations made.
+C DMM is free software developed at the Joint Research Centre of the 
+C European Commission: you can redistribute it and/or modify it under 
+C the terms of the GNU General Public License as published by
+C the Free Software Foundation, either version 3 of the License, or
+C (at your option) any later version.
 C
-C   Algorithm from Alan Genz (1992) Numerical Computation of 
-C   Multivariate Normal Probabilities, Journal of Computational and 
-C   Graphical Statistics, pp. 141-149.
-C   Copyright 2005 Alex Strashny (alex@strashny.org)
-C   version 1, April 29, 2005
-C   Recoded in Fortran by A.Rossi, C.Planas and G.Fiorentini 	
-C      
-C   In addition, as a special exception, the copyright holders give
-C   permission to link the code of portions of this program with the
-C   NAG Fortran library under certain conditions as described in each
-C   individual source file, and distribute linked combinations including
-C   the two.
+C DMM is distributed in the hope that it will be useful,
+C but WITHOUT ANY WARRANTY; without even the implied warranty of
+C MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+C GNU General Public License for more details.
 C
-C   You must obey the GNU General Public License in all respects for all
-C   of the code used other than NAG Fortran library. If you modify file(s)
-C   with this exception, you may extend this exception to your
-C   version of the file(s), but you are not obligated to do so. If
-C   you do not wish to do so, delete this exception statement from
-C   your version. If you delete this exception statement from all
-C   source files in the program, then also delete it here.      
+C You should have received a copy of the GNU General Public License
+C along with DMM.  If not, see <http://www.gnu.org/licenses/>.    
 C ----------------------------------------------------------------------
-	SUBROUTINE mvncdf(LB,UB,MU,SIGMA,K,errMax,Nmax,P,err,N)
+	SUBROUTINE MVNCDF(LB,UB,MU,SIGMA,K,EPS,NMAX,INTSUM,ERROR,N)
 	
 ! INPUT
-	INTEGER K,Nmax 
-	DOUBLE PRECISION LB(K),UB(K),MU(K),SIGMA(K,K),errMax	
+	INTEGER K,NMAX 
+	DOUBLE PRECISION LB(K),UB(K),MU(K),SIGMA(K,K),EPS	
 
 ! OUTPUT
 	INTEGER N 
-	DOUBLE PRECISION P,err	
+	DOUBLE PRECISION INTSUM,ERROR	
 
 ! LOCALS
 	INTEGER IFAIL,I,J
-	DOUBLE PRECISION LBC(K),UBC(K),alph,C(K,K),varSum,
-     1 F(K),E(K),D(K),Y(K),W,DEL,Q      
+	DOUBLE PRECISION LBC(K),UBC(K),C(K,K),F(K),E(K),D(K),Y(K)
+      DOUBLE PRECISION ALPHA,VARSUM,W,DELTA,SUMCY      
 
 ! EXTERNAL SUBROUTINES
       EXTERNAL DPOTRF
 ! EXTERNAL FUNCTIONS      
-      DOUBLE PRECISION cumnorm,genunf,PPND16
+      DOUBLE PRECISION CUMNORM,GENUNF,PPND16
       
 
 	LBC(:) = LB(:) - MU(:)
 	UBC(:) = UB(:) - MU(:)
-	alph = 2.32634787D0  ! deviate at 99% of N(0,1)
-	
-C     DO 10 I = 1,K
-C	DO 10 J = 1,I
-C10   AP(I+(2*K-J)*(J-1)/2) = SIGMA(I,J)
-      
-C	IFAIL = 0
-C	CALL F07GDF('L',K,AP,IFAIL) ! SIGMA = C*C'
-C	C(:,:) = 0.D0
-C     DO 20 I=1,K
-C	DO 20 J=1,I
-C20   C(I,J) = AP(I+(2*K-J)*(J-1)/2)
-      
-      C(1:K,1:K) = SIGMA(1:K,1:K)
+	ALPHA =  2.326347874040841 ! 99-TH PERCENTILE FOR A N(0,1)
+	C(1:K,1:K) = SIGMA(1:K,1:K)
 	IFAIL = -1
       CALL DPOTRF('L',K,C,K,IFAIL) ! SIGMA = C*C'
       	
-C d is always zero
+C INITIALIZATIONS
 	F(:) = 0.D0
 	D(:) = 0.D0
 	E(:) = 0.D0
 	Y(:) = 0.D0
 	IFAIL = 0
-C	E(1) = S15ABF(UBC(1)/C(1,1), IFAIL) ! CDF
-      E(1) = cumnorm(UBC(1)/C(1,1)) ! CDF
+      E(1) = CUMNORM(UBC(1)/C(1,1)) ! CDF
 	IFAIL = 0
-C	D(1) = S15ABF(LBC(1)/C(1,1), IFAIL) ! CDF
-      D(1) = cumnorm(LBC(1)/C(1,1)) ! CDF     
+      D(1) = CUMNORM(LBC(1)/C(1,1)) ! CDF     
 	F(1) = E(1) - D(1)
-	
-	err = 2.D0*errMax
-	P = 0.D0
+    	INTSUM = 0.D0
 	N = 0
-	varSum = 0.D0 
-	DO WHILE ((err.GT.errMax).AND.(N.LT.Nmax))
-	 DO 100 I =2,K	
-C	   W = G05CAF(W)
-         W = genunf(0.D0,1.D0)
+      VARSUM = 0.D0	
+	ERROR = EPS+1.D0
+	DO WHILE ((ERROR.GT.EPS).AND.(N.LT.NMAX))
+	 DO 100 I = 2,K	
+         W = GENUNF(0.D0,1.D0)
 	   IF((D(I-1)+W*F(I-1)).LE.0.D0) THEN
 	    Y(I-1) = -10.D10
 	   ELSEIF ((D(I-1)+W*F(I-1)).GE.1.D0) THEN
 	    Y(I-1) = 10.D10
 	   ELSE
-c	    Y(I-1) = G01FAF('L', D(I-1)+W*F(I-1), IFAIL) 	
           Y(I-1) = PPND16(D(I-1)+W*F(I-1),IFAIL) 	
 	   ENDIF
-	   Q = 0.D0
+	   SUMCY = 0.D0
 	   DO 50 J = 1, I-1
-50	   Q = Q + C(I,J)*Y(J)
-C        E(I) =  S15ABF((UBC(I) - Q) / C(I,I),IFAIL)
-         E(I) =  cumnorm((UBC(I) - Q) / C(I,I))
+50	   SUMCY = SUMCY + C(I,J)*Y(J)
+         E(I) =  CUMNORM((UBC(I) - SUMCY) / C(I,I))
 	   IFAIL = 0
-C         D(I) =  S15ABF((LBC(I) - Q) / C(I,I),IFAIL)
-         D(I) =  cumnorm((LBC(I) - Q) / C(I,I))
+         D(I) =  CUMNORM((LBC(I) - SUMCY) / C(I,I))
 100      F(I) = (E(I) - D(I))*F(I-1)
        N = N + 1
-	 del = (F(K) - P) / dfloat(N)
-       P = P + del
-       varSum = (N-2)*varSum /dfloat(N) + del**2
-       err = alph * dsqrt(varSum)
+	 DELTA = (F(K) - INTSUM)/DFLOAT(N)
+       INTSUM = INTSUM + DELTA
+       VARSUM = (N-2)*VARSUM/DFLOAT(N) + DELTA**2
+       ERROR = ALPHA * DSQRT(VARSUM)
       END DO  
 	
 	RETURN
