@@ -42,7 +42,7 @@ C ----------------------------------------------------------------------
 ! EXTERNAL SUBROUTINES
       EXTERNAL DPOTRF
 ! EXTERNAL FUNCTIONS      
-      DOUBLE PRECISION CUMNORM,GENUNF,PPND16
+      DOUBLE PRECISION CUMNORM,GENUNF,INVNORMCDF  ! PPND16
       
 
 	LBC(:) = LB(:) - MU(:)
@@ -74,7 +74,8 @@ C INITIALIZATIONS
 	   ELSEIF ((D(I-1)+W*F(I-1)).GE.1.D0) THEN
 	    Y(I-1) = 10.D10
 	   ELSE
-          Y(I-1) = PPND16(D(I-1)+W*F(I-1),IFAIL) 	
+C         Y(I-1) = PPND16(D(I-1)+W*F(I-1),IFAIL) 	
+          Y(I-1) = INVNORMCDF(D(I-1)+W*F(I-1))
 	   ENDIF
 	   SUMCY = 0.D0
 	   DO 50 J = 1, I-1

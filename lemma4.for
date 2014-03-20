@@ -30,7 +30,7 @@ C ------------------------------------------------------------
 ! LOCALS
 	INTEGER I,J,NULLITY,IFAIL
       DOUBLE PRECISION COM(nx+1,nx),OMC(nx,nx),C(nx,nx),T(nx,nx),
-	1 W(nx),LAM(nx),WORK(3*nx),DETV,AUX,EPS
+	1 DETV,AUX,EPS  ! W(nx),LAM(nx),WORK(3*nx)
 
 ! EXTERNAL SUBROUTINES      
       EXTERNAL SCHOLLU,DPOTRF,DPOTRI

@@ -25,13 +25,12 @@ C ----------------------------------------------------------------------
 C INPUT
       DOUBLE PRECISION PHIL,PHIP,T
 C EXTERNAL FUNCTIONS      
-      DOUBLE PRECISION genunf,PPND16  
-      INTEGER IFAIL
+      DOUBLE PRECISION genunf,INVNORMCDF  !PPND16        
 
-C	T=G05CAF(T)   ! Sampling from U(0,1)
       T = PHIL+genunf(0.d0,1.d0)*(PHIP-PHIL) ! Rescaling U(PHIL,PHIP)
-C     TNORMI=G01FAF('L',T,IFAIL) ! INVERSE of N(0,1)
-      TNORMI = PPND16(T,IFAIL)
+C     TNORMI = G01FAF('L',T,IFAIL) ! INVERSE of N(0,1)
+C     TNORMI = PPND16(T,IFAIL)
+      TNORMI = INVNORMCDF(T)
 
       RETURN
       END

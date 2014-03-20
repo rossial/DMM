@@ -21,8 +21,8 @@ C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.    
 C --------------------------------------
 	DOUBLE PRECISION FUNCTION VAR(X,N)
-	INTEGER N,I
-	DOUBLE PRECISION X(N),mean
+	INTEGER N
+	DOUBLE PRECISION X(N)
       VAR=SUM(X(1:N)**2)/DFLOAT(N)-(SUM(X(1:N))/DFLOAT(N))**2
 	RETURN
 	END

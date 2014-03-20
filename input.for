@@ -104,7 +104,13 @@ C FIND namelist ssm
 	 RETURN
 	ENDIF
 	
-C READ namelist ssm 
+C READ namelist ssm
+      ns1=0
+      ns2=0
+      ns3=0
+      ns4=0
+      ns5=0
+      ns6=0
 	OPEN(1,File=TRIM(FILEIN), ACCESS='SEQUENTIAL')   
 	nx      = -1
 	nu      = -1
@@ -909,8 +915,8 @@ C -----------------------------------------------------------------------
 	 dynS(4) = dynS4 
 	 dynS(5) = dynS5 
 	 dynS(6) = dynS6
-	 nstateS(1) = ns1 
-	 nstateS(2) = ns2 
+	 nstateS(1) = ns1
+       nstateS(2) = ns2 
 	 nstateS(3) = ns3 
 	 nstateS(4) = ns4 
 	 nstateS(5) = ns5 

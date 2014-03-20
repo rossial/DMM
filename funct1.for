@@ -55,8 +55,7 @@ C LOCALS
       DOUBLE PRECISION, ALLOCATABLE:: LIKE(:),XT(:,:),PT(:,:,:),	
 	1 Xdd(:,:),Pdd(:,:,:)
       DOUBLE PRECISION, ALLOCATABLE:: XSMOOTH(:,:),XSSE(:,:),
-     1 SSMOOTH(:,:),INN(:,:)
-      CHARACTER*200 NMLNAME,PATH
+     1 SSMOOTH(:,:),INN(:,:)      
 
 C Retrive metainformation
       nobs   = IU(1)

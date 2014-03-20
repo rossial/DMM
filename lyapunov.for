@@ -31,11 +31,11 @@ C OUTPUT
 	DOUBLE PRECISION Ps(nx,nx)
 C LOCALS
       INTEGER I,J,IFAIL,LWORK,IPIV(nx**2)
-	DOUBLE PRECISION, ALLOCATABLE:: WORK(:),RR(:,:),WR(:),WI(:),
+	LOGICAL BWORK(nx),SELECT
+      DOUBLE PRECISION, ALLOCATABLE:: WORK(:),RR(:,:),WR(:),WI(:),
 	1 Z(:,:),T(:,:),ZR(:,:),ZRZ(:,:),Q(:,:),WR1(:),Z1(:)
 C EXTERNAL SUBROUTINES
-      EXTERNAL DGETRF,DGETRI,DGEES
-      
+      EXTERNAL DGETRF,DGETRI,DGEES,SELECT      
 
 C RR = R*R' 
 	ALLOCATE(RR(nx,nx))
@@ -51,14 +51,16 @@ C RR = R*R'
 	 GOTO 7777 
 	ENDIF
 
-	LWORK = 2*64*nx
+	LWORK = 3*nx
 	ALLOCATE(T(nx,nx),WORK(LWORK),WR(nx),WI(nx),Z(nx,nx),ZRZ(nx,nx),
 	1         ZR(nx,nx),Q(2*nx,2*nx),WR1(nx),Z1(2*nx))
 
-	T(1:nx,1:nx) = F(1:nx,1:nx)
+      T(1:nx,1:nx) = F(1:nx,1:nx)
 	IFAIL = -1
 C	CALL F02EAF('V',nx,T,nx,WR,WI,Z,nx,WORK,LWORK,IFAIL) ! F = ZTZ'
-      CALL DGEES('V','N',SS,nx,T,nx,0,WR,WI,Z,nx,WORK,LWORK,BWORK,IFAIL) !F = ZTZ'
+      I = 0
+      CALL DGEES('V','N',SELECT,nx,T,nx,I,WR,WI,Z,nx,WORK,LWORK,
+     #           BWORK,IFAIL)
 	DO I = 1,nx
 	IF (WI(I)**2+WR(I)**2.GE.1.D0) THEN
 	 TYPE *, ' '
@@ -191,4 +193,18 @@ c x = U(:,:)*x*U(:,:)';
 	DEALLOCATE(WORK,RR,WR,WI,Z,T,ZRZ,ZR,Q,WR1,Z1)
 
 7777	RETURN
-	END
+      END
+
+C For DEEGS - not used
+      LOGICAL FUNCTION SELECT(A,B)
+      DOUBLE PRECISION A,B
+      RETURN
+      END
+      
+      
+c      SUBROUTINE PROVA(A)
+c      DOUBLE PRECISION A
+c      DIMENSION A( * )
+c      A(4) = 1.D0
+c      RETURN
+c      END
