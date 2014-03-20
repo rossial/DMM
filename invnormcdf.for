@@ -7,7 +7,7 @@ C
 C Copyright (C) 2002 Przemyslaw Sliwa and Jason H. Stover.
 C
 C Recoded in Fortran by A. Rossi
-C Copyright (C) 2010-2014 European Commission 
+C Copyright (C) 2014 European Commission
 C
 C This file is part of Program DMM
 C
