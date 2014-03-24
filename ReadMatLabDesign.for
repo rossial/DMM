@@ -1,12 +1,12 @@
 C --------------------------------------------------------------------
 C This file crates matlabdll.dll whih is ment to read the .m file
 C
-C Copyright (C) 2010-2014 European Commission 
+C Copyright (C) 2010-2014 European Commission
 C
 C This file is part of Program DMM
 C
-C DMM is free software developed at the Joint Research Centre of the 
-C European Commission: you can redistribute it and/or modify it under 
+C DMM is free software developed at the Joint Research Centre of the
+C European Commission: you can redistribute it and/or modify it under
 C the terms of the GNU General Public License as published by
 C the Free Software Foundation, either version 3 of the License, or
 C (at your option) any later version.
@@ -17,9 +17,9 @@ C MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
-C along with DMM.  If not, see <http://www.gnu.org/licenses/>.    
+C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C ---------------------------------------------------------------------
-	SUBROUTINE DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R) 
+	SUBROUTINE DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 !DEC$ ATTRIBUTES DLLEXPORT, ALIAS:'design_' :: DESIGN
 
 C INPUT
@@ -50,8 +50,8 @@ C
 	INTEGER ny_ptr,nz_ptr,nx_ptr,nu_ptr,ns_ptr,nt_ptr,theta_ptr
 	INTEGER C_ptr, H_ptr, G_ptr, A_ptr, F_ptr, R_ptr
 
-      
-C Try to open MatLab (just the first time)      
+
+C Try to open MatLab (just the first time)
       IF (ep .eq.0 ) THEN
         ep = engOpen('matlab ')
         IF (ep .eq. 0) THEN
@@ -69,28 +69,28 @@ C Check MatLab INPUT
 C
 	ny_ptr = mxCreateDoubleScalar(ny*1.0d0)
       status = engPutVariable(ep, 'ny'C, ny_ptr)
-      IF (status .ne. 0) THEN 
+      IF (status .ne. 0) THEN
          ny = -1 ! ' Can''t read ny in the MatLab file'
          RETURN
       ENDIF
 
 	nz_ptr = mxCreateDoubleScalar(nz*1.0d0)
       status = engPutVariable(ep, 'nz'C, nz_ptr)
-      IF (status .ne. 0) THEN 
+      IF (status .ne. 0) THEN
          ny = -2 ! ' Can''t read nz in the MatLab file'
          RETURN
       ENDIF
 
 	nx_ptr = mxCreateDoubleScalar(nx*1.0d0)
       status = engPutVariable(ep, 'nx'C, nx_ptr)
-      IF (status .ne. 0) THEN 
+      IF (status .ne. 0) THEN
          ny = -3 ! ' Can''t read nx in the MatLab file'
          RETURN
       ENDIF
 
 	nu_ptr = mxCreateDoubleScalar(nu*1.0d0)
       status = engPutVariable(ep, 'nu'C, nu_ptr)
-      IF (status .ne. 0) THEN 
+      IF (status .ne. 0) THEN
          ny = -4 ! ' Can''t read nu in the MatLab file'
          RETURN
       ENDIF
@@ -101,7 +101,7 @@ C
 	ENDDO
       CALL mxCopyReal8ToPtr(nsd, mxGetPr(ns_ptr), 6)
       status = engPutVariable(ep, 'ns'C, ns_ptr)
-      IF (status .ne. 0) THEN 
+      IF (status .ne. 0) THEN
          ny = -5 ! ' Can''t read ns in the MatLab file'
          RETURN
       ENDIF
@@ -109,14 +109,14 @@ C
       theta_ptr = mxCreateDoubleMatrix(1, nt, 0)
       CALL mxCopyReal8ToPtr(theta, mxGetPr(theta_ptr), nt)
       status = engPutVariable(ep, 'theta'C, theta_ptr)
-      IF (status .ne. 0) THEN 
+      IF (status .ne. 0) THEN
          ny = -6 ! ' Can''t read theta in the MatLab file'
          RETURN
       ENDIF
 
 C
 C     Evaluate the MatLab DESIGN Funtion with the input data from FORTRAN
-C 
+C
       buffer = ''
       status = engOutputBuffer(ep, buffer1)
       IF (engEvalString(ep, 'clear success;'//
@@ -130,8 +130,8 @@ C
           buffer=buffer1
           ny=-8   ! engEvalString failed
           RETURN
-      ENDIF      
-      
+      ENDIF
+
 C
 C Get the MatLab DESIGN created matrics back to FORTRAN
 C
@@ -139,43 +139,43 @@ C
       IF(C_ptr.NE.0) THEN
        CALL mxCopyPtrToReal8(mxGetPr(C_ptr), c, ny*max(1,nz)*ns(1))
       ELSE
-       ny = -101   
+       ny = -101
       ENDIF
-      
+
       H_ptr = engGetVariable(ep, 'H'C)
       IF(H_ptr.NE.0) THEN
        CALL mxCopyPtrToReal8(mxGetPr(H_ptr), H, ny*nx*ns(2))
       ELSE
-       ny = -102   
+       ny = -102
       ENDIF
-      
+
       G_ptr = engGetVariable(ep, 'G'C)
       IF(G_ptr.NE.0) THEN
        CALL mxCopyPtrToReal8(mxGetPr(G_ptr), G, ny*nu*ns(3))
       ELSE
-       ny = -103   
+       ny = -103
       ENDIF
-      
+
       A_ptr = engGetVariable(ep, 'A'C)
       IF(A_ptr.NE.0) THEN
        CALL mxCopyPtrToReal8(mxGetPr(A_ptr), a, nx*ns(4))
       ELSE
-       ny = -104   
+       ny = -104
       ENDIF
-      
+
       F_ptr = engGetVariable(ep, 'F'C)
       IF(F_ptr.NE.0) THEN
        CALL mxCopyPtrToReal8(mxGetPr(F_ptr), F, nx*nx*ns(5))
       ELSE
-       ny = -105   
-      ENDIF      
+       ny = -105
+      ENDIF
 
       R_ptr = engGetVariable(ep, 'R'C)
       IF(R_ptr.NE.0) THEN
        CALL mxCopyPtrToReal8(mxGetPr(R_ptr), R, nx*nu*ns(6))
       ELSE
-       ny = -106   
-      ENDIF      
+       ny = -106
+      ENDIF
 
 C
 C Free dynamic memory allocated by MXCREATE function
@@ -196,26 +196,26 @@ C
       RETURN
       END
 
-C ----------------------------------------- 
+C -----------------------------------------
 C To make dynamic the name of the .m file
-C ----------------------------------------- 
-	SUBROUTINE SETFILEM(string1,string2) 
+C -----------------------------------------
+	SUBROUTINE SETFILEM(string1,string2)
 !DEC$ ATTRIBUTES DLLEXPORT, ALIAS:'setfilem_' :: SETFILEM
-	CHARACTER*200 string1,string2,mfile,pathmfile 
+	CHARACTER*200 string1,string2,mfile,pathmfile
       COMMON /M/ mfile, pathmfile
       mfile     = string1
       pathmfile = string2
 	RETURN
-      END    
+      END
 
 C --------------------
 C To get MatLab errors
 C --------------------
-      SUBROUTINE GETERRSTR(matlaberror) 
-!DEC$ ATTRIBUTES DLLEXPORT, ALIAS:'geterrstr_' :: GETERRSTR 
+      SUBROUTINE GETERRSTR(matlaberror)
+!DEC$ ATTRIBUTES DLLEXPORT, ALIAS:'geterrstr_' :: GETERRSTR
       CHARACTER*1024 matlaberror
-      CHARACTER*1024 buffer 
+      CHARACTER*1024 buffer
       COMMON /ERRBUFFER/ buffer
 	 matlaberror = buffer
       RETURN
-      END    
+      END

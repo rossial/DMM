@@ -1,16 +1,16 @@
 C -------------------------------------------------------------
-C LYAP solves the Lyapunov equation Ps-F*Ps*F'=RR 
+C LYAP solves the Lyapunov equation Ps-F*Ps*F'=RR
 C where RR and Ps are symmetric matrices.
-C Developed by DYNARE team 
-C Recoded in Fortran by A.Rossi, C.Planas and G.Fiorentini     
-C         
+C Developed by DYNARE team
+C Recoded in Fortran by A.Rossi, C.Planas and G.Fiorentini
+C
 C Copyright (C) 2006-2012 Dynare Team
-C Copyright (C) 2010-2014 European Commission 
+C Copyright (C) 2010-2014 European Commission
 C
 C This file is part of Program DMM
 C
-C DMM is free software developed at the Joint Research Centre of the 
-C European Commission: you can redistribute it and/or modify it under 
+C DMM is free software developed at the Joint Research Centre of the
+C European Commission: you can redistribute it and/or modify it under
 C the terms of the GNU General Public License as published by
 C the Free Software Foundation, either version 3 of the License, or
 C (at your option) any later version.
@@ -21,7 +21,7 @@ C MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
-C along with DMM.  If not, see <http://www.gnu.org/licenses/>.    
+C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C -------------------------------------------------------------
 	SUBROUTINE LYAP(nx,nu,compt,F,R,Ps)
 C INPUT
@@ -35,9 +35,9 @@ C LOCALS
       DOUBLE PRECISION, ALLOCATABLE:: WORK(:),RR(:,:),WR(:),WI(:),
 	1 Z(:,:),T(:,:),ZR(:,:),ZRZ(:,:),Q(:,:),WR1(:),Z1(:)
 C EXTERNAL SUBROUTINES
-      EXTERNAL DGETRF,DGETRI,DGEES,SELECT      
+      EXTERNAL DGETRF,DGETRI,DGEES,SELECT
 
-C RR = R*R' 
+C RR = R*R'
 	ALLOCATE(RR(nx,nx))
 	DO 10 I = 1,nx
 	RR(I,I) = SUM(R(I,:)*R(I,:))
@@ -48,7 +48,7 @@ C RR = R*R'
 	IF (nx.EQ.1) THEN
 	 Ps(1,1) = RR(1,1)/(1.D0-F(1,1)**2)
 	 DEALLOCATE(RR)
-	 GOTO 7777 
+	 GOTO 7777
 	ENDIF
 
 	LWORK = 3*nx
@@ -65,13 +65,13 @@ C	CALL F02EAF('V',nx,T,nx,WR,WI,Z,nx,WORK,LWORK,IFAIL) ! F = ZTZ'
 	IF (WI(I)**2+WR(I)**2.GE.1.D0) THEN
 	 TYPE *, ' '
 	 TYPE *, ' LYAPUNOV SUBROUTINE: Some parameters out of '
-	 TYPE *, ' stationary region. Check hyptheta in namelist prior.' 
+	 TYPE *, ' stationary region. Check hyptheta in namelist prior.'
 	 TYPE *, ' Program aborting'
 	 PAUSE
 	 STOP
 	ENDIF
 	ENDDO
-	
+
 C ZRZ = Z'*RR*Z  (B in Matlab)
 	DO 20 I = 1,nx
 	DO 20 J = 1,nx
@@ -79,8 +79,8 @@ C ZRZ = Z'*RR*Z  (B in Matlab)
 
 	DO 30 I = 1,nx
 	DO 30 J = 1,nx
-30	ZRZ(I,J) = SUM(ZR(I,:)*Z(:,J))  
-	
+30	ZRZ(I,J) = SUM(ZR(I,:)*Z(:,J))
+
 	I = nx
 	WR(:)   = 0.D0  !(c  in Matalab)
 	WR1(:)  = 0.D0  !(c1 in Matalab)
@@ -91,12 +91,12 @@ C ZRZ = Z'*RR*Z  (B in Matlab)
 c        c = T(1:i,:)*(x(:,i+1:end)*T(i,i+1:end)') + ...
 c            T(i,i)*T(1:i,i+1:end)*x(i+1:end,i);
 	   	DO 40 J = 1,nx
-40		WI(J) = SUM(Ps(J,I+1:nx)*T(I,I+1:nx))  
+40		WI(J) = SUM(Ps(J,I+1:nx)*T(I,I+1:nx))
           DO 50 J = 1,I
-50		WR(J) = SUM(T(J,1:nx)*WI(1:nx)) 
-     +          + T(I,I)*SUM(T(J,I+1:nx)*Ps(I+1:nx,I))  
-         
-	  ENDIF 
+50		WR(J) = SUM(T(J,1:nx)*WI(1:nx))
+     +          + T(I,I)*SUM(T(J,I+1:nx)*Ps(I+1:nx,I))
+
+	  ENDIF
 c       q = eye(i)-T(1:i,1:i)*T(i,i);
 c       x(1:i,i) = q\(B(1:i,i)+c); x = inv(q)*(B(1:i,i)+c)
 c       x(i,1:i-1) = x(1:i-1,i)';
@@ -104,9 +104,9 @@ c       i = i - 1;
 	  Q(1:I,1:I) = -T(I,I)*T(1:I,1:I)
 	  DO 60 J = 1,I
 60	  Q(J,J) = Q(J,J) + 1.D0
-    
+
         IFAIL = -1
-	  ZR(1:I,1:I) = Q(1:I,1:I)  
+	  ZR(1:I,1:I) = Q(1:I,1:I)
 c	  CALL F07ADF(I,I,ZR(1:I,1:I),I,IPIV(1:I),IFAIL)
 c	  CALL F07AJF(I,ZR(1:I,1:I),I,IPIV(1:I),WORK(1:64*I),64*I,IFAIL)
         CALL DGETRF(I,I,ZR(1:I,1:I),I,IPIV(1:I),IFAIL)
@@ -121,22 +121,22 @@ c        c = T(1:i,:)*(x(:,i+1:end)*T(i,i+1:end)') + ...
 c            T(i,i)*T(1:i,i+1:end)*x(i+1:end,i) + ...
 c            T(i,i-1)*T(1:i,i+1:end)*x(i+1:end,i-1);
 	   	DO 90 J = 1,nx
-90		WI(J) = SUM(Ps(J,I+1:nx)*T(I,I+1:nx))  
+90		WI(J) = SUM(Ps(J,I+1:nx)*T(I,I+1:nx))
           DO 100 J = 1,I
-100		WR(J) = SUM(T(J,1:nx)*WI(1:nx)) 
-     +          + T(I,I)*SUM(T(J,I+1:nx)*Ps(I+1:nx,I)) 
-     +          + T(I,I-1)*SUM(T(J,I+1:nx)*Ps(I+1:nx,I-1))  
+100		WR(J) = SUM(T(J,1:nx)*WI(1:nx))
+     +          + T(I,I)*SUM(T(J,I+1:nx)*Ps(I+1:nx,I))
+     +          + T(I,I-1)*SUM(T(J,I+1:nx)*Ps(I+1:nx,I-1))
 c         c1 = T(1:i,:)*(x(:,i+1:end)*T(i-1,i+1:end)') + ...
 c              T(i-1,i-1)*T(1:i,i+1:end)*x(i+1:end,i-1) + ...
 c              T(i-1,i)*T(1:i,i+1:end)*x(i+1:end,i);
 	   	DO 110 J = 1,nx
-110		WI(J) = SUM(Ps(J,I+1:nx)*T(I-1,I+1:nx))  
+110		WI(J) = SUM(Ps(J,I+1:nx)*T(I-1,I+1:nx))
 
           DO 120 J = 1,I
-120		WR1(J) = SUM(T(J,1:nx)*WI(1:nx)) 
-     +           + T(I-1,I-1)*SUM(T(J,I+1:nx)*Ps(I+1:nx,I-1)) 
-     +           + T(I-1,I)*SUM(T(J,I+1:nx)*Ps(I+1:nx,I))  
-        ENDIF 
+120		WR1(J) = SUM(T(J,1:nx)*WI(1:nx))
+     +           + T(I-1,I-1)*SUM(T(J,I+1:nx)*Ps(I+1:nx,I-1))
+     +           + T(I-1,I)*SUM(T(J,I+1:nx)*Ps(I+1:nx,I))
+        ENDIF
 c       q = [  eye(i)-T(1:i,1:i)*T(i,i) ,  -T(1:i,1:i)*T(i,i-1) ; ...
 c            -T(1:i,1:i)*T(i-1,i)     ,   eye(i)-T(1:i,1:i)*T(i-1,i-1) ];
 	  Q(1:I,1:I)         = -T(I,I)*T(1:I,1:I)
@@ -153,7 +153,7 @@ C     #	          64*2*I,IFAIL)
 	  CALL DGETRF(2*I,2*I,Q(1:2*I,1:2*I),2*I,IPIV(1:2*I),IFAIL)
 	  CALL DGETRI(2*I,Q(1:2*I,1:2*I),2*I,IPIV(1:2*I),WORK(1:64*2*I),
      #	          64*2*I,IFAIL)
-	  
+
 	  DO 140 J = 1,2*I
 140	  Z1(J) = SUM(Q(J,1:I)*(ZRZ(1:I,I) + WR(1:I)))
      +        + SUM(Q(J,I+1:2*I)*(ZRZ(1:I,I-1) + WR1(1:I)))
@@ -173,21 +173,21 @@ c    c = T(1,:)*(x(:,2:end)*T(1,2:end)') + T(1,1)*T(1,2:end)*x(2:end,1);
 c    x(1,1) = (B(1,1)+c)/(1-T(1,1)*T(1,1));
 c end
 	IF (I.EQ.1) THEN
-	 DO 150 J =1,nx	 
+	 DO 150 J =1,nx
 	 WI(J) = SUM(Ps(J,2:nx)*T(1,2:nx))
-150    WR(1) = SUM(T(1,1:nx)*WI(1:nx)) 
-     +       + T(1,1)*SUM(T(1,2:nx)*Ps(2:nx,1))  
-	 Ps(1,1) = (ZRZ(1,1)+WR(1))/(1.D0-T(1,1)**2)	    
-	ENDIF 
+150    WR(1) = SUM(T(1,1:nx)*WI(1:nx))
+     +       + T(1,1)*SUM(T(1,2:nx)*Ps(2:nx,1))
+	 Ps(1,1) = (ZRZ(1,1)+WR(1))/(1.D0-T(1,1)**2)
+	ENDIF
 c x = U(:,:)*x*U(:,:)';
 	DO 160 I = 1,nx
 	DO 160 J = 1,nx
-160	ZR(I,J) = SUM(Z(I,1:nx)*Ps(1:nx,J))  
+160	ZR(I,J) = SUM(Z(I,1:nx)*Ps(1:nx,J))
 
 	DO 170 I = 1,nx
-	Ps(I,I) = SUM(ZR(I,1:nx)*Z(I,1:nx))  
+	Ps(I,I) = SUM(ZR(I,1:nx)*Z(I,1:nx))
 	DO 170 J = 1,I-1
-	Ps(I,J) = SUM(ZR(I,1:nx)*Z(J,1:nx))  
+	Ps(I,J) = SUM(ZR(I,1:nx)*Z(J,1:nx))
 170	Ps(J,I) = Ps(I,J)
 
 	DEALLOCATE(WORK,RR,WR,WI,Z,T,ZRZ,ZR,Q,WR1,Z1)
@@ -200,8 +200,8 @@ C For DEEGS - not used
       DOUBLE PRECISION A,B
       RETURN
       END
-      
-      
+
+
 c      SUBROUTINE PROVA(A)
 c      DOUBLE PRECISION A
 c      DIMENSION A( * )

@@ -1,11 +1,11 @@
-C ------------------------------------------------------------------------ 
+C ------------------------------------------------------------------------
 C GAMMLN returns the value for the natural logarithm of the Gamma function
 C Numerical Recipes - Chapter 6
-C         
+C
 C This file is part of Program DMM
 C
-C DMM is free software developed at the Joint Research Centre of the 
-C European Commission: you can redistribute it and/or modify it under 
+C DMM is free software developed at the Joint Research Centre of the
+C European Commission: you can redistribute it and/or modify it under
 C the terms of the GNU General Public License as published by
 C the Free Software Foundation, either version 3 of the License, or
 C (at your option) any later version.
@@ -16,8 +16,8 @@ C MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
-C along with DMM.  If not, see <http://www.gnu.org/licenses/>.    
-C -------------------------------------------------------------------------- 
+C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
+C --------------------------------------------------------------------------
 	DOUBLE PRECISION FUNCTION gammln(xx)
 C INPUT
       DOUBLE PRECISION xx
@@ -39,6 +39,6 @@ C INPUT
       gammln=tmp+log(stp*ser/x)
       return
       END
-      
 
-      
+
+

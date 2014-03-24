@@ -435,9 +435,9 @@ C LOCALS
        WRITE(*,*) 'CHI2INV: Too many degrees of freedom'
        PAUSE
        RETURN
-      ENDIF      
+      ENDIF
 
       CHI2INV = T(V,P)
 
-      RETURN 
+      RETURN
       END

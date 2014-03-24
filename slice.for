@@ -1,14 +1,14 @@
 C -------------------------------------------------------------
 C SLICE implements the SINGLE-VARIABLE SLICE SAMPLING in Neal (2003),
-C Slice Sampling, Annals of Statistics 31, 705-67 
-C Developed by A.Rossi, C.Planas and G.Fiorentini     
-C         
-C Copyright (C) 2010-2014 European Commission 
+C Slice Sampling, Annals of Statistics 31, 705-67
+C Developed by A.Rossi, C.Planas and G.Fiorentini
+C
+C Copyright (C) 2010-2014 European Commission
 C
 C This file is part of Program DMM
 C
-C DMM is free software developed at the Joint Research Centre of the 
-C European Commission: you can redistribute it and/or modify it under 
+C DMM is free software developed at the Joint Research Centre of the
+C European Commission: you can redistribute it and/or modify it under
 C the terms of the GNU General Public License as published by
 C the Free Software Foundation, either version 3 of the License, or
 C (at your option) any later version.
@@ -19,7 +19,7 @@ C MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
-C along with DMM.  If not, see <http://www.gnu.org/licenses/>.   
+C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C -------------------------------------------------------------
 	SUBROUTINE SLICE(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk,IYK,
 	1                 theta,thetaprior,tipo,pdll,NEVAL,XSIM)
@@ -55,15 +55,15 @@ C -------------------------------------------------------
 	NEVAL = NEVAL + 1
       U = genunf(0.D0,1.D0)
 	Z = FXOLD + DLOG(U)
-	
+
 C -------------------------------------------------------------
-C 2. FIND I=(L,R) AROUND X0 THAT CONTAINS S AS MUCH AS POSSIBLE 
+C 2. FIND I=(L,R) AROUND X0 THAT CONTAINS S AS MUCH AS POSSIBLE
 C    STEPPING-OUT PROCEDURE
-C    W = an estimate of the scale of SC    
+C    W = an estimate of the scale of SC
 C    M = Limit on steps (-1 = +INF)
 C -------------------------------------------------------------
 	M = -1
-	W = max((XUB-XLB)/10.0,1.D0) 
+	W = max((XUB-XLB)/10.0,1.D0)
 C	U = G05CAF(U)
       U = genunf(0.D0,1.D0)
 	L = XOLD - W*U
@@ -74,14 +74,14 @@ C	U = G05CAF(U)
  	  FXL=PTHETA(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk,IYK,
 	1             theta,thetaprior,tipo,pdll)
 	  NEVAL = NEVAL + 1
-	  IF (FXL.LE.Z) GOTO 110  
+	  IF (FXL.LE.Z) GOTO 110
 100	 L = L - W
 110     DO 200 WHILE(R.LT.XUB)
         theta(it) = R
  	  FXR=PTHETA(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk,IYK,
 	1             theta,thetaprior,tipo,pdll)
 	  NEVAL = NEVAL + 1
-	  IF (FXR.LE.Z) GOTO 210  
+	  IF (FXR.LE.Z) GOTO 210
 200	 R = R + W
 210    CONTINUE
 	ELSE
@@ -89,22 +89,22 @@ C	 U = G05CAF(U)
        U = genunf(0.D0,1.D0)
 	 J = M*U
 	 K = M-1-J
-	 DO 300 WHILE (J.GT.0)  
+	 DO 300 WHILE (J.GT.0)
 	  IF (L.LE.XLB) GOTO 310
 	  theta(it) = L
  	  FXL=PTHETA(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk,IYK,
 	1             theta,thetaprior,tipo,pdll)
-	  NEVAL = NEVAL + 1  
+	  NEVAL = NEVAL + 1
 	  IF (FXL.LE.Z) GOTO 310
 	  L = L - W
 300     J = J - 1
 310    CONTINUE
-	  DO 400 WHILE (K.GT.0)  
+	  DO 400 WHILE (K.GT.0)
 	  IF (R.GE.XLB) GOTO 410
 	  theta(it) = R
  	  FXR=PTHETA(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk,IYK,
 	1             theta,thetaprior,tipo,pdll)
-	  NEVAL = NEVAL + 1  
+	  NEVAL = NEVAL + 1
 	  IF (FXR.LE.Z) GOTO 410
 	  R = R + W
 400     K = K - 1
@@ -112,7 +112,7 @@ C	 U = G05CAF(U)
 	ENDIF
 	IF (L.LT.XLB) L = XLB
 	IF (R.GT.XUB) R = XUB
-	
+
 C ------------------------------------------------------
 C 3. SAMPLING FROM THE SET A = (I INTERSECT S) = (LA,RA)
 C ------------------------------------------------------
@@ -124,16 +124,16 @@ C	 U = G05CAF(U)
 	 theta(it) = XSIM
 	 FXSIM=PTHETA(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk,IYK,
 	1              theta,thetaprior,tipo,pdll)
-	 NEVAL = NEVAL + 1  
+	 NEVAL = NEVAL + 1
 	 IF (FXSIM.GE.Z) OK = 1
 	 IF(XSIM.GT.XOLD) THEN
 	  R = XSIM
 	 ELSE
 	  L = XSIM
-	 ENDIF 
-500	CONTINUE	
+	 ENDIF
+500	CONTINUE
 
-	theta(it) = XOLD     
+	theta(it) = XOLD
 
 	RETURN
 	END

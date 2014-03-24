@@ -1,5 +1,5 @@
-C --------------------------------------------------------------------------------      
-C INVNORMCDF Computes the inverse of the N(0,1) cdf according to 
+C --------------------------------------------------------------------------------
+C INVNORMCDF Computes the inverse of the N(0,1) cdf according to
 C the algorithm shown in Wichura, M.J. (1988).
 C Algorithm AS 241: The Percentage Points of the Normal Distribution.
 C Applied Statistics, 37, 477-484.
@@ -11,8 +11,8 @@ C Copyright (C) 2014 European Commission
 C
 C This file is part of Program DMM
 C
-C DMM is free software developed at the Joint Research Centre of the 
-C European Commission: you can redistribute it and/or modify it under 
+C DMM is free software developed at the Joint Research Centre of the
+C European Commission: you can redistribute it and/or modify it under
 C the terms of the GNU General Public License as published by
 C the Free Software Foundation, either version 3 of the License, or
 C (at your option) any later version.
@@ -23,55 +23,55 @@ C MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 C GNU General Public License for more details.
 C
 C You should have received a copy of the GNU General Public License
-C along with DMM.  If not, see <http://www.gnu.org/licenses/>. 
-C --------------------------------------------------------------------------------      
+C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
+C --------------------------------------------------------------------------------
       DOUBLE PRECISION FUNCTION INVNORMCDF(P)
 C INPUT
       DOUBLE PRECISION P
 C LOCALS
       DOUBLE PRECISION r,x,pp,dP
-C EXTERNAL FUNCIONS      
-      DOUBLE PRECISION small,intermediate,tail 
-      
+C EXTERNAL FUNCIONS
+      DOUBLE PRECISION small,intermediate,tail
+
       IF (P.GE.1.D0) THEN
        INVNORMCDF = 1.D100
        RETURN
-      ENDIF    
-      
+      ENDIF
+
       IF (P.LE.0.D0) THEN
        INVNORMCDF = -1.D100
        RETURN
-      ENDIF    
-      
+      ENDIF
+
       dP = P - 0.5D0
       IF (DABS(dP).LE.0.425D0) THEN
-       INVNORMCDF = small(dP)   
+       INVNORMCDF = small(dP)
        RETURN
       ENDIF
-      
+
       IF (P.LT.0.5D0) THEN
        pp = P
       ELSE
-       pp = 1.D0-P   
-      ENDIF 
-      
+       pp = 1.D0-P
+      ENDIF
+
       r = dsqrt(-dlog(pp))
       IF (r.LE.5.D0) THEN
-       x = intermediate(r)       
+       x = intermediate(r)
       ELSE
        x = tail(r)
       ENDIF
 
-      IF (P.LT.0.5D0) THEN 
+      IF (P.LT.0.5D0) THEN
        INVNORMCDF = -x
       ELSE
        INVNORMCDF = x
-      ENDIF            
-      
-      RETURN
-      END        
+      ENDIF
 
-C *************************************************************      
+      RETURN
+      END
+
+C *************************************************************
       double precision function small(q)
       double precision q,r,a(8),b(8)
       double precision rat_eval
@@ -83,13 +83,13 @@ C *************************************************************
      * 687.1870074920579083, 5394.1960214247511077,
      * 21213.794301586595867, 39307.89580009271061,
      * 28729.085735721942674, 5226.495278852854561/
-  
+
       r = .180625D0 - q * q
       small = q * rat_eval(a, 8, b, 8, r)
-  
+
       return
-      end     
-C *************************************************************            
+      end
+C *************************************************************
       double precision function intermediate(r)
       double precision r,a(8),b(8)
       double precision rat_eval
@@ -101,12 +101,12 @@ C *************************************************************
      * 1.6763848301838038494, 0.68976733498510000455,
      * 0.14810397642748007459, 0.0151986665636164571966,
      * 5.475938084995344946d-4, 1.05075007164441684324d-9/
-  
+
       intermediate = rat_eval(a, 8, b, 8, r-1.6D0)
-  
+
       return
-      end     
-C *************************************************************                  
+      end
+C *************************************************************
       double precision function tail(r)
       double precision r,a(8),b(8)
       double precision rat_eval
@@ -118,31 +118,31 @@ C *************************************************************
      * 0.13692988092273580531, 0.0148753612908506148525,
      * 7.868691311456132591d-4, 1.8463183175100546818d-5,
      * 1.4215117583164458887d-7, 2.04426310338993978564d-15/
-  
+
       tail = rat_eval(a, 8, b, 8, (r - 5.D0))
-      
+
       return
-      end     
-C *************************************************************                              
+      end
+C *************************************************************
       double precision function rat_eval(a,na,b,nb,x)
       integer na,nb,i
       double precision a(na),b(nb),x,u,v
-      
-      u = a(na)      
+
+      u = a(na)
       do i=na,2,-1
-       u = x*u+a(i-1)    
+       u = x*u+a(i-1)
       enddo
-      
+
       v = b(nb)
       do i=nb,2,-1
-       v = x*v+b(i-1)    
+       v = x*v+b(i-1)
       enddo
       rat_eval = u/v
-            
+
       return
-      end  
-C *************************************************************                  
-      
-      
-      
-      
+      end
+C *************************************************************
+
+
+
+
