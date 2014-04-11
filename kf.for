@@ -58,7 +58,7 @@ C LOCALS
      2 RG(nx,ny),HPV(nx,ny)
 
       LIKE(d(1)+1:nobs) = 0.D0
-      DO 1000 imain = d(1)+1,nobs
+      DO imain = d(1)+1,nobs
 	 iny = IYK(imain,ny+1)
 
 C ------------------------------------
@@ -171,7 +171,7 @@ c       CALL F03ABF(V(1:iny,1:iny),iny,iny,DETV,COM(1:iny,1),IFAIL)
 	  XT(imain,1:nx)      = X1(1:nx)
 	  PT(imain,1:nx,1:nx) = P1(1:nx,1:nx)
 
-1000	 ENDIF
-
-	RETURN
-	END
+      END IF
+      END DO
+      RETURN
+      END SUBROUTINE
