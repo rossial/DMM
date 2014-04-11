@@ -37,8 +37,9 @@ C GNU General Public License for more details.
 C ----------------------------------------------------------------------------
 	SUBROUTINE FORECAST(zk,nf,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                    theta,psi,INFOS,Z,STATE,pdll,FORE)
-
+#if !defined(DYNARE)
 	USE dfwin
+#endif
 	INTERFACE
 	 SUBROUTINE DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 	 INTEGER ny,nz,nx,nu,ns(6),nt

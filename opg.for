@@ -29,8 +29,9 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C ------------------------------------------------------------
 	SUBROUTINE OPG(nobs,d,ny,nz,nx,nu,nt,ns,pdll,yk,IYK,S,
 	1 theta,thetaprior,HESS,SE,XS,AKMSE,INN,IFAIL)
-
+#if !defined(DYNARE)
 	USE dfwin
+#endif
 	INTERFACE
 	 SUBROUTINE DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 	 INTEGER ny,nz,nx,nu,ns(6),nt

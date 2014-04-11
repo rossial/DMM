@@ -21,8 +21,9 @@ C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C --------------------------------------------------------------------
 	SUBROUTINE MISSING(yk,ny,nz,nx,nu,ns,nt,nmis,theta,S,STATE,pdll,ykmis)
-
+#if !defined(DYNARE)
 	USE dfwin
+#endif
 	INTERFACE
 	 SUBROUTINE DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 	 INTEGER ny,nz,nx,nu,ns(6),nt

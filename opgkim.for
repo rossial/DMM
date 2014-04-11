@@ -31,8 +31,9 @@ C ------------------------------------------------------------
      1                  IYK,INFOS,theta,psi,thetaprior,HESS,thetase,
      1                  psise,XS,XSSE,SSMOOTH,INN,IFAIL)
 
-
+#if !defined(DYNARE)
 	USE dfwin
+#endif
 	INTERFACE
 	 SUBROUTINE DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 	 INTEGER ny,nz,nx,nu,ns(6),nt

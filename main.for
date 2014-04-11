@@ -35,7 +35,9 @@ C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C --------------------------------------------------------------------------------------
       PROGRAM DMM
+#if !defined(DYNARE)
 	USE dfwin
+#endif
 C DECLARE an "interface block" to the .DLL that contains DESIGN
 
 	INTERFACE

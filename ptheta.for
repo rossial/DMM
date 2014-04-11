@@ -22,8 +22,9 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C ----------------------------------------------------------------
 	DOUBLE PRECISION FUNCTION PTHETA(it,nobs,d,ny,nz,nx,nu,ns,nt,
 	1 S,yk,IYK,theta,thetaprior,tipo,pdll)
-
+#if !defined(DYNARE)
 	USE dfwin
+#endif
 	INTERFACE
 	 SUBROUTINE DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 	 INTEGER ny,nz,nx,nu,ns(6),nt
