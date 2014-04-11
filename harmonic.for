@@ -30,8 +30,8 @@ C --------------------------------------------------------------------------
      2                    psiprior,tipo,pdll,MLH)
 
 C INPUT
-      INTEGER G,nobs,d(2),ny,nz,nx,nu,nv,ns(6),nstot,nt,np(3),
-	1 INFOS(9,6),gibZ(G,nobs),IYK(nobs,ny+1)
+      INTEGER G,nobs,d(2),ny,nz,nx,nu,nv,ns(6),nstot,nt,np(3)
+	  INTEGER INFOS(9,6),gibZ(G,nobs),IYK(nobs,ny+1)
 	DOUBLE PRECISION yk(nobs,ny+nz),gibpar(G,nt+np(1)),
 	1 thetaprior(nt,4),psiprior(np(2),np(3))
 	CHARACTER*2 tipo(nt)
@@ -53,7 +53,8 @@ C LOCALS
 	1 P2(INFOS(8,2),INFOS(8,2)),P3(INFOS(8,3),INFOS(8,3)),
      2 P4(INFOS(8,4),INFOS(8,4)),P5(INFOS(8,5),INFOS(8,5)),
      3 P6(INFOS(8,6),INFOS(8,6))
-	dOUBLE PRECISION Ppar(nt+np(1)),Fpar,QTHETA,QPSI,PS,QS,QF,A0,SS(1,1)
+	dOUBLE PRECISION Ppar(nt+np(1)),Fpar,QTHETA,QPSI,PS
+      DOUBLE PRECISION QS,QF,A0,SS(1,1)
 	DOUBLE PRECISION ZERO,ONE,PI
 	DATA ZERO/0.0D0/,ONE/1.0D0/,PI/3.141592653589793D0/
 C EXTERNAL FUNCTIONS
@@ -231,11 +232,12 @@ C Mothod of Moments: a0 = m1(1-m1)/V1+1, ai = mi*a0, i=1,2,..,N
 
 	 DEN2(IG) = QTHETA+QPSI+QS-Fpar-PS
 
-	 DO 105 I=1,NPVAL-1
+	 DO I=1,NPVAL-1
 	 IF (QF.GT.ub(I)) THEN
 	  NIND(I)        = NIND(I) + 1  ! count where to put 0s
         IND(NIND(I),I) = IG           ! those to discard
-105    ENDIF
+      END IF
+      END DO
 110   CONTINUE
 
       IND1 = MINLOC(DEN2)
