@@ -29,6 +29,10 @@ C --------------------------------------------------------------------------
 	1                    INFOS,yk,IYK,gibpar,gibZ,thetaprior,
      2                    psiprior,tipo,pdll,MLH)
 
+#ifdef DYNARE
+      USE dynare
+#endif
+
 C INPUT
       INTEGER G,nobs,d(2),ny,nz,nx,nu,nv,ns(6),nstot,nt,np(3)
 	  INTEGER INFOS(9,6),gibZ(G,nobs),IYK(nobs,ny+1)
@@ -117,16 +121,30 @@ C40	 ub(I)   =  PPCHI2(pval(I),DFLOAT(NPARTH),IFAIL)  !G01FCF(pval(I),DFLOAT(NPA
 	 ALLOCATE(PTR(nobs,nstot,nstot),PMAT(nstot,nstot),PE(nstot))
 C Transition prob for QS
 	 DO 55 I = 1,nstot-1
-55	 PTR(1,I,1)     = SUM(ABS(gibZ(1:G,1).EQ.I))/DFLOAT(G)
+#ifdef DYNARE
+55	 PTR(1,I,1)=SUM(ABS(LOGICAL2INTEGER(gibZ(1:G,1).EQ.I)))/DFLOAT(G)
+#else
+55	 PTR(1,I,1)=SUM(ABS(gibZ(1:G,1).EQ.I))/DFLOAT(G)
+#endif
        PTR(1,nstot,1) = ONE-SUM(PTR(1,1:nstot-1,1))
 
 	 DO 57 K = 2,nobs
 	 DO 57 I = 1,nstot-1
 	 DO 57 J = 1,nstot
+#ifdef DYNARE
+	  COM(1,1) = SUM(ABS(LOGICAL2INTEGER(gibZ(1:G,K-1).EQ.J)))
+#else
 	  COM(1,1) = SUM(ABS(gibZ(1:G,K-1).EQ.J))
+#endif
 	  IF (COM(1,1).GT.ZERO) THEN
-	   PTR(K,I,J) = SUM(ABS((gibZ(1:G,K).EQ.I).AND.(gibZ(1:G,K-1).EQ.J
+#ifdef DYNARE
+	   PTR(K,I,J) = SUM(ABS(LOGICAL2INTEGER(
+     + (gibZ(1:G,K).EQ.I).AND.(gibZ(1:G,K-1).EQ.J
+     +                ))))/COM(1,1)
+#else
+       PTR(K,I,J) = SUM(ABS((gibZ(1:G,K).EQ.I).AND.(gibZ(1:G,K-1).EQ.J
      #                )))/COM(1,1)
+#endif
 	  ELSE
 	   PTR(K,I,J) = ONE/DFLOAT(nstot)
 	  ENDIF

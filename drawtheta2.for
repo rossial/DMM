@@ -105,9 +105,15 @@ C CHEK theta
 	   IF (NN.LE.1000) THEN
 	     GOTO 7777
 	   ELSE
+#ifdef DYNARE
+          WRITE(*,*) ' '
+          WRITE(*,*) 'Reduce skcriterium or use Slice sampling'
+          WRITE(*,*) 'Program aborting'
+#else
 	    type *, ' '
 	    type *, 'Reduce skcriterium or use Slice sampling'
           type *, 'Program aborting'
+#endif
 	    PAUSE
 	    STOP
 	   ENDIF

@@ -55,7 +55,9 @@ C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C ----------------------------------------------------------------------
 	SUBROUTINE DRAWPSI(nobs,nv,np,INFOS,Z,psiprior,psi0,psi)
-
+#ifdef DYNARE
+      USE dynare
+#endif
 C INPUT
 	INTEGER nobs,nv,np(3),Z(nobs),INFOS(9,6)
 	DOUBLE PRECISION psiprior(np(2),np(3)),psi0(np(1))
@@ -88,7 +90,12 @@ C	DOUBLE PRECISION G05CAF
 	  IF (INFOS(9,I).EQ.1) THEN      ! S~IID
 C SAMPLING FROM DIRICHLET
 	   DO 5 ii = 1,NSI
+#ifdef DYNARE
+          AG = SUM(ABS(LOGICAL2INTEGER(SEQ(1:nobs,I).EQ.ii)))
+     #  +psiprior(K+1,ii)
+#else
          AG = SUM(ABS((SEQ(1:nobs,I).EQ.ii)))+psiprior(K+1,ii)
+#endif
 	   IFAIL = -1
 C 5      CALL G05FFF(AG,1.D0,1,GAM(ii),IFAIL)
 5        GAM(ii) = gengam(1.D0,AG)
@@ -100,8 +107,13 @@ C 5      CALL G05FFF(AG,1.D0,1,GAM(ii),IFAIL)
 	   ALLOCATE(NIJ(NSI,NSI),PENEW(NSI),PEOLD(NSI))
 	   DO 50 jj = 1,NSI
 	    DO 10 ii = 1,NSI
+#ifdef DYNARE
+10        NIJ(ii,jj) = SUM(ABS(LOGICAL2INTEGER((
+     # SEQ(2:nobs,I).EQ.ii).AND.(SEQ(1:nobs-1,I).EQ.jj))))
+#else
 10        NIJ(ii,jj) = SUM(ABS((SEQ(2:nobs,I).EQ.ii).AND.
-     #		          (SEQ(1:nobs-1,I).EQ.jj)))
+     #(SEQ(1:nobs-1,I).EQ.jj)))
+#endif
 C SAMPLING FROM DIRICHLET
 		DO 20 ii = 1,NSI
 		AG = NIJ(ii,jj) + psiprior(K+1,ii)

@@ -63,10 +63,18 @@ C	CALL F02EAF('V',nx,T,nx,WR,WI,Z,nx,WORK,LWORK,IFAIL) ! F = ZTZ'
      #           BWORK,IFAIL)
 	DO I = 1,nx
 	IF (WI(I)**2+WR(I)**2.GE.1.D0) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' '
+       WRITE(*,*) ' LYAPUNOV SUBROUTINE: Some parameters out of '
+       WRITE(*,*) ' stationary region. Check hyptheta in namelist '
+       WRITE(*,*) ' prior.'
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' '
 	 TYPE *, ' LYAPUNOV SUBROUTINE: Some parameters out of '
 	 TYPE *, ' stationary region. Check hyptheta in namelist prior.'
 	 TYPE *, ' Program aborting'
+#endif
 	 PAUSE
 	 STOP
 	ENDIF
@@ -152,7 +160,7 @@ C	  CALL F07AJF(2*I,Q(1:2*I,1:2*I),2*I,IPIV(1:2*I),WORK(1:64*2*I),
 C     #	          64*2*I,IFAIL)
 	  CALL DGETRF(2*I,2*I,Q(1:2*I,1:2*I),2*I,IPIV(1:2*I),IFAIL)
 	  CALL DGETRI(2*I,Q(1:2*I,1:2*I),2*I,IPIV(1:2*I),WORK(1:64*2*I),
-     #	          64*2*I,IFAIL)
+     # 64*2*I,IFAIL)
 
 	  DO 140 J = 1,2*I
 140	  Z1(J) = SUM(Q(J,1:I)*(ZRZ(1:I,I) + WR(1:I)))

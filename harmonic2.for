@@ -29,7 +29,9 @@ C --------------------------------------------------------------------------
 	SUBROUTINE HARMONIC2(G,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                     INFOS,yk,gibpar,gibZ,thetaprior,psiprior,
      2                     tipo,pdll,MLH)
-
+#ifdef DYNARE
+      USE dynare
+#endif
 C INPUT
       INTEGER G,nobs,d(2),ny,nz,nx,nu,nv,ns(6),nstot,nt,np(3),
 	1 INFOS(9,6),gibZ(G,nobs)
@@ -54,7 +56,8 @@ C LOCALS
 	1 P2(INFOS(8,2),INFOS(8,2)),P3(INFOS(8,3),INFOS(8,3)),
      2 P4(INFOS(8,4),INFOS(8,4)),P5(INFOS(8,5),INFOS(8,5)),
      3 P6(INFOS(8,6),INFOS(8,6))
-	DOUBLE PRECISION Ppar(nt+np(1)),Fpar,QTHETA,QPSI,PS,QS,QF,A0,SS(1,1)
+	DOUBLE PRECISION Ppar(nt+np(1)),Fpar,QTHETA,QPSI,PS,QS
+      DOUBLE PRECISION QF,A0,SS(1,1)
 	DOUBLE PRECISION ZERO,ONE,PI
 	DATA ZERO/0.0D0/,ONE/1.0D0/,PI/3.141592653589793D0/
 C EXTERNAL FUNCTIONS
@@ -117,16 +120,30 @@ C40	 ub(I)   = PPCHI2(pval(I),DFLOAT(NPARTH),IFAIL) ! G01FCF(pval(I),DFLOAT(NPAR
 	 ALLOCATE(PTR(nobs,nstot,nstot),PMAT(nstot,nstot),PE(nstot))
 C Transition prob for QS
 	 DO 55 I = 1,nstot-1
-55	 PTR(1,I,1)     = SUM(ABS(gibZ(1:G,1).EQ.I))/DFLOAT(G)
+#ifdef DYNARE
+55	 PTR(1,I,1)=SUM(ABS(LOGICAL2INTEGER(gibZ(1:G,1).EQ.I)))/DFLOAT(G)
+#else
+55	 PTR(1,I,1)=SUM(ABS(gibZ(1:G,1).EQ.I))/DFLOAT(G)
+#endif
        PTR(1,nstot,1) = ONE-SUM(PTR(1,1:nstot-1,1))
 
 	 DO 57 K = 2,nobs
 	 DO 57 I = 1,nstot-1
 	 DO 57 J = 1,nstot
-	  COM(1,1) = SUM(ABS(gibZ(1:G,K-1).EQ.J))
+#ifdef DYNARE
+	  COM(1,1) = SUM(ABS(LOGICAL2INTEGER(gibZ(1:G,K-1).EQ.J)))
+#else
+      COM(1,1) = SUM(ABS(gibZ(1:G,K-1).EQ.J))
+#endif
 	  IF (COM(1,1).GT.ZERO) THEN
+#ifdef DYNARE
+	   PTR(K,I,J) = SUM(ABS(LOGICAL2INTEGER(
+     +(gibZ(1:G,K).EQ.I).AND.(gibZ(1:G,K-1).EQ.J
+     +))))/COM(1,1)
+#else
 	   PTR(K,I,J) = SUM(ABS((gibZ(1:G,K).EQ.I).AND.(gibZ(1:G,K-1).EQ.J
      #                )))/COM(1,1)
+#endif
 	  ELSE
 	   PTR(K,I,J) = ONE/DFLOAT(nstot)
 	  ENDIF
@@ -232,11 +249,12 @@ C Mothod of Moments: a0 = m1(1-m1)/V1+1, ai = mi*a0, i=1,2,..,N
 
 	 DEN2(IG) = QTHETA+QPSI+QS-Fpar-PS
 
-	 DO 105 I=1,NPVAL-1
+	 DO I=1,NPVAL-1
 	 IF (QF.GT.ub(I)) THEN
 	  NIND(I)        = NIND(I) + 1  ! count where to put 0s
         IND(NIND(I),I) = IG           ! those to discard
-105    ENDIF
+      ENDIF
+      END DO
 110   CONTINUE
 
       IND1 = MINLOC(DEN2)
