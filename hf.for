@@ -29,7 +29,8 @@ C ----------------------------------------------------------------------
      1              c,a,F,R,SSMOOTH,INN,LLIKE)
 
 C INPUT
-	INTEGER nobs,nx,nk,nz,nu,nv,np,ns(6),ismoo,IYK(nobs,nx+1),INFOS(9,6)
+	INTEGER nobs,nx,nk,nz,nu,nv,np,ns(6),ismoo
+      INTEGER IYK(nobs,nx+1),INFOS(9,6)
 	DOUBLE PRECISION yk(nobs,nx+nz),c(nx,max(1,nz),ns(1)),
      1 a(nx,ns(4)),F(nx,nx,ns(5)),R(nx,nu,ns(6)),psi(max(1,np))
 
@@ -38,9 +39,9 @@ C OUTPUT
 
 C LOCALS
 	INTEGER inobs,inx,I,J,K,IMAX(1),IS(6),SEQ(1)
-	DOUBLE PRECISION,ALLOCATABLE:: ZZ(:),gam(:),mu(:),SIG(:,:),FILT(:,:),
+	DOUBLE PRECISION,ALLOCATABLE:: ZZ(:),gam(:),mu(:),SIG(:,:),
      1 P(:,:),PE(:),PP1(:,:),PP2(:,:),PP3(:,:),PP4(:,:),PP5(:,:),
-     1 PP6(:,:)
+     1 PP6(:,:), FILT(:,:)
 
       DOUBLE PRECISION logmvnpdf,mvnpdf,norm,Lmax
       ALLOCATE(PP1(INFOS(8,1),INFOS(8,1)),PP2(INFOS(8,2),INFOS(8,2)),
