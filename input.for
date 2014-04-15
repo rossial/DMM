@@ -77,7 +77,7 @@ C LOCALS
 	CHARACTER*1, ALLOCATABLE:: matS(:,:),dynS(:)
 
 C IDENTIFY the PATH and NAME of the .NML INPUT FILE
-	I = SCAN(FILEIN,'\', BACK = .TRUE.)
+	I = SCAN(FILEIN,'\/', BACK = .TRUE.)
 	IF((I.LE.0).OR.(I.GE.200)) THEN
 	 NMLNAME = FILEIN
 	 PATH    = ''
@@ -92,15 +92,28 @@ C FIND namelist ssm
 	OPEN(1,File=TRIM(FILEIN), ACCESS='SEQUENTIAL',
 	1     STATUS='OLD',IOSTAT=IERR, ERR=5000)
 	IFAIL = -1
+#ifdef DYNARE
+      DO WHILE (.TRUE.)
+         READ(1,'(A)',end=9991) STR
+         IF (INDEX(STR,'&ssm').GT.0) IFAIL = 0
+      ENDDO
+ 9991 CONTINUE
+#else
 	DO WHILE (.NOT.EOF(1))
 	 READ(1,'(A)') STR
 	 IF (INDEX(STR,'&ssm').GT.0) IFAIL = 0
 	ENDDO
+#endif
 	CLOSE(1)
 	IF (IFAIL.EQ.-1) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' Namelist ssm not found'
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' Namelist ssm not found'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 RETURN
 	ENDIF
 
@@ -121,33 +134,58 @@ C READ namelist ssm
 	estimation = 'BA'
 	READ(1,NML=ssm,END=5001,ERR=5001)
 	IF (nx.LE.0) THEN
+#ifdef DYNARE
+	 WRITE(*,*) ' Check nx in namelist ssm'
+	 WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' Check nx in namelist ssm'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 STOP
 	ENDIF
 	IF(nu.LE.0) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' Check nu in namelist ssm'
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' Check nu in namelist ssm'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 STOP
 	ENDIF
 	IF((d(1).LT.0).OR.(d(2).LT.0).OR.(d(2).GT.nx)) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' Check d in namelist ssm'
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' Check d in namelist ssm'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 STOP
 	ENDIF
 	IF((nv.LT.0).OR.(nv.GT.6)) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' Check nv in namelist ssm'
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' Check nv in namelist ssm'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 STOP
       ENDIF
       IF(dllname.EQ.'') THEN
+#ifdef DYNARE
+         WRITE(*,*) ' Check dllname in namelist ssm'
+         WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' Check dllname in namelist ssm'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 STOP
 	ENDIF
 	CLOSE(1)
@@ -162,15 +200,28 @@ C READ namelist ssm
 C FIND namelist S1
 	 OPEN(1,File=TRIM(FILEIN), ACCESS='SEQUENTIAL')
 	 IFAIL = -1
+#ifdef DYNARE
+      DO WHILE (.TRUE.)
+         READ(1,'(A)',end=9992) STR
+         IF (INDEX(STR,'&S1').GT.0) IFAIL = 0
+      ENDDO
+ 9992 CONTINUE
+#else
 	 DO WHILE (.NOT.EOF(1))
 	  READ(1,'(A)') STR
 	  IF (INDEX(STR,'&S1').GT.0) IFAIL = 0
 	 ENDDO
+#endif
 	 CLOSE(1)
 	 IF (IFAIL.EQ.-1) THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Namelist S1 not found'
+        WRITE(*,*) ' Program aborting'
+#else
 	  TYPE *, ' Namelist S1 not found'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  RETURN
 	 ENDIF
 
@@ -183,25 +234,40 @@ C READ namelist S1
 	 READ(1,NML=S1,END=5002,ERR=5002)
 
 	 IF ((dynS1.NE.'I').AND.(dynS1.NE.'M'))THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Check dynS1 in namelist S1'
+        WRITE(*,*) ' Program aborting'
+#else
 	  TYPE *, ' Check dynS1 in namelist S1'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
 	 ENDIF
 
 	 IF (ns1.LT.2) THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Check ns1 in namelist S1'
+        WRITE(*,*) ' Program aborting'
+#else
 	  TYPE *, ' Check ns1 in namelist S1'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
 	 ENDIF
 
 	 IF (dynS1.EQ.'I') THEN
         DO J = 1,ns1
 	   IF (hypS1(J,1).LE.0) THEN
+#ifdef DYNARE
+          WRITE(*,*) ' Check hypS1 in namelist S1'
+          WRITE(*,*) ' Program aborting'
+#else
 	    TYPE *, ' Check hypS1 in namelist S1'
 		TYPE *, ' Program aborting'
 	    PAUSE
+#endif
 		STOP
 	   ENDIF
         ENDDO
@@ -209,9 +275,14 @@ C READ namelist S1
 	  DO J = 1,ns1
 	  DO K = 1,ns1
 	   IF (hypS1(J,K).LE.0) THEN
+#ifdef DYNARE
+          WRITE(*,*) ' Check hypS1 in namelist S1'
+          WRITE(*,*) ' Program aborting'
+#else
 	    TYPE *, ' Check hypS1 in namelist S1'
 		TYPE *, ' Program aborting'
 	    PAUSE
+#endif
 		STOP
 	   ENDIF
         ENDDO
@@ -222,9 +293,14 @@ C READ namelist S1
      #	  .AND.(matS1(1).NE.'H').AND.(matS1(1).NE.'G')
      #	  .AND.(matS1(1).NE.'c').AND.(matS1(1).NE.'F')
      #	  .AND.(matS1(1).NE.'R'))) THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Check matS1 in namelist S1'
+        WRITE(*,*) ' Program aborting'
+#else
 	   TYPE *, ' Check matS1 in namelist S1'
 	   TYPE *, ' Program aborting'
 	   PAUSE
+#endif
 	   STOP
        ENDIF
 	 DO I = 2,6
@@ -232,9 +308,14 @@ C READ namelist S1
      #	  .AND.(matS1(I).NE.'H').AND.(matS1(I).NE.'G')
      #	  .AND.(matS1(I).NE.'c').AND.(matS1(I).NE.'F')
      #	  .AND.(matS1(I).NE.'R')) THEN
+#ifdef DYNARE
+         WRITE(*,*) ' Check matS1 in namelist S1'
+         WRITE(*,*) ' Program aborting'
+#else
 	   TYPE *, ' Check matS1 in namelist S1'
 	   TYPE *, ' Program aborting'
 	   PAUSE
+#endif
 	   STOP
 	  ENDIF
 	 ENDDO
@@ -245,15 +326,29 @@ C READ namelist S1
 C FIND namelist S2
 	 OPEN(1,File=TRIM(FILEIN), ACCESS='SEQUENTIAL')
 	 IFAIL = -1
+
+#ifdef DYNARE
+      DO WHILE (.TRUE.)
+         READ(1,'(A)',end=9993) STR
+         IF (INDEX(STR,'&S2').GT.0) IFAIL = 0
+      ENDDO
+ 9993 CONTINUE
+#else
 	 DO WHILE (.NOT.EOF(1))
 	  READ(1,'(A)') STR
 	  IF (INDEX(STR,'&S2').GT.0) IFAIL = 0
 	 ENDDO
+#endif
 	 CLOSE(1)
 	 IF (IFAIL.EQ.-1) THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Namelist S2 not found'
+        WRITE(*,*) ' Program aborting'
+#else
 	  TYPE *, ' Namelist S2 not found'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  RETURN
 	 ENDIF
 C READ namelist S2
@@ -265,25 +360,40 @@ C READ namelist S2
 	 READ(1,NML=S2,END=5003,ERR=5003)
 
 	 IF ((dynS2.NE.'I').AND.(dynS2.NE.'M'))THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Check dynS2 in namelist S2'
+        WRITE(*,*) ' Program aborting'
+#else
 	  TYPE *, ' Check dynS2 in namelist S2'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
 	 ENDIF
 
 	 IF (ns2.LT.2) THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Check ns2 in namelist S2'
+        WRITE(*,*) ' Program aborting'
+#else
 	  TYPE *, ' Check ns2 in namelist S2'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
 	 ENDIF
 
 	 IF (dynS2.EQ.'I') THEN
         DO J = 1,ns2
 	   IF (hypS2(J,1).LE.0) THEN
+#ifdef DYNARE
+          WRITE(*,*) ' Check hypS2 in namelist S2'
+          WRITE(*,*) ' Program aborting'
+#else
 	    TYPE *, ' Check hypS2 in namelist S2'
 	    TYPE *, ' Program aborting'
 	    PAUSE
+#endif
 		STOP
 	   ENDIF
         ENDDO
@@ -291,9 +401,14 @@ C READ namelist S2
 	  DO J = 1,ns2
 	  DO K = 1,ns2
 	   IF (hypS2(J,K).LE.0) THEN
+#ifdef DYNARE
+          WRITE(*,*) ' Check hypS2 in namelist S2'
+          WRITE(*,*) ' Program aborting'
+#else
 	    TYPE *, ' Check hypS2 in namelist S2'
 	    TYPE *, ' Program aborting'
 	    PAUSE
+#endif
 		STOP
 	   ENDIF
         ENDDO
@@ -304,9 +419,14 @@ C READ namelist S2
      #	  .AND.(matS2(I).NE.'H').AND.(matS2(I).NE.'G')
      #	  .AND.(matS2(I).NE.'c').AND.(matS2(I).NE.'F')
      #	  .AND.(matS2(I).NE.'R'))) THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Check matS2 in namelist S2'
+        WRITE(*,*) ' Program aborting'
+#else
 	   TYPE *, ' Check matS2 in namelist S2'
 	   TYPE *, ' Program aborting'
 	   PAUSE
+#endif
 	   STOP
        ENDIF
 	 DO I = 2,6
@@ -314,9 +434,14 @@ C READ namelist S2
      #	  .AND.(matS2(I).NE.'H').AND.(matS2(I).NE.'G')
      #	  .AND.(matS2(I).NE.'c').AND.(matS2(I).NE.'F')
      #	  .AND.(matS2(I).NE.'R')) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' Check matS2 in namelist S2'
+       WRITE(*,*) ' Program aborting'
+#else
 	   PAUSE
 	   TYPE *, ' Check matS2 in namelist S2'
 	   TYPE *, ' Program aborting'
+#endif
 	   STOP
 	  ENDIF
 	 ENDDO
@@ -327,15 +452,28 @@ C READ namelist S2
 C FIND namelist S3
 	 OPEN(1,File=TRIM(FILEIN), ACCESS='SEQUENTIAL')
 	 IFAIL = -1
+#ifdef DYNARE
+      DO WHILE (.TRUE.)
+         READ(1,'(A)',end=9994) STR
+         IF (INDEX(STR,'&S3').GT.0) IFAIL = 0
+      ENDDO
+ 9994 CONTINUE
+#else
 	 DO WHILE (.NOT.EOF(1))
 	  READ(1,'(A)') STR
 	  IF (INDEX(STR,'&S3').GT.0) IFAIL = 0
 	 ENDDO
+#endif
 	 CLOSE(1)
 	 IF (IFAIL.EQ.-1) THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Namelist S3 not found'
+        WRITE(*,*) ' Program aborting'
+#else
 	  TYPE *, ' Namelist S3 not found'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  RETURN
 	 ENDIF
 
@@ -348,25 +486,40 @@ C READ namelist S3
 	 READ(1,NML=S3,END=5004,ERR=5004)
 
 	 IF ((dynS3.NE.'I').AND.(dynS3.NE.'M'))THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Check dynS3 in namelist S3'
+        WRITE(*,*) ' Program aborting'
+#else
 	  TYPE *, ' Check dynS3 in namelist S3'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
 	 ENDIF
 
 	 IF (ns3.LT.2) THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Check ns3 in namelist S3'
+        WRITE(*,*) ' Program aborting'
+#else
 	  TYPE *, ' Check ns3 in namelist S3'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
 	 ENDIF
 
 	 IF (dynS3.EQ.'I') THEN
         DO J = 1,ns3
 	   IF (hypS3(J,1).LE.0) THEN
+#ifdef DYNARE
+          WRITE(*,*) ' Check hypS3 in namelist S3'
+          WRITE(*,*) ' Program aborting'
+#else
 	    TYPE *, ' Check hypS3 in namelist S3'
 	    TYPE *, ' Program aborting'
 		PAUSE
+#endif
 		STOP
 	   ENDIF
         ENDDO
@@ -374,9 +527,14 @@ C READ namelist S3
 	  DO J = 1,ns3
 	  DO K = 1,ns3
 	   IF (hypS3(J,K).LE.0) THEN
+#ifdef DYNARE
+          WRITE(*,*) ' Check hypS3 in namelist S3'
+          WRITE(*,*) ' Program aborting'
+#else
 	    TYPE *, ' Check hypS3 in namelist S3'
 	    TYPE *, ' Program aborting'
 		PAUSE
+#endif
 		STOP
 	   ENDIF
         ENDDO
@@ -387,9 +545,14 @@ C READ namelist S3
      #	  .AND.(matS3(1).NE.'H').AND.(matS3(1).NE.'G')
      #	  .AND.(matS3(1).NE.'c').AND.(matS3(1).NE.'F')
      #	  .AND.(matS3(1).NE.'R'))) THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Check matS3 in namelist S3'
+        WRITE(*,*) ' Program aborting'
+#else
 	   TYPE *, ' Check matS3 in namelist S3'
 	   TYPE *, ' Program aborting'
 	   PAUSE
+#endif
 	   STOP
        ENDIF
 	 DO I = 2,6
@@ -397,9 +560,14 @@ C READ namelist S3
      #	  .AND.(matS3(I).NE.'H').AND.(matS3(I).NE.'G')
      #	  .AND.(matS3(I).NE.'c').AND.(matS3(I).NE.'F')
      #	  .AND.(matS3(I).NE.'R')) THEN
+#ifdef DYNARE
+         WRITE(*,*) ' Check matS3 in namelist S3'
+         WRITE(*,*) ' Program aborting'
+#else
 	   TYPE *, ' Check matS3 in namelist S3'
 	   TYPE *, ' Program aborting'
 	   PAUSE
+#endif
 	   STOP
 	  ENDIF
 	 ENDDO
@@ -410,15 +578,28 @@ C READ namelist S3
 C FIND namelist S4
 	 OPEN(1,File=TRIM(FILEIN), ACCESS='SEQUENTIAL')
 	 IFAIL = -1
+#ifdef DYNARE
+      DO WHILE (.TRUE.)
+         READ(1,'(A)',end=9995) STR
+         IF (INDEX(STR,'&S4').GT.0) IFAIL = 0
+      ENDDO
+ 9995 CONTINUE
+#else
 	 DO WHILE (.NOT.EOF(1))
 	  READ(1,'(A)') STR
 	  IF (INDEX(STR,'&S4').GT.0) IFAIL = 0
 	 ENDDO
+#endif
 	 CLOSE(1)
 	 IF (IFAIL.EQ.-1) THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Namlist S4 not found'
+        WRITE(*,*) ' Program aborting'
+#else
 	  TYPE *, ' Namlist S4 not found'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  RETURN
 	 ENDIF
 
@@ -431,25 +612,40 @@ C READ namelist S4
 	 READ(1,NML=S4,END=5005,ERR=5005)
 
 	 IF ((dynS4.NE.'I').AND.(dynS4.NE.'M'))THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Check dynS4 in namelist S4'
+        WRITE(*,*) ' Program aborting'
+#else
 	  TYPE *, ' Check dynS4 in namelist S4'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
 	 ENDIF
 
 	 IF (ns4.LT.2) THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Check ns4 in namelist S4'
+        WRITE(*,*) ' Program aborting'
+#else
 	  TYPE *, ' Check ns4 in namelist S4'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
 	 ENDIF
 
 	 IF (dynS4.EQ.'I') THEN
         DO J = 1,ns4
 	   IF (hypS4(J,1).LE.0) THEN
+#ifdef DYNARE
+          WRITE(*,*) ' Check hypS4 in namelist S4'
+          WRITE(*,*) ' Program aborting'
+#else
 	    TYPE *, ' Check hypS4 in namelist S4'
 	    TYPE *, ' Program aborting'
 		PAUSE
+#endif
 		STOP
 	   ENDIF
         ENDDO
@@ -457,9 +653,14 @@ C READ namelist S4
 	  DO J = 1,ns4
 	  DO K = 1,ns4
 	   IF (hypS4(J,K).LE.0) THEN
+#ifdef DYNARE
+          WRITE(*,*) ' Check hypS4 in namelist S4'
+          WRITE(*,*) ' Program aborting'
+#else
 	    TYPE *, ' Check hypS4 in namelist S4'
 	    TYPE *, ' Program aborting'
 		PAUSE
+#endif
 		STOP
 	   ENDIF
         ENDDO
@@ -470,9 +671,14 @@ C READ namelist S4
      #	  .AND.(matS4(1).NE.'H').AND.(matS4(1).NE.'G')
      #	  .AND.(matS4(1).NE.'c').AND.(matS4(1).NE.'F')
      #	  .AND.(matS4(1).NE.'R'))) THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Check matS4 in namelist S4'
+        WRITE(*,*) ' Program aborting'
+#else
 	   TYPE *, ' Check matS4 in namelist S4'
 	   TYPE *, ' Program aborting'
 	   PAUSE
+#endif
 	   STOP
        ENDIF
 	 DO I = 2,6
@@ -480,9 +686,14 @@ C READ namelist S4
      #	  .AND.(matS4(I).NE.'H').AND.(matS4(I).NE.'G')
      #	  .AND.(matS4(I).NE.'c').AND.(matS4(I).NE.'F')
      #	  .AND.(matS4(I).NE.'R')) THEN
+#ifdef DYNARE
+         WRITE(*,*) ' Check matS4 in namelist S4'
+         WRITE(*,*) ' Program aborting'
+#else
 	   TYPE *, ' Check matS4 in namelist S4'
 	   TYPE *, ' Program aborting'
 	   PAUSE
+#endif
 	   STOP
 	  ENDIF
 	 ENDDO
@@ -493,15 +704,28 @@ C READ namelist S4
 C FIND namelist S5
 	 OPEN(1,File=TRIM(FILEIN), ACCESS='SEQUENTIAL')
 	 IFAIL = -1
+#ifdef DYNARE
+      DO WHILE (.TRUE.)
+         READ(1,'(A)',end=9996) STR
+         IF (INDEX(STR,'&S5').GT.0) IFAIL = 0
+      ENDDO
+ 9996 CONTINUE
+#else
 	 DO WHILE (.NOT.EOF(1))
 	  READ(1,'(A)') STR
 	  IF (INDEX(STR,'&S5').GT.0) IFAIL = 0
 	 ENDDO
+#endif
 	 CLOSE(1)
 	 IF (IFAIL.EQ.-1) THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Namlist S5 not found'
+        WRITE(*,*) ' Program aborting'
+#else
 	  TYPE *, ' Namlist S5 not found'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  RETURN
 	 ENDIF
 
@@ -514,25 +738,40 @@ C READ namelist S5
 	 READ(1,NML=S5,END=5006,ERR=5006)
 
 	 IF ((dynS5.NE.'I').AND.(dynS5.NE.'M'))THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Check dynS5 in namelist S5'
+        WRITE(*,*) ' Program aborting'
+#else
 	  TYPE *, ' Check dynS5 in namelist S5'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
 	 ENDIF
 
 	 IF (ns5.LT.2) THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Check ns5 in namelist S5'
+        WRITE(*,*) ' Program aborting'
+#else
 	  TYPE *, ' Check ns5 in namelist S5'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
 	 ENDIF
 
 	 IF (dynS5.EQ.'I') THEN
         DO J = 1,ns5
 	   IF (hypS5(J,1).LE.0) THEN
+#ifdef DYNARE
+          WRITE(*,*) ' Check hypS5 in namelist S5'
+          WRITE(*,*) ' Program aborting'
+#else
 	    TYPE *, ' Check hypS5 in namelist S5'
 	    TYPE *, ' Program aborting'
 		PAUSE
+#endif
 		STOP
 	   ENDIF
         ENDDO
@@ -540,9 +779,14 @@ C READ namelist S5
 	  DO J = 1,ns5
 	  DO K = 1,ns5
 	   IF (hypS5(J,K).LE.0) THEN
+#ifdef DYNARE
+          WRITE(*,*) ' Check hypS5 in namelist S5'
+          WRITE(*,*) ' Program aborting'
+#else
 	    TYPE *, ' Check hypS5 in namelist S5'
 	    TYPE *, ' Program aborting'
 		PAUSE
+#endif
 		STOP
 	   ENDIF
         ENDDO
@@ -553,9 +797,14 @@ C READ namelist S5
      #	  .AND.(matS5(1).NE.'H').AND.(matS5(1).NE.'G')
      #	  .AND.(matS5(1).NE.'c').AND.(matS5(1).NE.'F')
      #	  .AND.(matS5(1).NE.'R'))) THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Check matS5 in namelist S5'
+        WRITE(*,*) ' Program aborting'
+#else
 	   TYPE *, ' Check matS5 in namelist S5'
 	   TYPE *, ' Program aborting'
 	   PAUSE
+#endif
 	   STOP
        ENDIF
 	 DO I = 2,6
@@ -563,9 +812,14 @@ C READ namelist S5
      #	  .AND.(matS5(I).NE.'H').AND.(matS5(I).NE.'G')
      #	  .AND.(matS5(I).NE.'c').AND.(matS5(I).NE.'F')
      #	  .AND.(matS5(I).NE.'R')) THEN
+#ifdef DYNARE
+         WRITE(*,*) ' Check matS5 in namelist S5'
+         WRITE(*,*) ' Program aborting'
+#else
 	   TYPE *, ' Check matS5 in namelist S5'
 	   TYPE *, ' Program aborting'
 	   PAUSE
+#endif
 	   STOP
 	  ENDIF
 	 ENDDO
@@ -576,15 +830,28 @@ C READ namelist S5
 C FIND namelist S6
 	 OPEN(1,File=TRIM(FILEIN), ACCESS='SEQUENTIAL')
 	 IFAIL = -1
+#ifdef DYNARE
+      DO WHILE (.TRUE.)
+         READ(1,'(A)',end=9997) STR
+         IF (INDEX(STR,'&S6').GT.0) IFAIL = 0
+      ENDDO
+ 9997 CONTINUE
+#else
 	 DO WHILE (.NOT.EOF(1))
 	  READ(1,'(A)') STR
 	  IF (INDEX(STR,'&S6').GT.0) IFAIL = 0
 	 ENDDO
+#endif
 	 CLOSE(1)
 	 IF (IFAIL.EQ.-1) THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Namlist S6 not found'
+        WRITE(*,*) ' Program aborting'
+#else
 	  TYPE *, ' Namlist S6 not found'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  RETURN
 	 ENDIF
 
@@ -597,25 +864,40 @@ C READ namelist S6
 	 READ(1,NML=S6,END=5007,ERR=5007)
 
 	 IF ((dynS6.NE.'I').AND.(dynS6.NE.'M'))THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Check dynS6 in namelist S6'
+        WRITE(*,*) ' Program aborting'
+#else
 	  TYPE *, ' Check dynS6 in namelist S6'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
 	 ENDIF
 
 	 IF (ns6.LT.2) THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Check ns6 in namelist S6'
+        WRITE(*,*) ' Program aborting'
+#else
 	  TYPE *, ' Check ns6 in namelist S6'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
 	 ENDIF
 
 	 IF (dynS6.EQ.'I') THEN
         DO J = 1,ns6
 	   IF (hypS6(J,1).LE.0) THEN
+#ifdef DYNARE
+          WRITE(*,*) ' Check hypS6 in namelist S6'
+          WRITE(*,*) ' Program aborting'
+#else
 	    TYPE *, ' Check hypS6 in namelist S6'
 	    TYPE *, ' Program aborting'
 		PAUSE
+#endif
 		STOP
 	   ENDIF
         ENDDO
@@ -623,9 +905,14 @@ C READ namelist S6
 	  DO J = 1,ns6
 	  DO K = 1,ns6
 	   IF (hypS6(J,K).LE.0) THEN
+#ifdef DYNARE
+          WRITE(*,*) ' Check hypS6 in namelist S6'
+          WRITE(*,*) ' Program aborting'
+#else
 	    TYPE *, ' Check hypS6 in namelist S6'
 	    TYPE *, ' Program aborting'
 		PAUSE
+#endif
 		STOP
 	   ENDIF
         ENDDO
@@ -636,9 +923,14 @@ C READ namelist S6
      #	  .AND.(matS6(1).NE.'H').AND.(matS6(1).NE.'G')
      #	  .AND.(matS6(1).NE.'c').AND.(matS6(1).NE.'F')
      #	  .AND.(matS6(1).NE.'R'))) THEN
+#ifdef DYNARE
+        WRITE(*,*) ' Check matS6 in namelist S6'
+        WRITE(*,*) ' Program aborting'
+#else
 	   TYPE *, ' Check matS6 in namelist S6'
 	   TYPE *, ' Program aborting'
 	   PAUSE
+#endif
 	   STOP
        ENDIF
 	 DO I = 2,6
@@ -646,9 +938,14 @@ C READ namelist S6
      #	  .AND.(matS6(I).NE.'H').AND.(matS6(I).NE.'G')
      #	  .AND.(matS6(I).NE.'c').AND.(matS6(I).NE.'F')
      #	  .AND.(matS6(I).NE.'R')) THEN
+#ifdef DYNARE
+         WRITE(*,*) ' Check matS6 in namelist S6'
+         WRITE(*,*) ' Program aborting'
+#else
 	   TYPE *, ' Check matS6 in namelist S6'
 	   TYPE *, ' Program aborting'
 	   PAUSE
+#endif
 	   STOP
 	  ENDIF
 	 ENDDO
@@ -658,15 +955,28 @@ C READ namelist S6
 C FIND namelist prior
 	OPEN(1,File=TRIM(FILEIN), ACCESS='SEQUENTIAL')
 	IFAIL = -1
+#ifdef DYNARE
+      DO WHILE (.TRUE.)
+         READ(1,'(A)',end=9998) STR
+         IF (INDEX(STR,'&prior').GT.0) IFAIL = 0
+      ENDDO
+ 9998 CONTINUE
+#else
 	DO WHILE (.NOT.EOF(1))
 	 READ(1,'(A)') STR
 	 IF (INDEX(STR,'&prior').GT.0) IFAIL = 0
 	ENDDO
+#endif
 	CLOSE(1)
 	IF (IFAIL.EQ.-1) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' Namelist prior not found'
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' Namelist prior not found'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 RETURN
 	ENDIF
 C READ namelist prior
@@ -676,15 +986,25 @@ C READ namelist prior
 	hyptheta(:,:) = -1
 	READ(1,NML = prior,END=5008,ERR=5008)
 	IF (nt.LE.0) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' Check nt in namelist prior'
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' Check nt in namelist prior'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 STOP
       ENDIF
 	IF (nt.GT.200) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' nt is too large '
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' nt is too large '
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 STOP
 	ENDIF
 	IF (estimation.EQ.'BA') THEN
@@ -692,24 +1012,39 @@ C READ namelist prior
 	  WRITE(IC,'(I3)') I
 	  IF ((pdftheta(I).NE.'BE').AND.(pdftheta(I).NE.'NT').AND.
      #     (pdftheta(I).NE.'IG')) THEN
+#ifdef DYNARE
+         WRITE(*,*) ' Check pdftheta('//IC//') in namelist prior'
+         WRITE(*,*) ' Program aborting'
+#else
 	   TYPE *, ' Check pdftheta('//IC//') in namelist prior'
 	   TYPE *, ' Program aborting'
 	   PAUSE
+#endif
 	   STOP
 	  ENDIF
 	  IF (hyptheta(3,I).GT.hyptheta(4,I)) THEN
+#ifdef DYNARE
+         WRITE(*,*) ' Check hyptheta('//IC//') in namelist prior'
+         WRITE(*,*) ' Program aborting'
+#else
 	   TYPE *, ' Check hyptheta('//IC//') in namelist prior'
 	   TYPE *, ' Program aborting'
 	   PAUSE
+#endif
 	   STOP
 	  ENDIF
 	  IF (pdftheta(I).EQ.'BE') THEN
 	   IF (hyptheta(3,I).LT.hyptheta(4,I)) THEN
 	    IF ((hyptheta(1,I).LE.0.).OR.(hyptheta(2,I).LE.0.).OR.
      #       (hyptheta(3,I).GT.hyptheta(4,I))) THEN
+#ifdef DYNARE
+           WRITE(*,*) ' Check hyptheta('//IC//') in namelist prior'
+           WRITE(*,*) ' Program aborting'
+#else
 	     TYPE *, ' Check hyptheta('//IC//') in namelist prior'
 	     TYPE *, ' Program aborting'
 	     PAUSE
+#endif
 	     STOP
 	    ENDIF
 	   ENDIF
@@ -717,9 +1052,14 @@ C READ namelist prior
 	   IF (hyptheta(3,I).LT.hyptheta(4,I)) THEN
 	    IF ((hyptheta(2,I).LE.0.).OR.(hyptheta(3,I).GT.hyptheta(4,I)))
      #     THEN
+#ifdef DYNARE
+           WRITE(*,*) ' Check hyptheta('//IC//') in namelist prior'
+           WRITE(*,*) ' Program aborting'
+#else
 	     TYPE *, ' Check hyptheta('//IC//') in namelist prior'
 	     TYPE *, ' Program aborting'
 	     PAUSE
+#endif
 	     STOP
 	    ENDIF
 	   ENDIF
@@ -727,9 +1067,14 @@ C READ namelist prior
  	   IF (hyptheta(3,I).LT.hyptheta(4,I)) THEN
 	    IF ((hyptheta(1,I).LE.0.).OR.(hyptheta(2,I).LE.0.).OR.
      #    (hyptheta(3,I).GT.hyptheta(4,I)).OR.(hyptheta(3,I).LT.0.))THEN
+#ifdef DYNARE
+           WRITE(*,*) ' Check hyptheta('//IC//') in namelist prior'
+           WRITE(*,*) ' Program aborting'
+#else
 	     TYPE *, ' Check hyptheta('//IC//') in namelist prior'
 	     TYPE *, ' Program aborting'
 	     PAUSE
+#endif
 	     STOP
 	    ENDIF
 	   ENDIF
@@ -739,9 +1084,14 @@ C READ namelist prior
        DO I = 1,nt  ! ML check
         WRITE(IC,'(I3)') I
         IF (hyptheta(3,I).GT.hyptheta(4,I)) THEN
+#ifdef DYNARE
+           WRITE(*,*) ' Check hyptheta('//IC//') in namelist prior'
+           WRITE(*,*) ' Program aborting'
+#else
 	   TYPE *, ' Check hyptheta('//IC//') in namelist prior'
 	   TYPE *, ' Program aborting'
 	   PAUSE
+#endif
 	   STOP
 	  ENDIF
        ENDDO
@@ -751,15 +1101,28 @@ C READ namelist prior
 C FIND namelist mcmc
 	OPEN(1,File=TRIM(FILEIN), ACCESS='SEQUENTIAL')
 	IFAIL = -1
+#ifdef DYNARE
+      DO WHILE (.TRUE.)
+         READ(1,'(A)',end=9999) STR
+         IF (INDEX(STR,'&mcmc').GT.0) IFAIL = 0
+      ENDDO
+ 9999 CONTINUE
+#else
 	DO WHILE (.NOT.EOF(1))
 	 READ(1,'(A)') STR
 	 IF (INDEX(STR,'&mcmc').GT.0) IFAIL = 0
 	ENDDO
+#endif
 	CLOSE(1)
 	IF (IFAIL.EQ.-1) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' Namelist mcmc not found'
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' Namelist mcmc not found'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 RETURN
 	ENDIF
 
@@ -775,33 +1138,58 @@ C READ namelist mcmc
 	MargLik      = 'N'
 	READ(1,NML=mcmc,END=5009,ERR=5009)
 	IF ((seed.LT.0).OR.(seed.GT.999)) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' Check seed in namelist mcmc'
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' Check seed in namelist mcmc'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 STOP
 	ENDIF
 	IF (thin.LT.1) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' Check thin in namelist mcmc'
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' Check thin in namelist mcmc'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 STOP
 	ENDIF
 	IF (burnin.LE.0) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' Check burnin in namelist mcmc'
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' Check burnin in namelist mcmc'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 STOP
 	ENDIF
 	IF (simulrec.LE.1) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' Check simulrec in namelist mcmc'
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' Check simulrec in namelist mcmc'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 STOP
 	ENDIF
 	IF ((sampler.NE.'SL').AND.(sampler.NE.'MH')) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' Check sampler in namelist mcmc'
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' Check sampler in namelist mcmc'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 STOP
 	ENDIF
 
@@ -824,15 +1212,28 @@ c	ENDIF
 C FIND namelist dataset
 	OPEN(1,File=TRIM(FILEIN), ACCESS='SEQUENTIAL')
 	IFAIL = -1
+#ifdef DYNARE
+      DO WHILE (.TRUE.)
+         READ(1,'(A)',end=9990) STR
+         IF (INDEX(STR,'&dataset').GT.0) IFAIL = 0
+      ENDDO
+ 9990 CONTINUE
+#else
 	DO WHILE (.NOT.EOF(1))
 	 READ(1,'(A)') STR
 	 IF (INDEX(STR,'&dataset').GT.0) IFAIL = 0
 	ENDDO
+#endif
 	CLOSE(1)
 	IF (IFAIL.EQ.-1) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' Namelist dataset not found'
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' Namelist dataset not found'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 RETURN
 	ENDIF
 C READ namelist dataset
@@ -843,33 +1244,58 @@ C READ namelist dataset
 	datasim = 'N'
 	READ(1,NML=dataset,END=5010,ERR=5010)
 	IF ((T.LE.0).OR.(T.GT.3000)) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' Check T in namelist dataset (T<=3000)'
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' Check T in namelist dataset (T<=3000)'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 STOP
 	ENDIF
 	IF (ny.LE.0) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' Check ny in namelist dataset'
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' Check ny in namelist dataset'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 STOP
 	ENDIF
 	IF (nz.LT.0) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' Check nz in namelist dataset'
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' Check nz in namelist dataset'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 STOP
 	ENDIF
 	IF (nf.LT.0) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' Check nf in namelist dataset'
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' Check nf in namelist dataset'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 STOP
 	ENDIF
 	IF (T.LT.hbl) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' Check hbl in namelist mcmc (hbl > T)'
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' Check hbl in namelist mcmc (hbl > T)'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 STOP
 	ENDIF
 	IF ((datasim.NE.'N').AND.(datasim.NE.'n').AND.
@@ -981,6 +1407,41 @@ C -----------------------------------------------------------------------
 
 	GO TO 7777
 
+#ifdef DYNARE
+ 5000 WRITE(*,*)'Input file not found'
+      WRITE(*,*)'Program aborting'
+      STOP
+ 5001 WRITE(*,*)'Input error in namelist ssm'
+      WRITE(*,*)'Program aborting'
+      STOP
+ 5002 WRITE(*,*)'Input error in namelist S1 '
+      WRITE(*,*)'Program aborting'
+      STOP
+ 5003 WRITE(*,*)'Input error in namelist S2 '
+      WRITE(*,*)'Program aborting'
+      STOP
+ 5004 WRITE(*,*)'Input error in namelist S3 '
+      WRITE(*,*)'Program aborting'
+      STOP
+ 5005 WRITE(*,*)'Input error in namelist S4 '
+      WRITE(*,*)'Program aborting'
+      STOP
+ 5006 WRITE(*,*)'Input error in namelist S5 '
+      WRITE(*,*)'Program aborting'
+      STOP
+ 5007 WRITE(*,*)'Input error in namelist S6 '
+      WRITE(*,*)'Program aborting'
+      STOP
+ 5008 WRITE(*,*)'Input error in namelist prior'
+      WRITE(*,*)'Program aborting'
+      STOP
+ 5009 WRITE(*,*)'Input error in namelist mcmc'
+      WRITE(*,*)'Program aborting'
+      STOP
+ 5010 WRITE(*,*)'Input error in namelist dataset'
+      WRITE(*,*)'Program aborting'
+      STOP
+#else
 5000  TYPE *,'Input file not found'
 	TYPE *,'Program aborting'
 	PAUSE
@@ -1026,6 +1487,6 @@ C -----------------------------------------------------------------------
 	TYPE *,'Program aborting'
 	PAUSE
 	STOP
-
+#endif
 7777	RETURN
       END

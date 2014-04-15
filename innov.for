@@ -76,7 +76,11 @@ C LOCALS
      1 Xdd(max(d(1),1),nx),Pdd(max(d(1),1),nx,nx),LIKE(max(d(1),1)),
      1 XT(nx),PT(nx,nx),INN0(ny))
 
+#ifdef DYNARE
+      pdesign = getprocaddress(pdll, "design_")
+#else
 	pdesign = getprocaddress(pdll, "design_"C)
+#endif
 	INN(:,:) = 0.D0
 	CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 	CALL IKF(d,ny,nz,nx,nu,ns,S(1:max(d(1),1),1:6),
@@ -85,7 +89,11 @@ C LOCALS
 	XT(1:nx)      = Xdd(max(d(1),1),1:nx)
 	PT(1:nx,1:nx) = Pdd(max(d(1),1),1:nx,1:nx)
 
+#ifdef DYNARE
+      DO imain = d(1)+1,nobs
+#else
       DO 1000 imain = d(1)+1,nobs
+#endif
 	 iny = IYK(imain,ny+1)
 
 C ------------------------------------
@@ -169,7 +177,7 @@ c	  CALL F01ADF(iny,COM(1:iny+1,1:iny),iny+1,IFAIL)
 
 	  DO 110 I=1,nx
 	   PT(I,I) = P1(I,I)
-     +	             - SUM(HPV(I,1:iny)*(HP1(1:iny,I)+RG(I,1:iny)))
+     +        - SUM(HPV(I,1:iny)*(HP1(1:iny,I)+RG(I,1:iny)))
 	  DO 110 J=1,I-1
 	  PT(I,J) = P1(I,J)
      +                - SUM(HPV(I,1:iny)*(HP1(1:iny,J)+RG(J,1:iny)))
@@ -180,7 +188,12 @@ c	  CALL F01ADF(iny,COM(1:iny+1,1:iny),iny+1,IFAIL)
 	  XT(1:nx)      = X1(1:nx)
 	  PT(1:nx,1:nx) = P1(1:nx,1:nx)
 
+#ifdef DYNARE
+      END IF
+      END DO
+#else
 1000	 ENDIF
+#endif
 
 C Put Innovations in the rigth place
 	DO I = 1,nobs

@@ -99,6 +99,10 @@ C LOCALS
 	CHARACTER*200 FILEIN,NMLNAME,PATH,FILEOUT,DMMTITLE,CURDIR
       CHARACTER*1024 matlaberror
 
+#ifdef DYNARE
+      CHARACTER*12 fmt
+#endif
+
 C EXTERNAL SUBROUTINES
       EXTERNAL GETARG
 C EXTERNAL FUNCTIONS
@@ -123,10 +127,16 @@ C     FILEIN = 'H:\arossi\dmm\tfpf\tfpf_es.nml'
 
 C CHECK FILEIN
 	IF (TRIM(FILEIN).EQ.'') THEN
+#ifdef DYNARE
+       WRITE(*,*) ' '
+       WRITE(*,*) ' No input file provided'
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' '
 	 TYPE *, ' No input file provided'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 STOP
 	ENDIF
 
@@ -139,7 +149,7 @@ C LOAD input from FILEIN
      4 Ssampler,HBL,MargLik)
 
 C CHECK DLL NAME AND FIND FILE EXTENSION (.dll or .m)
-      J = SCAN(DLLNAME,'\', BACK = .TRUE.)
+      J = SCAN(DLLNAME,'\/', BACK = .TRUE.)
       I = SCAN(DLLNAME,'.', BACK = .TRUE.)
       DLLEXT = DLLNAME(I+1:I+3)
       IF ((DLLEXT.EQ.'M  ').OR.(DLLEXT.EQ.'m  ')) THEN
@@ -153,42 +163,78 @@ C       DLLNAME = TRIM(CURDIR) // '\matlabdll.dll'                 ! definitivo
 C FIND the DLL and LOAD it into the memory
       pdll = loadlibrary(DLLNAME)
 	IF (pdll.EQ.0) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' '
+       WRITE(*,*) TRIM(DLLNAME) // ' cannot be found or opened'
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' '
 	 TYPE *, TRIM(DLLNAME) // ' cannot be found or opened'
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 STOP
 	ENDIF
 
 C SET UP the pointer to the DLL function
+#ifdef DYNARE
+      pdesign = getprocaddress(pdll, "design_")
+#else
 	pdesign = getprocaddress(pdll, "design_"C)
+#endif
 	IF (pdesign.EQ.0) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' '
+       WRITE(*,*) ' Sub DESIGN cannot be found into '// DLLNAME
+       WRITE(*,*) ' Program aborting'
+#else
 	 TYPE *, ' '
 	 TYPE *, ' Sub DESIGN cannot be found into '// DLLNAME
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 STOP
       ENDIF
 
 C CHECK the MatLab file if needed
       IF ((DLLEXT.EQ.'M  ').OR.(DLLEXT.EQ.'m  ')) THEN
 C SET UP the pointer to the DLL function
+#ifdef DYNARE
+         psetfilem = getprocaddress(pdll, "setfilem_")
+#else
 	 psetfilem = getprocaddress(pdll, "setfilem_"C)
+#endif
 	 IF (psetfilem.EQ.0) THEN
+#ifdef DYNARE
+        WRITE(*,*) ' '
+        WRITE(*,*) ' Sub SETFILEM cannot be found into '// DLLNAME
+        WRITE(*,*) ' Program aborting'
+#else
 	  TYPE *, ' '
 	  TYPE *, ' Sub SETFILEM cannot be found into '// DLLNAME
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
        ENDIF
 
 C SET UP the pointer to the DLL function
+#ifdef DYNARE
+       pgeterrstr = getprocaddress(pdll, "geterrstr_")
+#else
 	 pgeterrstr = getprocaddress(pdll, "geterrstr_"C)
+#endif
 	 IF (pgeterrstr.EQ.0) THEN
+#ifdef DYNARE
+        WRITE(*,*) ' '
+        WRITE(*,*) ' Sub GETERRSTR cannot be found into '// DLLNAME
+        WRITE(*,*) ' Program aborting'
+#else
 	  TYPE *, ' '
 	  TYPE *, ' Sub GETERRSTR cannot be found into '// DLLNAME
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
        ENDIF
 
@@ -201,74 +247,136 @@ C Assign the name of the matlab file
        CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
        DEALLOCATE(c,H,G,a,F,R,theta)
        IF (ny.EQ.0) THEN
+#ifdef DYNARE
+          WRITE(*,*) ' '
+          WRITE(*,*) ' Can''t start MATLAB engine'
+          WRITE(*,*) ' Program aborting'
+#else
         TYPE *, ' '
 	  TYPE *, ' Can''t start MATLAB engine'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
        ELSEIF (ny.EQ.-1) THEN
+#ifdef DYNARE
+          WRITE(*,*) ' '
+          WRITE(*,*) ' Can''t read ny in the MATLAB file'
+          WRITE(*,*) ' Program aborting'
+#else
         TYPE *, ' '
 	  TYPE *, ' Can''t read ny in the MATLAB file'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
        ELSEIF (ny.EQ.-2) THEN
+#ifdef DYNARE
+          WRITE(*,*) ' '
+          WRITE(*,*) ' Can''t read nz in the MATLAB file'
+          WRITE(*,*) ' Program aborting'
+#else
         TYPE *, ' '
 	  TYPE *, ' Can''t read nz in the MATLAB file'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
        ELSEIF (ny.EQ.-3) THEN
+#ifdef DYNARE
+          WRITE(*,*) ' '
+          WRITE(*,*) ' Can''t read nx in the MATLAB file'
+          WRITE(*,*) ' Program aborting'
+#else
         TYPE *, ' '
 	  TYPE *, ' Can''t read nx in the MATLAB file'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
        ELSEIF (ny.EQ.-4) THEN
+#ifdef DYNARE
+          WRITE(*,*) ' '
+          WRITE(*,*) ' Can''t read nu in the MATLAB file'
+          WRITE(*,*) ' Program aborting'
+#else
         TYPE *, ' '
 	  TYPE *, ' Can''t read nu in the MATLAB file'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
        ELSEIF (ny.EQ.-5) THEN
+#ifdef DYNARE
+          WRITE(*,*) ' '
+          WRITE(*,*) ' Can''t read ns in the MATLAB file'
+          WRITE(*,*) ' Program aborting'
+#else
         TYPE *, ' '
 	  TYPE *, ' Can''t read ns in the MATLAB file'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
        ELSEIF (ny.EQ.-6) THEN
+#ifdef DYNARE
+          WRITE(*,*) ' '
+          WRITE(*,*) ' Can''t read nt in the MATLAB file'
+          WRITE(*,*) ' Program aborting'
+#else
         TYPE *, ' '
 	  TYPE *, ' Can''t read nt in the MATLAB file'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
        ELSEIF (ny.EQ.-7) THEN
+#ifdef DYNARE
+          WRITE(*,*) ' '
+          WRITE(*,*) ' Can''t find or open the MatLab function'
+          WRITE(*,*) ' Program aborting'
+#else
         TYPE *, ' '
 	  TYPE *, ' Can''t find or open the MatLab function'
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
        ELSEIF (ny.EQ.-8) THEN
         CALL GETERRSTR(matlaberror)
+#ifdef DYNARE
+        WRITE(*,*) ' '
+        WRITE(*,*) ' the MATLAB funtion can not be executed:'
+        WRITE(*,*) trim(matlaberror)
+        WRITE(*,*) ' Program aborting'
+#else
         TYPE *, ' '
 	  TYPE *, ' the MATLAB funtion can not be executed:'
         TYPE *, trim(matlaberror)
 	  TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
        ELSEIF (ny.LT.-100) THEN
+#ifdef DYNARE
+          WRITE(*,*) ' '
+          WRITE(*,*) ' One of the output canot be assigned during the call'
+          WRITE(*,*) ' ' // trim(DLLNAME)
+          WRITE(*,*) ' Program aborting'
+#else
         TYPE *, ' '
 	  TYPE *, ' One of the output canot be assigned during the call '
         TYPE *, ' ' // trim(DLLNAME)
         TYPE *, ' Program aborting'
 	  PAUSE
+#endif
 	  STOP
        ENDIF
       ENDIF
 
 C SET SHELL title
 	DMMTITLE = 'title DMM input:' // TRIM(PATH) // TRIM(NMLNAME)
-     #	     // '.nml' // ' - ' // TRIM(DLLNAME)
+     #     // '.nml' // ' - ' // TRIM(DLLNAME)
 	CALL system(DMMTITLE)
 
 C INITIALISE THE RANDOM NUMBER GENERATOR
@@ -338,7 +446,11 @@ C PSI STARTING VALUES
 	 ALLOCATE(psi0(np(1)),psi(np(1)),ZW(2*nobs))
 	ENDIF
 	K = 0
+#ifdef DYNARE
+      DO J=1,nv
+#else
 	DO 80 J=1,nv
+#endif
 	 IF (INFOS(9,J).EQ.1) THEN  ! S-IID
         DO jjj = 1,INFOS(8,J)-1
          psi0(K+jjj) = genbet(1.D0,1.D0)
@@ -364,31 +476,61 @@ c	   CALL G05FEF(1.D0,1.D0,1,AUX,IFAIL)
      #   (SUM(psi0(K+1:K+INFOS(8,J)-1))+AUX)
 	   K = K + INFOS(8,J)-1
 	  ENDDO
+#ifdef DYNARE
+      END IF
+      END DO
+#else
 80	 ENDIF
+#endif
 
 C WRITE HYPERPARAMTERS for THETA and PSI plus DATA
 	FILEOUT = TRIM(PATH)//TRIM(NMLNAME)//'.PRI'
  	OPEN(10,FILE = FILEOUT, ACCESS='SEQUENTIAL')
+#ifdef DYNARE
+      WRITE(fmt, '(a,i4,a)') '(', nv+11, '(I6))'
+      WRITE(10,fmt) nt,np(1:3),nf,nz,seed,nx,ny,nobs,nv,INFOS(8,1:nv)
+#else
 	 WRITE(10,'(<11+nv>(I6))') nt,np(1:3),nf,nz,seed,nx,ny,nobs,
 	1                           nv,INFOS(8,1:nv)
+#endif
        WRITE(10,'(A2)') estimation
        DO I =1,nt
+#ifdef DYNARE
+          WRITE(fmt, '(a,i4,a)') '(', 4, '(F25.12)), ''  '',A2'
+          WRITE(10,fmt) thetaprior(I,1:4),pdftheta(I)
+#else
 	  WRITE(10,1111) thetaprior(I,1:4),pdftheta(I)
+#endif
        END DO
 	 K = 0
 	 DO I = 1,nv
 	  IF (INFOS(9,I).EQ.1) THEN
+#ifdef DYNARE
+         WRITE(fmt, '(a,i4,a)') 'I10,(', np(3), '(F25.12)), ''  '',I2'
+         WRITE(10,fmt) INFOS(8,I),psiprior(K+1,:),INFOS(9,I)
+#else
 	    WRITE(10,1112) INFOS(8,I),psiprior(K+1,:),INFOS(9,I)
+#endif
 		K = K+1
 	  ELSEIF (INFOS(9,I).EQ.2) THEN
 	    DO J = 1,INFOS(8,I)
+#ifdef DYNARE
+         WRITE(fmt, '(a,i4,a)') 'I10,(', np(3), '(F25.12)), ''  '',I2'
+         WRITE(10,fmt) INFOS(8,I),psiprior(K+1,:),INFOS(9,I)
+#else
 	     WRITE(10,1112) INFOS(8,I),psiprior(K+1,:),INFOS(9,I)
+#endif
            K = K + 1
 	    END DO
 	  ENDIF
        END DO
        DO I =1,nobs+nf
+#ifdef DYNARE
+      WRITE(fmt, '(a,i4,a)') '(', ny+nz, '(F20.10))'
+      WRITE(10,fmt) yk(I,1:ny+nz)
+#else
 	  WRITE(10,'(<ny+nz>(F20.10))') yk(I,1:ny+nz)
+#endif
 	 END DO
 	CLOSE(10)
 
@@ -410,10 +552,22 @@ C SIMULATION of DATA and UNOBSERVABLES
 	  WRITE(9,'((F25.15))') theta0(1:nt)
 	 ELSE
 	  WRITE(9,'((F25.15))') theta0(1:nt),psi0(1:np(1))
+#ifdef DYNARE
+      WRITE(fmt, '(a,i4,a)') '(', 1, '(I3))'
+	  WRITE(11,fmt) Z(:)
+#else
 	  WRITE(11,'(<1>(I3))') Z(:)
+#endif
 	 ENDIF
+#ifdef DYNARE
+      WRITE(fmt, '(a,i4,a)') '(', nx, '(F20.10))'
+      WRITE(10,fmt) (STATE(I,1:nx),I=1,nobs)
+      WRITE(fmt, '(a,i4,a)') '(', nx, '(F20.10))'
+      WRITE(15,fmt) (yk(I,1:ny),I=1,nobs)
+#else
 	 WRITE(10,'(<nx>(F20.10))') (STATE(I,1:nx),I=1,nobs)
 	 WRITE(15,'(<ny>(F20.10))') (yk(I,1:ny),I=1,nobs)
+#endif
 	 CLOSE(9)
 	 CLOSE(10)
 	 CLOSE(11)
@@ -424,10 +578,16 @@ C SIMULATION of DATA and UNOBSERVABLES
 C MAXIMUM LIKELIHOOD ESTIMATION
 	IF ((estimation.EQ.'ML').OR.(estimation.EQ.'ml').OR.
      &    (estimation.EQ.'Ml').OR.(estimation.EQ.'mL')) THEN
+#ifdef DYNARE
+       WRITE(*,*) ' '
+       WRITE(*,*) ' Maximum Likelihood inference not allowed '
+       WRITE(*,*) ' Program aborting'
+#else
        TYPE *, ' '
        TYPE *, ' Maximum Likelihood inference not allowed '
 	 TYPE *, ' Program aborting'
 	 PAUSE
+#endif
 	 STOP
        CALL OPENFILES(estimation,seed,nv,nf,0,datasim,marglik,
 	1                path,nmlname)
@@ -438,11 +598,22 @@ c	1         thetaprior,theta0,psi0,IMSVAR,HESS,AUX)
 	 IF (nv.EQ.0) THEN
         CALL OPG(nobs,d,ny,nz,nx,nu,nt,ns,pdll,yk,IYK,S,
 	1           theta0,thetaprior,HESS,thetase,STATE,AKMSE,INN,IFAIL)
+#ifdef DYNARE
+        WRITE(fmt, '(a,i4,a)') '(', 2, '(F25.15))'
+        WRITE(9,fmt) (theta0(I),thetase(I),I=1,nt)
+        WRITE(9,fmt) AUX,IFAIL
+        WRITE(fmt, '(a,i4,a)') '(', nx, '(F20.10))'
+        WRITE(10,fmt) (STATE(I,1:nx),I=1,nobs)
+        WRITE(10,fmt) (AKMSE(I,1:nx),I=1,nobs)
+        WRITE(fmt, '(a,i4,a)') '(', ny, '(F20.10))'
+        WRITE(12,fmt) (INN(I,1:ny),I=1,nobs)
+#else
         WRITE(9,'(<2>(F25.15))') (theta0(I),thetase(I),I=1,nt)
 	  WRITE(9,'(<2>(F25.15))') AUX,IFAIL
 	  WRITE(10,'(<nx>(F20.10))') (STATE(I,1:nx),I=1,nobs)
         WRITE(10,'(<nx>(F20.10))') (AKMSE(I,1:nx),I=1,nobs)
         WRITE(12,'(<ny>(F20.10))') (INN(I,1:ny),I=1,nobs)
+#endif
        ELSE
         ALLOCATE(psise(np(1)),SSMOOTH(nobs,nstot))
         IF(IMSVAR.EQ.1)THEN
@@ -453,6 +624,20 @@ c	1         thetaprior,theta0,psi0,IMSVAR,HESS,AUX)
          CALL OPGKIM(nobs,d,ny,nz,nx,nu,nt,nv,ns,nstot,np(1),pdll,
      1               yk,IYK,INFOS,theta0,psi0,thetaprior,HESS,
      1               thetase,psise,STATE,AKMSE,SSMOOTH,INN,IFAIL)
+#ifdef DYNARE
+         WRITE(fmt, '(a,i4,a)') '(', nx, '(F20.10))'
+         WRITE(10,fmt) (STATE(I,1:nx),I=1,nobs)
+         WRITE(10,fmt) (AKMSE(I,1:nx),I=1,nobs)
+      ENDIF
+      WRITE(fmt, '(a,i4,a)') '(', 2, '(F25.15))'
+      WRITE(9,fmt) (theta0(I),thetase(I),I=1,nt)
+      WRITE(9,fmt) (psi0(I),psise(I),I=1,np(1))
+	  WRITE(9,fmt) AUX,IFAIL
+      WRITE(fmt, '(a,i4,a)') '(', nstot, '(F20.10))'
+      WRITE(11,fmt) (SSMOOTH(I,1:nstot),I=1,nobs)
+      WRITE(fmt, '(a,i4,a)') '(', ny, '(F20.10))'
+      WRITE(12,fmt) (INN(I,1:ny),I=1,nobs)
+#else
 	   WRITE(10,'(<nx>(F20.10))') (STATE(I,1:nx),I=1,nobs)
          WRITE(10,'(<nx>(F20.10))') (AKMSE(I,1:nx),I=1,nobs)
         ENDIF
@@ -461,6 +646,7 @@ c	1         thetaprior,theta0,psi0,IMSVAR,HESS,AUX)
 	  WRITE(9,'(<2>(F25.15))') AUX,IFAIL
         WRITE(11,'(<nstot>(F20.10))') (SSMOOTH(I,1:nstot),I=1,nobs)
         WRITE(12,'(<ny>(F20.10))') (INN(I,1:ny),I=1,nobs)
+#endif
         CLOSE(11)
         DEALLOCATE(PSISE,SSMOOTH,HESS)
        ENDIF
@@ -512,7 +698,7 @@ C MCMC BURN-IN
 	   IMAX(1) = CUMN(INDT(IMAX(1))) !CUMN(IMAX(1))
 	   CALL system('cls')
 	   WRITE(6,1113) jjj,ntf,IMIN(1)/dfloat(jjj),
-     #	             IMAX(1)/dfloat(jjj)
+     #             IMAX(1)/dfloat(jjj)
         ENDIF
        ENDDO
 	ELSE  ! NO MISSING
@@ -528,7 +714,7 @@ C MCMC BURN-IN
         DO it = 1,nt
 	   IF (thetaprior(it,3).LT.thetaprior(it,4)) THEN
 	    CALL SLICE2(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk(1:nobs,:),
-	1              	theta0,thetaprior(it,:),pdftheta(it),pdll,
+	1             theta0,thetaprior(it,:),pdftheta(it),pdll,
      2                NEVAL(it),theta(it))
           theta0(it) = theta(it)
          ENDIF
@@ -541,7 +727,7 @@ C MCMC BURN-IN
 	   IMAX(1) = CUMN(INDT(IMAX(1))) !CUMN(IMAX(1))
 	   CALL system('cls')
 	   WRITE(6,1113) jjj,ntf,IMIN(1)/dfloat(jjj),
-     #	             IMAX(1)/dfloat(jjj)
+     #             IMAX(1)/dfloat(jjj)
         ENDIF
        ENDDO
 	ENDIF
@@ -577,7 +763,7 @@ C MCMC RECORDING phase
 	   ELSE
 	    CALL AMH(HBL,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np(1),
 	1             yk(1:nobs,:),IYK(1:nobs,:),theta0,psi0,
-	2    		 PTR,PM,INFOS,pdll,Z,S,ACCRATE)
+	2             PTR,PM,INFOS,pdll,Z,S,ACCRATE)
 		CALL RECPR(jjj+burnin,nstot,nobs,Z,ZW,PM,PTR)
 	   ENDIF
 	   CALL DRAWPSI(nobs,nv,np,INFOS,Z,psiprior,psi0,psi)
@@ -620,7 +806,7 @@ C MCMC RECORDING phase
 	   WRITE(6,1113) BURNIN,ntf,lastl,lasth
 	   IF ((HBL.EQ.1).OR.(nv.EQ.0)) THEN
 	    WRITE(6,1114) jjj,ntf,IMIN(1)/dfloat(jjj),
-     #	              IMAX(1)/dfloat(jjj)
+     #           IMAX(1)/dfloat(jjj)
          ELSEIF ((HBL.GT.1).AND.(nv.GT.0)) THEN
 	    WRITE(6,1115) jjj,ntf,IMIN(1)/dfloat(jjj),
      #           IMAX(1)/dfloat(jjj),
@@ -628,26 +814,57 @@ C MCMC RECORDING phase
 	   ENDIF
         ENDIF
         IF (jjj/thin*thin.EQ.jjj) THEN
+#ifdef DYNARE
+           WRITE(fmt, '(a,i4,a)') '(', nobs*ny, '(F20.10))'
+           WRITE(12,fmt) (INN(1:nobs,I),I=1,ny)
+           WRITE(fmt, '(a,i4,a)') '(', nobs*nx, '(F20.10))'
+           WRITE(10,fmt) (STATE(1:nobs,I),I=1,nx)
+#else
 	   WRITE(12,'(<nobs*ny>(F20.10))') (INN(1:nobs,I),I=1,ny)
 	   WRITE(10,'(<nobs*nx>(F20.10))') (STATE(1:nobs,I),I=1,nx)
+#endif
 	   IF ((MargLik.EQ.'Y').OR.(MargLik.EQ.'y')) THEN
 	    gibtheta(jjj/thin,1:nt) = theta(1:nt)
 	   ENDIF
 	   IF (nv.EQ.0) THEN
+#ifdef DYNARE
+          WRITE(fmt, '(a,i4,a)') '(', nt, '(F25.15))'
+          WRITE(9,fmt) theta(1:nt)
+#else
 	    WRITE(9,'(<nt>(F25.15))') theta(1:nt)
+#endif
 	   ELSE
 	   IF ((MargLik.EQ.'Y').OR.(MargLik.EQ.'y')) THEN
 	    gibtheta(jjj/thin,nt+1:nt+np(1)) = psi(1:np(1))
 	    gibZ(jjj/thin,1:nobs) = Z(1:nobs)
 	   ENDIF
+#ifdef DYNARE
+       WRITE(fmt, '(a,i4,a)') '(', nt+np(1), '(F25.15))'
+       WRITE(9,fmt) theta(1:nt),psi(1:np(1))
+       WRITE(fmt, '(a,i4,a)') '(', nobs, '(I3))'
+	   WRITE(11,fmt) Z(:)
+#else
 	   WRITE(9,'(<nt+np(1)>(F25.15))') theta(1:nt),psi(1:np(1))
 	   WRITE(11,'(<nobs>(I3))') Z(:)
+#endif
 	  ENDIF
 	  IF (nf.GT.0) THEN
 	   J = min(nv,1)
+#ifdef DYNARE
+       WRITE(fmt, '(a,i4,a)') '(', nf*(nx+ny+J), '(F20.10))'
+       WRITE(13,fmt) (FORE(1:nf,I),I=1,nx+ny+J)
+#else
 	   WRITE(13,'(<nf*(nx+ny+J)>(F20.10))') (FORE(1:nf,I),I=1,nx+ny+J)
+#endif
 	  ENDIF
+#ifdef DYNARE
+      IF (INDMIS*nmis.GE.1) THEN
+         WRITE(fmt, '(a,i4,a)') '(', nmis, '(F20.10))'
+         WRITE(14,fmt) ykmis(1:nmis)
+      END IF
+#else
 	  IF (INDMIS*nmis.GE.1) WRITE(14,'(<nmis>(F20.10))') ykmis(1:nmis)
+#endif
 	  ENDIF
 	 ENDDO
 	ELSE  ! NO MISSINGS
@@ -659,7 +876,7 @@ C MCMC RECORDING phase
 	   ELSE
 		CALL AMH2(hbl,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np(1),
 	1              yk(1:nobs,:),theta0,psi0,
-	2    		  PTR,PM,INFOS,pdll,Z,S,ACCRATE)
+	2              PTR,PM,INFOS,pdll,Z,S,ACCRATE)
 		CALL RECPR(jjj+burnin,nstot,nobs,Z,ZW,PM,PTR)
 	   ENDIF
 	   CALL DRAWPSI(nobs,nv,np,INFOS,Z,psiprior,psi0,psi)
@@ -667,7 +884,7 @@ C MCMC RECORDING phase
 	  DO it = 1,nt
 	   IF (thetaprior(it,3).LT.thetaprior(it,4)) THEN
 	    CALL SLICE2(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk(1:nobs,:),
-	1             	theta0,thetaprior(it,:),pdftheta(it),pdll,
+	1                 theta0,thetaprior(it,:),pdftheta(it),pdll,
      2                NEVAL(it),theta(it))
           theta0(it) = theta(it)
          ENDIF
@@ -691,7 +908,7 @@ C MCMC RECORDING phase
 	   WRITE(6,1113) BURNIN,ntf,lastl,lasth
 	   IF ((HBL.EQ.1).OR.(nv.EQ.0)) THEN
 	    WRITE(6,1114) jjj,ntf,IMIN(1)/dfloat(jjj),
-     #	              IMAX(1)/dfloat(jjj)
+     #           IMAX(1)/dfloat(jjj)
          ELSEIF ((HBL.GT.1).AND.(nv.GT.0)) THEN
 	    WRITE(6,1115) jjj,ntf,IMIN(1)/dfloat(jjj),
      #           IMAX(1)/dfloat(jjj),
@@ -702,21 +919,45 @@ C MCMC RECORDING phase
 	   IF ((MargLik.EQ.'Y').OR.(MargLik.EQ.'y')) THEN
 	    gibtheta(jjj/thin,1:nt) = theta(1:nt)
 	   ENDIF
+#ifdef DYNARE
+       WRITE(fmt, '(a,i4,a)') '(', nobs*ny, '(F20.10))'
+       WRITE(12,fmt) (INN(1:nobs,I),I=1,ny)
+       WRITE(fmt, '(a,i4,a)') '(', nobs*nx, '(F20.10))'
+	   WRITE(10,fmt) (STATE(1:nobs,I),I=1,nx)
+#else
 	   WRITE(12,'(<nobs*ny>(F20.10))') (INN(1:nobs,I),I=1,ny)
 	   WRITE(10,'(<nobs*nx>(F20.10))') (STATE(1:nobs,I),I=1,nx)
+#endif
 	   IF (nv.EQ.0) THEN
+#ifdef DYNARE
+       WRITE(fmt, '(a,i4,a)') '(', nt, '(F25.15))'
+       WRITE(9,fmt) theta(1:nt)
+#else
 	    WRITE(9,'(<nt>(F25.15))') theta(1:nt)
+#endif
 	   ELSE
 	    IF ((MargLik.EQ.'Y').OR.(MargLik.EQ.'y')) THEN
 	     gibtheta(jjj/thin,nt+1:nt+np(1)) = psi(1:np(1))
 	     gibZ(jjj/thin,1:nobs) = Z(1:nobs)
 	    ENDIF
+#ifdef DYNARE
+        WRITE(fmt, '(a,i4,a)') '(', nt+np(1), '(F25.15))'
+	    WRITE(9,fmt) theta(1:nt),psi(1:np(1))
+        WRITE(fmt, '(a,i4,a)') '(', nobs, '(F25.15))'
+	    WRITE(11,fmt) Z(:)
+#else
 	    WRITE(9,'(<nt+np(1)>(F25.15))') theta(1:nt),psi(1:np(1))
 	    WRITE(11,'(<nobs>(I3))') Z(:)
+#endif
 	   ENDIF
 	   IF (nf.GT.0) THEN
 	   J = min(nv,1)
+#ifdef DYNARE
+       WRITE(fmt, '(a,i4,a)') '(', nf*(nx+ny+J), '(F20.10))'
+       WRITE(13,fmt) (FORE(1:nf,I),I=1,nx+ny+J)
+#else
 	   WRITE(13,'(<nf*(nx+ny+J)>(F20.10))') (FORE(1:nf,I),I=1,nx+ny+J)
+#endif
 	   ENDIF
 	  ENDIF
 	 ENDDO
@@ -761,9 +1002,16 @@ C MARGINAL LIKELIHOOD
 	  WRITE(*,*) ' '
 	 ENDIF
 	 WRITE(15,*) 'Modified Harmonic mean (ML and Var)'
+#ifdef DYNARE
+      WRITE(fmt, '(a,i4,a)') '(', 2, '(F20.10))'
+      WRITE(15,fmt) (MLHM(I,:),I=1,11)
+      WRITE(15,*) 'Bridge Sampling'
+      WRITE(15,fmt) (MLMW(I,:),I=1,2)
+#else
 	 WRITE(15,'(<2>(F20.10))') (MLHM(I,:),I=1,11)
 	 WRITE(15,*) 'Bridge Sampling'
 	 WRITE(15,'(<2>(F20.10))') (MLMW(I,:),I=1,2)
+#endif
 	 CLOSE(15)
 	 DEALLOCATE(gibtheta,gibZ,MLHM,MLMW)
       ENDIF
@@ -774,7 +1022,11 @@ C MARGINAL LIKELIHOOD
 	 DEALLOCATE(psi0,psi,psiprior,ZW)
 	ENDIF
 
+#ifdef DYNARE
+      call freelibrary(pdll)
+#else
 	STATUS = freelibrary(pdll) !libero la DLL dalla memoria alla fine del programma
+#endif
 	IF (TRIM(PATH).EQ.'') THEN
 	 STATUS = getcwd(PATH) ! get current directory
       ENDIF
@@ -800,8 +1052,10 @@ C MARGINAL LIKELIHOOD
       ENDIF
       DEALLOCATE(np,ns,INFOS,IT1,IT2,DATE_ITIME,REAL_CLOCK)
 
+#if !defined(DYNARE)
 1111  FORMAT((<4>(F25.12)), '  ',A2)
 1112  FORMAT(I10,(<np(3)>(F25.12)), '  ',I2)
+#endif
 1113  FORMAT(/,' Burn-in draws = ',I8,
      #       /,' Parameters sampled by SLICE ',I5,
      #       /,' SLICE likelihood eval. Min/Max = ',F6.2, ' / ',F6.2)
@@ -822,7 +1076,8 @@ C MARGINAL LIKELIHOOD
 1119  FORMAT(/,' Maximum Likelihood completed',
      #       /,' CPU-time (sec)=', I10,
      #       /,' Output printed in ',A)
-
+#if !defined(DYNARE)
       PAUSE
+#endif
 	STOP
       END

@@ -45,7 +45,10 @@ C ------------------------------------------------------------
 	POINTER (pdesign,DESIGN) ! IMPORTANT associo il puntatore pdesign alla Interface definita
 
 ! Input
-	INTEGER nobs,d(2),ny,nz,nx,nu,nt,ns(6),pdll,IYK(nobs,ny+1),
+#if !defined(DYNARE)
+      INTEGER pdll
+#endif
+	INTEGER nobs,d(2),ny,nz,nx,nu,nt,ns(6),IYK(nobs,ny+1),
 	1 S(nobs,6)
       DOUBLE PRECISION yk(nobs,ny+nz),theta(nt),thetaprior(nt,4),
      1 HESS(nt*(nt+1)/2)
@@ -65,12 +68,13 @@ C ------------------------------------------------------------
 	SE(:) = 0.D0
       DRI   = 1.D-3
 	NFREE = 0
-	DO 20 I = 1,nt
-	 IF ((theta(I).GT.thetaprior(I,3)).AND.
-	1     (theta(I).LT.thetaprior(I,4))) THEN
-         NFREE = NFREE + 1
-	   IFREE(NFREE) = I
-20     ENDIF
+      DO I = 1,nt
+         IF ((theta(I).GT.thetaprior(I,3)).AND.
+     $        (theta(I).LT.thetaprior(I,4))) THEN
+            NFREE = NFREE + 1
+            IFREE(NFREE) = I
+         END IF
+      END DO
 
 C Using Hessian from E04UCF
 	ALLOCATE (LTR(NFREE*(NFREE+1)/2),W(NFREE))
@@ -89,7 +93,11 @@ C Using Hessian from E04UCF
      1 XT(0:nobs,nx),PT(0:nobs,nx,nx),Xdd(max(d(1),1),nx),
      1 Pdd(max(d(1),1),nx,nx))
 
+#ifdef DYNARE
+      pdesign = getprocaddress(pdll, "design_")
+#else
       pdesign = getprocaddress(pdll, "design_"C)
+#endif
      	CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 
       CALL IKF(d,ny,nz,nx,nu,ns,S(1:max(d(1),1),1:6),

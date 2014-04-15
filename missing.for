@@ -51,16 +51,21 @@ C LOCALS
 
 	ALLOCATE(R(nx,nu,ns(6)),c(ny,max(nz,1),ns(1)),H(ny,nx,ns(2)),
 	1 G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)))
+#ifdef DYNARE
+      pdesign = getprocaddress(pdll, "design_")
+#else
 	pdesign = getprocaddress(pdll, "design_"C)
+#endif
 	CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 
 C NIYK = not(IYK)
 	K = 0
-	DO 10 J = 1,ny
-	 IF(yk(J).EQ.-99999.D0) THEN
-        K = K+1
-	  NIYK(K) = J
-10	 ENDIF
+      DO J = 1,ny
+         IF(yk(J).EQ.-99999.D0) THEN
+            K = K+1
+            NIYK(K) = J
+         ENDIF
+      ENDDO
 
 C SAMPLING U
 	IFAIL = -1

@@ -68,28 +68,44 @@ C
 C Check MatLab INPUT
 C
 	ny_ptr = mxCreateDoubleScalar(ny*1.0d0)
+#ifdef DYNARE
+      status = engPutVariable(ep, 'ny', ny_ptr)
+#else
       status = engPutVariable(ep, 'ny'C, ny_ptr)
+#endif
       IF (status .ne. 0) THEN
          ny = -1 ! ' Can''t read ny in the MatLab file'
          RETURN
       ENDIF
 
 	nz_ptr = mxCreateDoubleScalar(nz*1.0d0)
+#ifdef DYNARE
+      status = engPutVariable(ep, 'nz', nz_ptr)
+#else
       status = engPutVariable(ep, 'nz'C, nz_ptr)
+#endif
       IF (status .ne. 0) THEN
          ny = -2 ! ' Can''t read nz in the MatLab file'
          RETURN
       ENDIF
 
 	nx_ptr = mxCreateDoubleScalar(nx*1.0d0)
+#ifdef DYNARE
+      status = engPutVariable(ep, 'nx', nx_ptr)
+#else
       status = engPutVariable(ep, 'nx'C, nx_ptr)
+#endif
       IF (status .ne. 0) THEN
          ny = -3 ! ' Can''t read nx in the MatLab file'
          RETURN
       ENDIF
 
 	nu_ptr = mxCreateDoubleScalar(nu*1.0d0)
+#ifdef DYNARE
+      status = engPutVariable(ep, 'nu', nu_ptr)
+#else
       status = engPutVariable(ep, 'nu'C, nu_ptr)
+#endif
       IF (status .ne. 0) THEN
          ny = -4 ! ' Can''t read nu in the MatLab file'
          RETURN
@@ -100,7 +116,11 @@ C
 	  nsd(i)=ns(i)*1.d0
 	ENDDO
       CALL mxCopyReal8ToPtr(nsd, mxGetPr(ns_ptr), 6)
+#ifdef DYNARE
+      status = engPutVariable(ep, 'ns', ns_ptr)
+#else
       status = engPutVariable(ep, 'ns'C, ns_ptr)
+#endif
       IF (status .ne. 0) THEN
          ny = -5 ! ' Can''t read ns in the MatLab file'
          RETURN
@@ -108,7 +128,11 @@ C
 
       theta_ptr = mxCreateDoubleMatrix(1, nt, 0)
       CALL mxCopyReal8ToPtr(theta, mxGetPr(theta_ptr), nt)
+#ifdef DYNARE
+      status = engPutVariable(ep, 'theta', theta_ptr)
+#else
       status = engPutVariable(ep, 'theta'C, theta_ptr)
+#endif
       IF (status .ne. 0) THEN
          ny = -6 ! ' Can''t read theta in the MatLab file'
          RETURN
@@ -125,7 +149,11 @@ C
          ny = -8   ! engEvalString failed
          RETURN
       ENDIF
+#ifdef DYNARE
+      C_ptr = engGetVariable(ep, 'success')
+#else
       C_ptr = engGetVariable(ep, 'success'C)
+#endif
       IF (C_ptr .eq. 0) then
           buffer=buffer1
           ny=-8   ! engEvalString failed
@@ -135,42 +163,66 @@ C
 C
 C Get the MatLab DESIGN created matrics back to FORTRAN
 C
+#ifdef DYNARE
+      C_ptr = engGetVariable(ep, 'C')
+#else
       C_ptr = engGetVariable(ep, 'C'C)
+#endif
       IF(C_ptr.NE.0) THEN
        CALL mxCopyPtrToReal8(mxGetPr(C_ptr), c, ny*max(1,nz)*ns(1))
       ELSE
        ny = -101
       ENDIF
 
+#ifdef DYNARE
+      H_ptr = engGetVariable(ep, 'H')
+#else
       H_ptr = engGetVariable(ep, 'H'C)
+#endif
       IF(H_ptr.NE.0) THEN
        CALL mxCopyPtrToReal8(mxGetPr(H_ptr), H, ny*nx*ns(2))
       ELSE
        ny = -102
       ENDIF
 
+#ifdef DYNARE
+      G_ptr = engGetVariable(ep, 'G')
+#else
       G_ptr = engGetVariable(ep, 'G'C)
+#endif
       IF(G_ptr.NE.0) THEN
        CALL mxCopyPtrToReal8(mxGetPr(G_ptr), G, ny*nu*ns(3))
       ELSE
        ny = -103
       ENDIF
 
+#ifdef DYNARE
+      A_ptr = engGetVariable(ep, 'A')
+#else
       A_ptr = engGetVariable(ep, 'A'C)
+#endif
       IF(A_ptr.NE.0) THEN
        CALL mxCopyPtrToReal8(mxGetPr(A_ptr), a, nx*ns(4))
       ELSE
        ny = -104
       ENDIF
 
+#ifdef DYNARE
+      F_ptr = engGetVariable(ep, 'F')
+#else
       F_ptr = engGetVariable(ep, 'F'C)
+#endif
       IF(F_ptr.NE.0) THEN
        CALL mxCopyPtrToReal8(mxGetPr(F_ptr), F, nx*nx*ns(5))
       ELSE
        ny = -105
       ENDIF
 
-      R_ptr = engGetVariable(ep, 'R'C)
+#ifdef DYNARE
+      r_ptr = enggetvariable(ep, 'r')
+#else
+      r_ptr = enggetvariable(ep, 'r'c)
+#endif
       IF(R_ptr.NE.0) THEN
        CALL mxCopyPtrToReal8(mxGetPr(R_ptr), R, nx*nu*ns(6))
       ELSE

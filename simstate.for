@@ -82,7 +82,11 @@ C EXTERNAL FUNCTIONS
      3 WORK((nx+2)*(nx+1)/2),FP(nx,nx),WORK1(64*nx),UP(nu) )
 
 C	pdesign = getprocaddress(pdll, "DESIGN"C)
+#ifdef DYNARE
+      pdesign = getprocaddress(pdll, "design_")
+#else
 	pdesign = getprocaddress(pdll, "design_"C)
+#endif
       CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 
 	ykP(:,:) = 0.D0

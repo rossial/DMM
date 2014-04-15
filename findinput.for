@@ -30,7 +30,12 @@ C -------------------------------------------------------------
 	SUBROUTINE FINDINPUT(STR1,N1,STR2,N2,NUM)
 C INPUT
 	INTEGER N1,N2
+#ifdef DYNARE
+      CHARACTER(len=N1) :: STR1
+      CHARACTER(len=N2) :: STR2
+#else
 	CHARACTER STR1*N1,STR2*N2
+#endif
 C OUTPUT
 	DOUBLE PRECISION NUM
 C LOCALS

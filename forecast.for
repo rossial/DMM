@@ -79,7 +79,11 @@ C EXTERNAL SUBROUTINES
 	1 G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)))
 
 C Call DESIGN
+#ifdef DYNARE
+      pdesign = getprocaddress(pdll, "design_")
+#else
 	pdesign = getprocaddress(pdll, "design_"C)
+#endif
 	CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 
 	IF (nv.GT.0) THEN

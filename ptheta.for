@@ -54,7 +54,11 @@ C LOCALS
      3 Pdd(max(d(1),1),nx,nx))
 
 C computes the log-posterior
+#ifdef DYNARE
+      pdesign = getprocaddress(pdll, "design_")
+#else
 	pdesign = getprocaddress(pdll, "design_"C)
+#endif
 	CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 	CALL IKF(d,ny,nz,nx,nu,ns,S(1:max(d(1),1),1:6),
 	1         yk(1:max(d(1),1),1:ny+nz),IYK(1:max(d(1),1),1:ny+1),

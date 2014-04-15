@@ -47,7 +47,10 @@ C ------------------------------------------------------------
 	POINTER (pdesign,DESIGN) ! IMPORTANT associo il puntatore pdesign alla Interface definita
 
 ! Input
-	INTEGER nobs,d(2),ny,nz,nx,nu,nt,nv,ns(6),nstot,np,pdll,IYK(nobs,ny+1),
+#if !defined(DYNARE)
+      INTEGER pdll
+#endif
+	INTEGER nobs,d(2),ny,nz,nx,nu,nt,nv,ns(6),nstot,np,IYK(nobs,ny+1),
      1 INFOS(9,6)
       DOUBLE PRECISION yk(nobs,ny+nz),theta(nt),psi(np),
      1 thetaprior(nt,4),HESS((nt+np)*(nt+np+1)/2)
@@ -68,20 +71,22 @@ C ------------------------------------------------------------
 	IFAIL = 0
       DRI   = 1.D-3
 	NFREE = 0
-	DO 20 I = 1,nt
-	 IF ((theta(I).GT.thetaprior(I,3)).AND.
-	1     (theta(I).LT.thetaprior(I,4))) THEN
-         NFREE        = NFREE + 1
-	   IFREE(NFREE) = I
-         PAR(NFREE)   = theta(I)
-20     ENDIF
+      DO  I = 1,nt
+         IF ((theta(I).GT.thetaprior(I,3)).AND.
+     $        (theta(I).LT.thetaprior(I,4))) THEN
+            NFREE        = NFREE + 1
+            IFREE(NFREE) = I
+            PAR(NFREE)   = theta(I)
+         END IF
+      END DO
       NFT = NFREE ! only theta free param
-      DO 21 I = 1,np
-	 IF ((psi(I).GT..001D0).AND.(psi(I).LT..999D0)) THEN
-         NFREE        = NFREE + 1
-	   IFREE(NFREE) = I+nt
-         PAR(NFREE)   = psi(I)
-21     ENDIF
+      DO I = 1,np
+         IF ((psi(I).GT..001D0).AND.(psi(I).LT..999D0)) THEN
+            NFREE        = NFREE + 1
+            IFREE(NFREE) = I+nt
+            PAR(NFREE)   = psi(I)
+         ENDIF
+      END DO
 
 	ALLOCATE (LTR(NFREE*(NFREE+1)/2),W(NFREE))
       DO 25 I=1,NFREE
@@ -91,7 +96,11 @@ C ------------------------------------------------------------
       IFAIL = 0
       CALL SYMINV(LTR,NFREE,LTR,W,J,IFAIL,RMAX)
 
+#ifdef DYNARE
+      pdesign = getprocaddress(pdll, "design_")
+#else
       pdesign = getprocaddress(pdll, "design_"C)
+#endif
      	CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
       CALL KIM(nobs,d,ny,nz,nx,nu,ns,nstot,nv,np,INFOS,yk,IYK,
      1         c,H,G,a,F,R,psi,1,XS,XSSE,SSMOOTH,INN,DLL)

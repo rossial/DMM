@@ -75,7 +75,11 @@ C LOCALS
      1 Xdd(max(d(1),1),nx),Pdd(max(d(1),1),nx,nx),LIKE(max(d(1),1)),
      1 XT(nx),PT(nx,nx))
 
+#ifdef DYNARE
+      pdesign = getprocaddress(pdll, "design_")
+#else
       pdesign = getprocaddress(pdll, "design_"C)
+#endif
 	INN(:,:) = 0.D0
 	CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 	CALL IKF2(d,ny,nz,nx,nu,ns,S(1:max(d(1),1),1:6),
@@ -84,8 +88,11 @@ C LOCALS
 	XT(1:nx)      = Xdd(max(d(1),1),1:nx)
 	PT(1:nx,1:nx) = Pdd(max(d(1),1),1:nx,1:nx)
 
+#ifdef DYNARE
+      DO imain = d(1)+1,nobs
+#else
       DO 1000 imain = d(1)+1,nobs
-
+#endif
 C ------------------------------------
 C Prediction       x1 = c+F*x0
 C Prediction var.  P1 = F*p0*F'+ R*R'
@@ -166,7 +173,7 @@ c	  CALL F01ADF(ny,COM(1:ny+1,1:ny),ny+1,IFAIL)
 
 	  DO 110 I=1,nx
 	   PT(I,I) = P1(I,I)
-     +	             - SUM(HPV(I,1:ny)*(HP1(1:ny,I)+RG(I,1:ny)))
+     +             - SUM(HPV(I,1:ny)*(HP1(1:ny,I)+RG(I,1:ny)))
 	  DO 110 J=1,I-1
 	  PT(I,J) = P1(I,J)
      +                - SUM(HPV(I,1:ny)*(HP1(1:ny,J)+RG(J,1:ny)))
@@ -177,7 +184,12 @@ c	  CALL F01ADF(ny,COM(1:ny+1,1:ny),ny+1,IFAIL)
 	  XT(1:nx)      = X1(1:nx)
 	  PT(1:nx,1:nx) = P1(1:nx,1:nx)
 
+#ifdef DYNARE
+      END IF
+      END DO
+#else
 1000   ENDIF
+#endif
 
       DEALLOCATE(R,c,H,G,a,F,X1,P1,FP,HP1,V,Vinv,COM,RG,HPV,Xdd,Pdd,
      1 LIKE,XT,PT)

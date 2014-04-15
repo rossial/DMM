@@ -35,7 +35,9 @@ C -------------------------------------------------------------------
 	SUBROUTINE MENGWONG2(G,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                     INFOS,yk,gibpar,gibZ,thetaprior,psiprior,
      2                     tipo,pdll,MLSTART,MLMW)
-
+#ifdef DYNARE
+      USE dynare
+#endif
 C INPUT
       INTEGER G,nobs,d(2),ny,nz,nx,nu,nv,ns(6),nstot,nt,np(3),
 	1 INFOS(9,6),gibZ(G,nobs)
@@ -100,17 +102,29 @@ C EXTERNAL FUNCTIONS
 
 C Transition prob for QS
 	 DO I = 1,nstot-1
+#ifdef DYNARE
+        PTR(1,I,1) = SUM(ABS(LOGICAL2INTEGER(gibZ(1:G,1).EQ.I)))/DFLOAT(G)
+#else
 	  PTR(1,I,1) = SUM(ABS(gibZ(1:G,1).EQ.I))/DFLOAT(G)
+#endif
        ENDDO
        PTR(1,nstot,1) = ONE-SUM(PTR(1,1:nstot-1,1))
 
 	 DO 50 K = 2,nobs
 	  DO 50 I = 1,nstot-1
 	   DO 50 J = 1,nstot
+#ifdef DYNARE
+          COM(1,1) = SUM(ABS(LOGICAL2INTEGER(gibZ(1:G,K-1).EQ.J)))
+#else
 	    COM(1,1) = SUM(ABS(gibZ(1:G,K-1).EQ.J))
+#endif
 	    IF (COM(1,1).GT.ZERO) THEN
+#ifdef DYNARE
+           PTR(K,I,J) = SUM(ABS(LOGICAL2INTEGER((gibZ(1:G,K).EQ.I).AND.(gibZ(1:G,K-1).EQ.J))))/COM(1,1)
+#else
 	     PTR(K,I,J) = SUM(ABS((gibZ(1:G,K).EQ.I).AND.
      #		          (gibZ(1:G,K-1).EQ.J)))/COM(1,1)
+#endif
 	    ELSE
 	     PTR(K,I,J) = ONE/DFLOAT(nstot)
 	    ENDIF

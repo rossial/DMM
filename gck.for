@@ -114,7 +114,11 @@ C LOCALS
 	DATA EPS/1.D-14/,ONE/1.0D0/,ZERO/0.0D0/
 	DOUBLE PRECISION genunf,LEMMA4,MARKOVP
 
+#ifdef DYNARE
+      pdesign = getprocaddress(pdll, "design_")
+#else
 	pdesign = getprocaddress(pdll, "design_"C)
+#endif
 	CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 	CALL DESIGNZ(nv,np,psi,INFOS,P1,P2,P3,P4,P5,P6)
 C PALL(i,j) = Pr[Z(t+1)=i|Z(t)=j], Z = S1 x S2 x ... x Snv
@@ -282,11 +286,12 @@ C ---------------
 C FEASIBLE Z-STATES
 	NIFS   = 0
 	IFS(:) = 0
-	DO 265 K =1,nstot
+	DO K =1,nstot
  	 IF (PE(K).GT.0.D0) THEN
 	  NIFS = NIFS + 1
         IFS(NIFS) = K
-265    ENDIF
+      ENDIF
+      END DO
 	dc(1:2) = 0
 	DO 2000 IT = 1,nobs
 	 DO 1000 KKK = 1,NIFS
