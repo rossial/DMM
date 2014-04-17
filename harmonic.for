@@ -30,7 +30,7 @@ C --------------------------------------------------------------------------
      2                    psiprior,tipo,pdll,MLH)
 
 #ifdef __GFORTRAN__
-      USE dynare
+      USE gfortran
 #endif
 
 C INPUT

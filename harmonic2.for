@@ -30,7 +30,7 @@ C --------------------------------------------------------------------------
 	1                     INFOS,yk,gibpar,gibZ,thetaprior,psiprior,
      2                     tipo,pdll,MLH)
 #ifdef __GFORTRAN__
-      USE dynare
+      USE gfortran
 #endif
 C INPUT
       INTEGER G,nobs,d(2),ny,nz,nx,nu,nv,ns(6),nstot,nt,np(3),

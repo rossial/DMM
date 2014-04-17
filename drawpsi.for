@@ -56,7 +56,7 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C ----------------------------------------------------------------------
 	SUBROUTINE DRAWPSI(nobs,nv,np,INFOS,Z,psiprior,psi0,psi)
 #ifdef __GFORTRAN__
-      USE dynare
+      USE gfortran
 #endif
 C INPUT
 	INTEGER nobs,nv,np(3),Z(nobs),INFOS(9,6)

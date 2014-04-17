@@ -36,7 +36,7 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C -------------------------------------------------------------
 	SUBROUTINE CHECKDESIGN(ny,nz,nx,nu,ns,nt,d,theta,pdll,PATH,NMLNAME)
 #ifdef __GFORTRAN__
-      USE dynare
+      USE gfortran
 #else
 	USE dfwin
 #endif

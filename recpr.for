@@ -24,7 +24,7 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C ------------------------------------------------------------------------
 	SUBROUTINE RECPR(N,NS,nobs,S,SW,PM,PTR)
 #ifdef __GFORTRAN__
-      USE dynare
+      USE gfortran
 #endif
 ! INPUT
 	INTEGER N,NS,nobs
