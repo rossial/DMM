@@ -35,7 +35,7 @@ C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C --------------------------------------------------------------------------------------
       PROGRAM DMM
-#if !defined(__GFORTRAN__)
+#ifdef __INTEL_COMPILER
 	USE dfwin
 #endif
 C DECLARE an "interface block" to the .DLL that contains DESIGN
@@ -1052,7 +1052,7 @@ C MARGINAL LIKELIHOOD
       ENDIF
       DEALLOCATE(np,ns,INFOS,IT1,IT2,DATE_ITIME,REAL_CLOCK)
 
-#if !defined(__GFORTRAN__)
+#ifdef __INTEL_COMPILER
 1111  FORMAT((<4>(F25.12)), '  ',A2)
 1112  FORMAT(I10,(<np(3)>(F25.12)), '  ',I2)
 #endif
@@ -1076,7 +1076,7 @@ C MARGINAL LIKELIHOOD
 1119  FORMAT(/,' Maximum Likelihood completed',
      #       /,' CPU-time (sec)=', I10,
      #       /,' Output printed in ',A)
-#if !defined(__GFORTRAN__)
+#ifdef __INTEL_COMPILER
       PAUSE
 #endif
 	STOP

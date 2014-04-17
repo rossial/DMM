@@ -37,7 +37,8 @@ C -------------------------------------------------------------
 	SUBROUTINE CHECKDESIGN(ny,nz,nx,nu,ns,nt,d,theta,pdll,PATH,NMLNAME)
 #ifdef __GFORTRAN__
       USE gfortran
-#else
+#endif
+#ifdef __INTEL_COMPILER
 	USE dfwin
 #endif
 	INTERFACE

@@ -31,7 +31,7 @@ C ------------------------------------------------------------
       SUBROUTINE OPGH(nobs,ny,nz,nx,nu,nt,nv,ns,nstot,np,pdll,yk,IYK,
 	1                INFOS,theta,psi,thetaprior,HESS,thetase,psise,
      1                SSMOOTH,INN,IFAIL)
-#if !defined(__GFORTRAN__)
+#ifdef __INTEL_COMPILER
 	USE dfwin
 #endif
 	INTERFACE
@@ -47,7 +47,7 @@ C ------------------------------------------------------------
 	POINTER (pdesign,DESIGN) ! IMPORTANT associo il puntatore pdesign alla Interface definita
 
 ! Input
-#if !defined(__GFORTRAN__)
+#ifdef __INTEL_COMPILER
       INTEGER pdll
 #endif
 	INTEGER nobs,ny,nz,nx,nu,nt,nv,ns(6),nstot,np,IYK(nobs,ny+1),

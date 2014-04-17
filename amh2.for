@@ -59,7 +59,7 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C -------------------------------------------------------------
 	SUBROUTINE AMH2(HFIX,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,yk,
 	1                theta,psi,PTR,PM,INFOS,pdll,Z,S,ACCRATE)
-#if !defined(__GFORTRAN__)
+#ifdef __INTEL_COMPILER
 	USE dfwin
 #endif
 	INTERFACE

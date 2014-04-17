@@ -60,7 +60,7 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C ----------------------------------------------------------------------
 	SUBROUTINE GCK(nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,yk,IYK,
 	1               theta,psi,INFOS,pdll,Z,S)
-#if !defined(__GFORTRAN__)
+#ifdef __INTEL_COMPILER
 	USE dfwin
 #endif
 	INTERFACE

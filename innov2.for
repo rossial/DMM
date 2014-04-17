@@ -39,7 +39,7 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C --------------------------------------------------------------------
       SUBROUTINE INNOV2(nobs,d,ny,nz,nx,nu,ns,nt,S,yk,
 	1                  theta,pdll,INN)
-#if !defined(__GFORTRAN__)
+#ifdef __INTEL_COMPILER
 	USE dfwin
 #endif
 	INTERFACE

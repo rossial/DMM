@@ -37,7 +37,7 @@ C GNU General Public License for more details.
 C ----------------------------------------------------------------------------
 	SUBROUTINE FORECAST(zk,nf,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                    theta,psi,INFOS,Z,STATE,pdll,FORE)
-#if !defined(__GFORTRAN__)
+#ifdef __INTEL_COMPILER
 	USE dfwin
 #endif
 	INTERFACE

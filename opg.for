@@ -29,7 +29,7 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C ------------------------------------------------------------
 	SUBROUTINE OPG(nobs,d,ny,nz,nx,nu,nt,ns,pdll,yk,IYK,S,
 	1 theta,thetaprior,HESS,SE,XS,AKMSE,INN,IFAIL)
-#if !defined(__GFORTRAN__)
+#ifdef __INTEL_COMPILER
 	USE dfwin
 #endif
 	INTERFACE
@@ -45,7 +45,7 @@ C ------------------------------------------------------------
 	POINTER (pdesign,DESIGN) ! IMPORTANT associo il puntatore pdesign alla Interface definita
 
 ! Input
-#if !defined(__GFORTRAN__)
+#ifdef __INTEL_COMPILER
       INTEGER pdll
 #endif
 	INTEGER nobs,d(2),ny,nz,nx,nu,nt,ns(6),IYK(nobs,ny+1),

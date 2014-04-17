@@ -21,7 +21,7 @@ C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C --------------------------------------------------------------------
 	SUBROUTINE MISSING(yk,ny,nz,nx,nu,ns,nt,nmis,theta,S,STATE,pdll,ykmis)
-#if !defined(__GFORTRAN__)
+#ifdef __INTEL_COMPILER
 	USE dfwin
 #endif
 	INTERFACE

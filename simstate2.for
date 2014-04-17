@@ -43,7 +43,7 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C --------------------------------------------------------------------
 	SUBROUTINE SIMSTATE2(nobs,d,ny,nz,nx,nu,ns,nt,yk,
 	1                     theta,S,pdll,STATE)
-#if !defined(__GFORTRAN__)
+#ifdef __INTEL_COMPILER
 	USE dfwin
 #endif
 	INTERFACE
