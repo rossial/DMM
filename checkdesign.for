@@ -35,7 +35,7 @@ C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C -------------------------------------------------------------
 	SUBROUTINE CHECKDESIGN(ny,nz,nx,nu,ns,nt,d,theta,pdll,PATH,NMLNAME)
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       USE dynare
 #else
 	USE dfwin
@@ -65,7 +65,7 @@ C LOCALS
 	CHARACTER*3 CJ
 C EXTERNAL SUBROUTINES
       EXTERNAL DGEEV
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       INTEGER tmp
       CHARACTER*13 fmt
 #endif
@@ -73,7 +73,7 @@ C EXTERNAL SUBROUTINES
 	ALLOCATE(c(ny,max(nz,1),ns(1)),H(ny,nx,ns(2)),
 	1 G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)),R(nx,nu,ns(6))) !,HRG(ny,nu),HRGRH(ny,ny))
 
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       pdesign = getprocaddress(pdll, "design_")
 #else
 	pdesign = getprocaddress(pdll, "design_"C)
@@ -92,7 +92,7 @@ C write ny,nx,etc
 C write theta
 	 WRITE(11,*) 'theta(1:nt) = ['
 	 WRITE(11,*) ' '
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       WRITE(fmt, '(a,i4,a)') '(', nt, '(F20.10))'
       WRITE(11,fmt) theta(1:nt)
 #else
@@ -112,7 +112,7 @@ C write c(ny,max(1,nz),ns(1))
 	 ENDIF
 	 WRITE(11,*) 'c(1:ny,1:nz,'//TRIM(CJ)// ') = ['
 	 WRITE(11,*) ' '
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       WRITE(fmt, '(a,i4,a)') '(', maxnz, '(F20.10))'
       WRITE(11,fmt) (c(I,1:maxnz,J),I=1,ny)
 #else
@@ -133,7 +133,7 @@ C write H(ny,nx,ns(2))
 	 ENDIF
 	 WRITE(11,*) 'H(1:ny,1:nx,'//TRIM(CJ)// ') = ['
 	 WRITE(11,*) ' '
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       WRITE(fmt, '(a,i4,a)') '(', nx, '(F20.10))'
       WRITE(11,fmt) (H(I,1:nx,J),I=1,ny)
 #else
@@ -154,7 +154,7 @@ C write G(ny,nu,ns(3))
 	 ENDIF
 	 WRITE(11,*) 'G(1:ny,1:nu,'//TRIM(CJ)// ') = ['
 	 WRITE(11,*) ' '
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       WRITE(fmt, '(a,i4,a)') '(', nu, '(F20.10))'
       WRITE(11,fmt) (G(I,1:nu,J),I=1,ny)
 #else
@@ -175,7 +175,7 @@ C write a(nx,ns(4))
 	 ENDIF
 	 WRITE(11,*) 'a(1:nx,'//TRIM(CJ)// ') = ['
 	 WRITE(11,*) ' '
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       WRITE(fmt, '(a,i4,a)') '(', 1, '(F20.10))'
       WRITE(11,fmt) (a(I,J),I=1,nx)
 #else
@@ -196,7 +196,7 @@ C write F(nx,nx,ns(5))
 	 ENDIF
 	 WRITE(11,*) 'F(1:nx,1:nx,'//TRIM(CJ)// ') = ['
 	 WRITE(11,*) ' '
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       WRITE(fmt, '(a,i4,a)') '(', nx, '(F20.10))'
       WRITE(11,fmt) (F(I,1:nx,J),I=1,nx)
 #else
@@ -217,7 +217,7 @@ C write R(nx,nu,ns(6))
 	 ENDIF
 	 WRITE(11,*) 'R(1:nx,1:nu,'//TRIM(CJ)// ') = ['
 	 WRITE(11,*) ' '
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       WRITE(fmt, '(a,i4,a)') '(', nu, '(F20.10))'
       WRITE(11,fmt) (R(I,1:nu,J),I=1,nx)
 #else
@@ -238,7 +238,7 @@ C	1              WR(1:d(2)),WI(1:d(2)),VR,1,VI,1,WORK,4*nx,IFAIL)
 	  ESTABLE = 0
 	  DO I = 1,d(2)
 	   W(I) = WR(I)**2+WI(I)**2
-#ifdef DYNARE
+#ifdef __GFORTRAN__
        tmp = W(I).GE.1.D0
        ESTABLE = ESTABLE + ABS(tmp)
 #else
@@ -265,7 +265,7 @@ c	1              nx-d(2),WR,WI,VR,1,VI,1,WORK,4*nx,IFAIL)
 	  ESTABLE = 0
 	  DO I = 1,nx-d(2)
          W(I) = WR(I)**2+WI(I)**2
-#ifdef DYNARE
+#ifdef __GFORTRAN__
          tmp = W(I).LT.1.D0
          ESTABLE = ESTABLE + ABS(tmp)
 #else

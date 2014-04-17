@@ -31,7 +31,7 @@ C ------------------------------------------------------------
      1                  IYK,INFOS,theta,psi,thetaprior,HESS,thetase,
      1                  psise,XS,XSSE,SSMOOTH,INN,IFAIL)
 
-#if !defined(DYNARE)
+#if !defined(__GFORTRAN__)
 	USE dfwin
 #endif
 	INTERFACE
@@ -47,7 +47,7 @@ C ------------------------------------------------------------
 	POINTER (pdesign,DESIGN) ! IMPORTANT associo il puntatore pdesign alla Interface definita
 
 ! Input
-#if !defined(DYNARE)
+#if !defined(__GFORTRAN__)
       INTEGER pdll
 #endif
 	INTEGER nobs,d(2),ny,nz,nx,nu,nt,nv,ns(6),nstot,np,IYK(nobs,ny+1),
@@ -96,7 +96,7 @@ C ------------------------------------------------------------
       IFAIL = 0
       CALL SYMINV(LTR,NFREE,LTR,W,J,IFAIL,RMAX)
 
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       pdesign = getprocaddress(pdll, "design_")
 #else
       pdesign = getprocaddress(pdll, "design_"C)

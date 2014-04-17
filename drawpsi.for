@@ -55,7 +55,7 @@ C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C ----------------------------------------------------------------------
 	SUBROUTINE DRAWPSI(nobs,nv,np,INFOS,Z,psiprior,psi0,psi)
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       USE dynare
 #endif
 C INPUT
@@ -90,7 +90,7 @@ C	DOUBLE PRECISION G05CAF
 	  IF (INFOS(9,I).EQ.1) THEN      ! S~IID
 C SAMPLING FROM DIRICHLET
 	   DO 5 ii = 1,NSI
-#ifdef DYNARE
+#ifdef __GFORTRAN__
           AG = SUM(ABS(LOGICAL2INTEGER(SEQ(1:nobs,I).EQ.ii)))
      #  +psiprior(K+1,ii)
 #else
@@ -107,7 +107,7 @@ C 5      CALL G05FFF(AG,1.D0,1,GAM(ii),IFAIL)
 	   ALLOCATE(NIJ(NSI,NSI),PENEW(NSI),PEOLD(NSI))
 	   DO 50 jj = 1,NSI
 	    DO 10 ii = 1,NSI
-#ifdef DYNARE
+#ifdef __GFORTRAN__
 10        NIJ(ii,jj) = SUM(ABS(LOGICAL2INTEGER((
      # SEQ(2:nobs,I).EQ.ii).AND.(SEQ(1:nobs-1,I).EQ.jj))))
 #else

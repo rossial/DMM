@@ -29,7 +29,7 @@ C --------------------------------------------------------------------------
 	1                    INFOS,yk,IYK,gibpar,gibZ,thetaprior,
      2                    psiprior,tipo,pdll,MLH)
 
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       USE dynare
 #endif
 
@@ -121,7 +121,7 @@ C40	 ub(I)   =  PPCHI2(pval(I),DFLOAT(NPARTH),IFAIL)  !G01FCF(pval(I),DFLOAT(NPA
 	 ALLOCATE(PTR(nobs,nstot,nstot),PMAT(nstot,nstot),PE(nstot))
 C Transition prob for QS
 	 DO 55 I = 1,nstot-1
-#ifdef DYNARE
+#ifdef __GFORTRAN__
 55	 PTR(1,I,1)=SUM(ABS(LOGICAL2INTEGER(gibZ(1:G,1).EQ.I)))/DFLOAT(G)
 #else
 55	 PTR(1,I,1)=SUM(ABS(gibZ(1:G,1).EQ.I))/DFLOAT(G)
@@ -131,13 +131,13 @@ C Transition prob for QS
 	 DO 57 K = 2,nobs
 	 DO 57 I = 1,nstot-1
 	 DO 57 J = 1,nstot
-#ifdef DYNARE
+#ifdef __GFORTRAN__
 	  COM(1,1) = SUM(ABS(LOGICAL2INTEGER(gibZ(1:G,K-1).EQ.J)))
 #else
 	  COM(1,1) = SUM(ABS(gibZ(1:G,K-1).EQ.J))
 #endif
 	  IF (COM(1,1).GT.ZERO) THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
 	   PTR(K,I,J) = SUM(ABS(LOGICAL2INTEGER(
      + (gibZ(1:G,K).EQ.I).AND.(gibZ(1:G,K-1).EQ.J
      +                ))))/COM(1,1)

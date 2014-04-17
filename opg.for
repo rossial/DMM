@@ -29,7 +29,7 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C ------------------------------------------------------------
 	SUBROUTINE OPG(nobs,d,ny,nz,nx,nu,nt,ns,pdll,yk,IYK,S,
 	1 theta,thetaprior,HESS,SE,XS,AKMSE,INN,IFAIL)
-#if !defined(DYNARE)
+#if !defined(__GFORTRAN__)
 	USE dfwin
 #endif
 	INTERFACE
@@ -45,7 +45,7 @@ C ------------------------------------------------------------
 	POINTER (pdesign,DESIGN) ! IMPORTANT associo il puntatore pdesign alla Interface definita
 
 ! Input
-#if !defined(DYNARE)
+#if !defined(__GFORTRAN__)
       INTEGER pdll
 #endif
 	INTEGER nobs,d(2),ny,nz,nx,nu,nt,ns(6),IYK(nobs,ny+1),
@@ -93,7 +93,7 @@ C Using Hessian from E04UCF
      1 XT(0:nobs,nx),PT(0:nobs,nx,nx),Xdd(max(d(1),1),nx),
      1 Pdd(max(d(1),1),nx,nx))
 
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       pdesign = getprocaddress(pdll, "design_")
 #else
       pdesign = getprocaddress(pdll, "design_"C)

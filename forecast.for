@@ -37,7 +37,7 @@ C GNU General Public License for more details.
 C ----------------------------------------------------------------------------
 	SUBROUTINE FORECAST(zk,nf,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                    theta,psi,INFOS,Z,STATE,pdll,FORE)
-#if !defined(DYNARE)
+#if !defined(__GFORTRAN__)
 	USE dfwin
 #endif
 	INTERFACE
@@ -79,7 +79,7 @@ C EXTERNAL SUBROUTINES
 	1 G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)))
 
 C Call DESIGN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       pdesign = getprocaddress(pdll, "design_")
 #else
 	pdesign = getprocaddress(pdll, "design_"C)

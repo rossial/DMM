@@ -21,7 +21,7 @@ C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C --------------------------------------------------------------------
 	SUBROUTINE MISSING(yk,ny,nz,nx,nu,ns,nt,nmis,theta,S,STATE,pdll,ykmis)
-#if !defined(DYNARE)
+#if !defined(__GFORTRAN__)
 	USE dfwin
 #endif
 	INTERFACE
@@ -51,7 +51,7 @@ C LOCALS
 
 	ALLOCATE(R(nx,nu,ns(6)),c(ny,max(nz,1),ns(1)),H(ny,nx,ns(2)),
 	1 G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)))
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       pdesign = getprocaddress(pdll, "design_")
 #else
 	pdesign = getprocaddress(pdll, "design_"C)

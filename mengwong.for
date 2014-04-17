@@ -35,7 +35,7 @@ C -------------------------------------------------------------------
 	SUBROUTINE MENGWONG(G,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                    INFOS,yk,IYK,gibpar,gibZ,thetaprior,psiprior,
      2                    tipo,pdll,MLSTART,MLMW)
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       USE dynare
 #endif
 C INPUT
@@ -103,7 +103,7 @@ C EXTERNAL FUNCTIONS
 
 C Transition prob for QS
 	 DO I = 1,nstot-1
-#ifdef DYNARE
+#ifdef __GFORTRAN__
         PTR(1,I,1) = SUM(ABS(LOGICAL2INTEGER(gibZ(1:G,1).EQ.I)))/DFLOAT(G)
 #else
 	  PTR(1,I,1) = SUM(ABS(gibZ(1:G,1).EQ.I))/DFLOAT(G)
@@ -114,13 +114,13 @@ C Transition prob for QS
 	 DO 50 K = 2,nobs
 	  DO 50 I = 1,nstot-1
 	   DO 50 J = 1,nstot
-#ifdef DYNARE
+#ifdef __GFORTRAN__
           COM(1,1) = SUM(ABS(LOGICAL2INTEGER(gibZ(1:G,K-1).EQ.J)))
 #else
 	    COM(1,1) = SUM(ABS(gibZ(1:G,K-1).EQ.J))
 #endif
 	    IF (COM(1,1).GT.ZERO) THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
            PTR(K,I,J) = SUM(ABS(LOGICAL2INTEGER((gibZ(1:G,K).EQ.I).AND.(gibZ(1:G,K-1).EQ.J))))/COM(1,1)
 #else
 	     PTR(K,I,J) = SUM(ABS((gibZ(1:G,K).EQ.I).AND.

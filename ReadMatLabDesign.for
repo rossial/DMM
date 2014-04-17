@@ -68,7 +68,7 @@ C
 C Check MatLab INPUT
 C
 	ny_ptr = mxCreateDoubleScalar(ny*1.0d0)
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       status = engPutVariable(ep, 'ny', ny_ptr)
 #else
       status = engPutVariable(ep, 'ny'C, ny_ptr)
@@ -79,7 +79,7 @@ C
       ENDIF
 
 	nz_ptr = mxCreateDoubleScalar(nz*1.0d0)
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       status = engPutVariable(ep, 'nz', nz_ptr)
 #else
       status = engPutVariable(ep, 'nz'C, nz_ptr)
@@ -90,7 +90,7 @@ C
       ENDIF
 
 	nx_ptr = mxCreateDoubleScalar(nx*1.0d0)
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       status = engPutVariable(ep, 'nx', nx_ptr)
 #else
       status = engPutVariable(ep, 'nx'C, nx_ptr)
@@ -101,7 +101,7 @@ C
       ENDIF
 
 	nu_ptr = mxCreateDoubleScalar(nu*1.0d0)
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       status = engPutVariable(ep, 'nu', nu_ptr)
 #else
       status = engPutVariable(ep, 'nu'C, nu_ptr)
@@ -116,7 +116,7 @@ C
 	  nsd(i)=ns(i)*1.d0
 	ENDDO
       CALL mxCopyReal8ToPtr(nsd, mxGetPr(ns_ptr), 6)
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       status = engPutVariable(ep, 'ns', ns_ptr)
 #else
       status = engPutVariable(ep, 'ns'C, ns_ptr)
@@ -128,7 +128,7 @@ C
 
       theta_ptr = mxCreateDoubleMatrix(1, nt, 0)
       CALL mxCopyReal8ToPtr(theta, mxGetPr(theta_ptr), nt)
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       status = engPutVariable(ep, 'theta', theta_ptr)
 #else
       status = engPutVariable(ep, 'theta'C, theta_ptr)
@@ -149,7 +149,7 @@ C
          ny = -8   ! engEvalString failed
          RETURN
       ENDIF
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       C_ptr = engGetVariable(ep, 'success')
 #else
       C_ptr = engGetVariable(ep, 'success'C)
@@ -163,7 +163,7 @@ C
 C
 C Get the MatLab DESIGN created matrics back to FORTRAN
 C
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       C_ptr = engGetVariable(ep, 'C')
 #else
       C_ptr = engGetVariable(ep, 'C'C)
@@ -174,7 +174,7 @@ C
        ny = -101
       ENDIF
 
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       H_ptr = engGetVariable(ep, 'H')
 #else
       H_ptr = engGetVariable(ep, 'H'C)
@@ -185,7 +185,7 @@ C
        ny = -102
       ENDIF
 
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       G_ptr = engGetVariable(ep, 'G')
 #else
       G_ptr = engGetVariable(ep, 'G'C)
@@ -196,7 +196,7 @@ C
        ny = -103
       ENDIF
 
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       A_ptr = engGetVariable(ep, 'A')
 #else
       A_ptr = engGetVariable(ep, 'A'C)
@@ -207,7 +207,7 @@ C
        ny = -104
       ENDIF
 
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       F_ptr = engGetVariable(ep, 'F')
 #else
       F_ptr = engGetVariable(ep, 'F'C)
@@ -218,7 +218,7 @@ C
        ny = -105
       ENDIF
 
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       r_ptr = enggetvariable(ep, 'r')
 #else
       r_ptr = enggetvariable(ep, 'r'c)

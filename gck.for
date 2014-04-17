@@ -60,7 +60,7 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C ----------------------------------------------------------------------
 	SUBROUTINE GCK(nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,yk,IYK,
 	1               theta,psi,INFOS,pdll,Z,S)
-#if !defined(DYNARE)
+#if !defined(__GFORTRAN__)
 	USE dfwin
 #endif
 	INTERFACE
@@ -114,7 +114,7 @@ C LOCALS
 	DATA EPS/1.D-14/,ONE/1.0D0/,ZERO/0.0D0/
 	DOUBLE PRECISION genunf,LEMMA4,MARKOVP
 
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       pdesign = getprocaddress(pdll, "design_")
 #else
 	pdesign = getprocaddress(pdll, "design_"C)

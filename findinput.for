@@ -30,7 +30,7 @@ C -------------------------------------------------------------
 	SUBROUTINE FINDINPUT(STR1,N1,STR2,N2,NUM)
 C INPUT
 	INTEGER N1,N2
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       CHARACTER(len=N1) :: STR1
       CHARACTER(len=N2) :: STR2
 #else

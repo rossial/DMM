@@ -22,7 +22,7 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C ----------------------------------------------------------------
 	DOUBLE PRECISION FUNCTION PTHETA(it,nobs,d,ny,nz,nx,nu,ns,nt,
 	1 S,yk,IYK,theta,thetaprior,tipo,pdll)
-#if !defined(DYNARE)
+#if !defined(__GFORTRAN__)
 	USE dfwin
 #endif
 	INTERFACE
@@ -54,7 +54,7 @@ C LOCALS
      3 Pdd(max(d(1),1),nx,nx))
 
 C computes the log-posterior
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       pdesign = getprocaddress(pdll, "design_")
 #else
 	pdesign = getprocaddress(pdll, "design_"C)

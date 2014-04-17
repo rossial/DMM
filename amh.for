@@ -59,7 +59,7 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C -------------------------------------------------------------
 	SUBROUTINE AMH(HFIX,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1               yk,IYK,theta,psi,PTR,PM,INFOS,pdll,Z,S,ACCRATE)
-#if !defined(DYNARE)
+#if !defined(__GFORTRAN__)
 	USE dfwin
 #endif
 	INTERFACE
@@ -111,7 +111,7 @@ C LOCALS
 	id1   = max(1,d(1))
 	Z0    = Z
 	delta = 1.D-3
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       pdesign = getprocaddress(pdll, "design_")
 #else
 	pdesign = getprocaddress(pdll, "design_"C)

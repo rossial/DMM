@@ -23,7 +23,7 @@ C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C ------------------------------------------------------------------------
 	SUBROUTINE RECPR(N,NS,nobs,S,SW,PM,PTR)
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       USE dynare
 #endif
 ! INPUT
@@ -33,7 +33,7 @@ C ------------------------------------------------------------------------
 	DOUBLE PRECISION PM(nobs,NS),PTR(nobs,NS,NS)
 ! LOCALS
 	INTEGER I,J,IT
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       INTEGER tmp0, tmp1
 #endif
 C Use previous run
@@ -44,7 +44,7 @@ C Transition probs Pr[S(t)|S(t-1),Y]
 	DO 10 IT = 2,nobs
 	DO 10 J  = 1,NS
 	DO 9  I  = 1,NS-1
-#ifdef DYNARE
+#ifdef __GFORTRAN__
        tmp0 = SW(IT).EQ.I
        tmp1 = SW(IT-1).EQ.J
 9	PTR(IT,I,J) = (N*PTR(IT,I,J)*PM(IT-1,J)
@@ -59,7 +59,7 @@ C Transition probs Pr[S(t)|S(t-1),Y]
 
 	DO 30 IT = 1,nobs
 	DO 20 I  = 1,NS-1
-#ifdef DYNARE
+#ifdef __GFORTRAN__
        tmp0 = SW(IT).EQ.I
 20	PM(IT,I) = (N*PM(IT,I)
      #         + ABS(tmp0))/DFLOAT(N+1)

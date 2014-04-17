@@ -39,7 +39,7 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C --------------------------------------------------------------------
       SUBROUTINE INNOV2(nobs,d,ny,nz,nx,nu,ns,nt,S,yk,
 	1                  theta,pdll,INN)
-#if !defined(DYNARE)
+#if !defined(__GFORTRAN__)
 	USE dfwin
 #endif
 	INTERFACE
@@ -75,7 +75,7 @@ C LOCALS
      1 Xdd(max(d(1),1),nx),Pdd(max(d(1),1),nx,nx),LIKE(max(d(1),1)),
      1 XT(nx),PT(nx,nx))
 
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       pdesign = getprocaddress(pdll, "design_")
 #else
       pdesign = getprocaddress(pdll, "design_"C)
@@ -88,7 +88,7 @@ C LOCALS
 	XT(1:nx)      = Xdd(max(d(1),1),1:nx)
 	PT(1:nx,1:nx) = Pdd(max(d(1),1),1:nx,1:nx)
 
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       DO imain = d(1)+1,nobs
 #else
       DO 1000 imain = d(1)+1,nobs
@@ -184,7 +184,7 @@ c	  CALL F01ADF(ny,COM(1:ny+1,1:ny),ny+1,IFAIL)
 	  XT(1:nx)      = X1(1:nx)
 	  PT(1:nx,1:nx) = P1(1:nx,1:nx)
 
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       END IF
       END DO
 #else

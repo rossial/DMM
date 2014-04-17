@@ -35,7 +35,7 @@ C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C --------------------------------------------------------------------------------------
       PROGRAM DMM
-#if !defined(DYNARE)
+#if !defined(__GFORTRAN__)
 	USE dfwin
 #endif
 C DECLARE an "interface block" to the .DLL that contains DESIGN
@@ -99,7 +99,7 @@ C LOCALS
 	CHARACTER*200 FILEIN,NMLNAME,PATH,FILEOUT,DMMTITLE,CURDIR
       CHARACTER*1024 matlaberror
 
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       CHARACTER*12 fmt
 #endif
 
@@ -127,7 +127,7 @@ C     FILEIN = 'H:\arossi\dmm\tfpf\tfpf_es.nml'
 
 C CHECK FILEIN
 	IF (TRIM(FILEIN).EQ.'') THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
        WRITE(*,*) ' '
        WRITE(*,*) ' No input file provided'
        WRITE(*,*) ' Program aborting'
@@ -163,7 +163,7 @@ C       DLLNAME = TRIM(CURDIR) // '\matlabdll.dll'                 ! definitivo
 C FIND the DLL and LOAD it into the memory
       pdll = loadlibrary(DLLNAME)
 	IF (pdll.EQ.0) THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
        WRITE(*,*) ' '
        WRITE(*,*) TRIM(DLLNAME) // ' cannot be found or opened'
        WRITE(*,*) ' Program aborting'
@@ -177,13 +177,13 @@ C FIND the DLL and LOAD it into the memory
 	ENDIF
 
 C SET UP the pointer to the DLL function
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       pdesign = getprocaddress(pdll, "design_")
 #else
 	pdesign = getprocaddress(pdll, "design_"C)
 #endif
 	IF (pdesign.EQ.0) THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
        WRITE(*,*) ' '
        WRITE(*,*) ' Sub DESIGN cannot be found into '// DLLNAME
        WRITE(*,*) ' Program aborting'
@@ -199,13 +199,13 @@ C SET UP the pointer to the DLL function
 C CHECK the MatLab file if needed
       IF ((DLLEXT.EQ.'M  ').OR.(DLLEXT.EQ.'m  ')) THEN
 C SET UP the pointer to the DLL function
-#ifdef DYNARE
+#ifdef __GFORTRAN__
          psetfilem = getprocaddress(pdll, "setfilem_")
 #else
 	 psetfilem = getprocaddress(pdll, "setfilem_"C)
 #endif
 	 IF (psetfilem.EQ.0) THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
         WRITE(*,*) ' '
         WRITE(*,*) ' Sub SETFILEM cannot be found into '// DLLNAME
         WRITE(*,*) ' Program aborting'
@@ -219,13 +219,13 @@ C SET UP the pointer to the DLL function
        ENDIF
 
 C SET UP the pointer to the DLL function
-#ifdef DYNARE
+#ifdef __GFORTRAN__
        pgeterrstr = getprocaddress(pdll, "geterrstr_")
 #else
 	 pgeterrstr = getprocaddress(pdll, "geterrstr_"C)
 #endif
 	 IF (pgeterrstr.EQ.0) THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
         WRITE(*,*) ' '
         WRITE(*,*) ' Sub GETERRSTR cannot be found into '// DLLNAME
         WRITE(*,*) ' Program aborting'
@@ -247,7 +247,7 @@ C Assign the name of the matlab file
        CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
        DEALLOCATE(c,H,G,a,F,R,theta)
        IF (ny.EQ.0) THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
           WRITE(*,*) ' '
           WRITE(*,*) ' Can''t start MATLAB engine'
           WRITE(*,*) ' Program aborting'
@@ -259,7 +259,7 @@ C Assign the name of the matlab file
 #endif
 	  STOP
        ELSEIF (ny.EQ.-1) THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
           WRITE(*,*) ' '
           WRITE(*,*) ' Can''t read ny in the MATLAB file'
           WRITE(*,*) ' Program aborting'
@@ -271,7 +271,7 @@ C Assign the name of the matlab file
 #endif
 	  STOP
        ELSEIF (ny.EQ.-2) THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
           WRITE(*,*) ' '
           WRITE(*,*) ' Can''t read nz in the MATLAB file'
           WRITE(*,*) ' Program aborting'
@@ -283,7 +283,7 @@ C Assign the name of the matlab file
 #endif
 	  STOP
        ELSEIF (ny.EQ.-3) THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
           WRITE(*,*) ' '
           WRITE(*,*) ' Can''t read nx in the MATLAB file'
           WRITE(*,*) ' Program aborting'
@@ -295,7 +295,7 @@ C Assign the name of the matlab file
 #endif
 	  STOP
        ELSEIF (ny.EQ.-4) THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
           WRITE(*,*) ' '
           WRITE(*,*) ' Can''t read nu in the MATLAB file'
           WRITE(*,*) ' Program aborting'
@@ -307,7 +307,7 @@ C Assign the name of the matlab file
 #endif
 	  STOP
        ELSEIF (ny.EQ.-5) THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
           WRITE(*,*) ' '
           WRITE(*,*) ' Can''t read ns in the MATLAB file'
           WRITE(*,*) ' Program aborting'
@@ -319,7 +319,7 @@ C Assign the name of the matlab file
 #endif
 	  STOP
        ELSEIF (ny.EQ.-6) THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
           WRITE(*,*) ' '
           WRITE(*,*) ' Can''t read nt in the MATLAB file'
           WRITE(*,*) ' Program aborting'
@@ -331,7 +331,7 @@ C Assign the name of the matlab file
 #endif
 	  STOP
        ELSEIF (ny.EQ.-7) THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
           WRITE(*,*) ' '
           WRITE(*,*) ' Can''t find or open the MatLab function'
           WRITE(*,*) ' Program aborting'
@@ -344,7 +344,7 @@ C Assign the name of the matlab file
 	  STOP
        ELSEIF (ny.EQ.-8) THEN
         CALL GETERRSTR(matlaberror)
-#ifdef DYNARE
+#ifdef __GFORTRAN__
         WRITE(*,*) ' '
         WRITE(*,*) ' the MATLAB funtion can not be executed:'
         WRITE(*,*) trim(matlaberror)
@@ -358,7 +358,7 @@ C Assign the name of the matlab file
 #endif
 	  STOP
        ELSEIF (ny.LT.-100) THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
           WRITE(*,*) ' '
           WRITE(*,*) ' One of the output canot be assigned during the call'
           WRITE(*,*) ' ' // trim(DLLNAME)
@@ -446,7 +446,7 @@ C PSI STARTING VALUES
 	 ALLOCATE(psi0(np(1)),psi(np(1)),ZW(2*nobs))
 	ENDIF
 	K = 0
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       DO J=1,nv
 #else
 	DO 80 J=1,nv
@@ -476,7 +476,7 @@ c	   CALL G05FEF(1.D0,1.D0,1,AUX,IFAIL)
      #   (SUM(psi0(K+1:K+INFOS(8,J)-1))+AUX)
 	   K = K + INFOS(8,J)-1
 	  ENDDO
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       END IF
       END DO
 #else
@@ -486,7 +486,7 @@ c	   CALL G05FEF(1.D0,1.D0,1,AUX,IFAIL)
 C WRITE HYPERPARAMTERS for THETA and PSI plus DATA
 	FILEOUT = TRIM(PATH)//TRIM(NMLNAME)//'.PRI'
  	OPEN(10,FILE = FILEOUT, ACCESS='SEQUENTIAL')
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       WRITE(fmt, '(a,i4,a)') '(', nv+11, '(I6))'
       WRITE(10,fmt) nt,np(1:3),nf,nz,seed,nx,ny,nobs,nv,INFOS(8,1:nv)
 #else
@@ -495,7 +495,7 @@ C WRITE HYPERPARAMTERS for THETA and PSI plus DATA
 #endif
        WRITE(10,'(A2)') estimation
        DO I =1,nt
-#ifdef DYNARE
+#ifdef __GFORTRAN__
           WRITE(fmt, '(a,i4,a)') '(', 4, '(F25.12)), ''  '',A2'
           WRITE(10,fmt) thetaprior(I,1:4),pdftheta(I)
 #else
@@ -505,7 +505,7 @@ C WRITE HYPERPARAMTERS for THETA and PSI plus DATA
 	 K = 0
 	 DO I = 1,nv
 	  IF (INFOS(9,I).EQ.1) THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
          WRITE(fmt, '(a,i4,a)') 'I10,(', np(3), '(F25.12)), ''  '',I2'
          WRITE(10,fmt) INFOS(8,I),psiprior(K+1,:),INFOS(9,I)
 #else
@@ -514,7 +514,7 @@ C WRITE HYPERPARAMTERS for THETA and PSI plus DATA
 		K = K+1
 	  ELSEIF (INFOS(9,I).EQ.2) THEN
 	    DO J = 1,INFOS(8,I)
-#ifdef DYNARE
+#ifdef __GFORTRAN__
          WRITE(fmt, '(a,i4,a)') 'I10,(', np(3), '(F25.12)), ''  '',I2'
          WRITE(10,fmt) INFOS(8,I),psiprior(K+1,:),INFOS(9,I)
 #else
@@ -525,7 +525,7 @@ C WRITE HYPERPARAMTERS for THETA and PSI plus DATA
 	  ENDIF
        END DO
        DO I =1,nobs+nf
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       WRITE(fmt, '(a,i4,a)') '(', ny+nz, '(F20.10))'
       WRITE(10,fmt) yk(I,1:ny+nz)
 #else
@@ -552,14 +552,14 @@ C SIMULATION of DATA and UNOBSERVABLES
 	  WRITE(9,'((F25.15))') theta0(1:nt)
 	 ELSE
 	  WRITE(9,'((F25.15))') theta0(1:nt),psi0(1:np(1))
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       WRITE(fmt, '(a,i4,a)') '(', 1, '(I3))'
 	  WRITE(11,fmt) Z(:)
 #else
 	  WRITE(11,'(<1>(I3))') Z(:)
 #endif
 	 ENDIF
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       WRITE(fmt, '(a,i4,a)') '(', nx, '(F20.10))'
       WRITE(10,fmt) (STATE(I,1:nx),I=1,nobs)
       WRITE(fmt, '(a,i4,a)') '(', nx, '(F20.10))'
@@ -578,7 +578,7 @@ C SIMULATION of DATA and UNOBSERVABLES
 C MAXIMUM LIKELIHOOD ESTIMATION
 	IF ((estimation.EQ.'ML').OR.(estimation.EQ.'ml').OR.
      &    (estimation.EQ.'Ml').OR.(estimation.EQ.'mL')) THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
        WRITE(*,*) ' '
        WRITE(*,*) ' Maximum Likelihood inference not allowed '
        WRITE(*,*) ' Program aborting'
@@ -598,7 +598,7 @@ c	1         thetaprior,theta0,psi0,IMSVAR,HESS,AUX)
 	 IF (nv.EQ.0) THEN
         CALL OPG(nobs,d,ny,nz,nx,nu,nt,ns,pdll,yk,IYK,S,
 	1           theta0,thetaprior,HESS,thetase,STATE,AKMSE,INN,IFAIL)
-#ifdef DYNARE
+#ifdef __GFORTRAN__
         WRITE(fmt, '(a,i4,a)') '(', 2, '(F25.15))'
         WRITE(9,fmt) (theta0(I),thetase(I),I=1,nt)
         WRITE(9,fmt) AUX,IFAIL
@@ -624,7 +624,7 @@ c	1         thetaprior,theta0,psi0,IMSVAR,HESS,AUX)
          CALL OPGKIM(nobs,d,ny,nz,nx,nu,nt,nv,ns,nstot,np(1),pdll,
      1               yk,IYK,INFOS,theta0,psi0,thetaprior,HESS,
      1               thetase,psise,STATE,AKMSE,SSMOOTH,INN,IFAIL)
-#ifdef DYNARE
+#ifdef __GFORTRAN__
          WRITE(fmt, '(a,i4,a)') '(', nx, '(F20.10))'
          WRITE(10,fmt) (STATE(I,1:nx),I=1,nobs)
          WRITE(10,fmt) (AKMSE(I,1:nx),I=1,nobs)
@@ -814,7 +814,7 @@ C MCMC RECORDING phase
 	   ENDIF
         ENDIF
         IF (jjj/thin*thin.EQ.jjj) THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
            WRITE(fmt, '(a,i4,a)') '(', nobs*ny, '(F20.10))'
            WRITE(12,fmt) (INN(1:nobs,I),I=1,ny)
            WRITE(fmt, '(a,i4,a)') '(', nobs*nx, '(F20.10))'
@@ -827,7 +827,7 @@ C MCMC RECORDING phase
 	    gibtheta(jjj/thin,1:nt) = theta(1:nt)
 	   ENDIF
 	   IF (nv.EQ.0) THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
           WRITE(fmt, '(a,i4,a)') '(', nt, '(F25.15))'
           WRITE(9,fmt) theta(1:nt)
 #else
@@ -838,7 +838,7 @@ C MCMC RECORDING phase
 	    gibtheta(jjj/thin,nt+1:nt+np(1)) = psi(1:np(1))
 	    gibZ(jjj/thin,1:nobs) = Z(1:nobs)
 	   ENDIF
-#ifdef DYNARE
+#ifdef __GFORTRAN__
        WRITE(fmt, '(a,i4,a)') '(', nt+np(1), '(F25.15))'
        WRITE(9,fmt) theta(1:nt),psi(1:np(1))
        WRITE(fmt, '(a,i4,a)') '(', nobs, '(I3))'
@@ -850,14 +850,14 @@ C MCMC RECORDING phase
 	  ENDIF
 	  IF (nf.GT.0) THEN
 	   J = min(nv,1)
-#ifdef DYNARE
+#ifdef __GFORTRAN__
        WRITE(fmt, '(a,i4,a)') '(', nf*(nx+ny+J), '(F20.10))'
        WRITE(13,fmt) (FORE(1:nf,I),I=1,nx+ny+J)
 #else
 	   WRITE(13,'(<nf*(nx+ny+J)>(F20.10))') (FORE(1:nf,I),I=1,nx+ny+J)
 #endif
 	  ENDIF
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       IF (INDMIS*nmis.GE.1) THEN
          WRITE(fmt, '(a,i4,a)') '(', nmis, '(F20.10))'
          WRITE(14,fmt) ykmis(1:nmis)
@@ -919,7 +919,7 @@ C MCMC RECORDING phase
 	   IF ((MargLik.EQ.'Y').OR.(MargLik.EQ.'y')) THEN
 	    gibtheta(jjj/thin,1:nt) = theta(1:nt)
 	   ENDIF
-#ifdef DYNARE
+#ifdef __GFORTRAN__
        WRITE(fmt, '(a,i4,a)') '(', nobs*ny, '(F20.10))'
        WRITE(12,fmt) (INN(1:nobs,I),I=1,ny)
        WRITE(fmt, '(a,i4,a)') '(', nobs*nx, '(F20.10))'
@@ -929,7 +929,7 @@ C MCMC RECORDING phase
 	   WRITE(10,'(<nobs*nx>(F20.10))') (STATE(1:nobs,I),I=1,nx)
 #endif
 	   IF (nv.EQ.0) THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
        WRITE(fmt, '(a,i4,a)') '(', nt, '(F25.15))'
        WRITE(9,fmt) theta(1:nt)
 #else
@@ -940,7 +940,7 @@ C MCMC RECORDING phase
 	     gibtheta(jjj/thin,nt+1:nt+np(1)) = psi(1:np(1))
 	     gibZ(jjj/thin,1:nobs) = Z(1:nobs)
 	    ENDIF
-#ifdef DYNARE
+#ifdef __GFORTRAN__
         WRITE(fmt, '(a,i4,a)') '(', nt+np(1), '(F25.15))'
 	    WRITE(9,fmt) theta(1:nt),psi(1:np(1))
         WRITE(fmt, '(a,i4,a)') '(', nobs, '(F25.15))'
@@ -952,7 +952,7 @@ C MCMC RECORDING phase
 	   ENDIF
 	   IF (nf.GT.0) THEN
 	   J = min(nv,1)
-#ifdef DYNARE
+#ifdef __GFORTRAN__
        WRITE(fmt, '(a,i4,a)') '(', nf*(nx+ny+J), '(F20.10))'
        WRITE(13,fmt) (FORE(1:nf,I),I=1,nx+ny+J)
 #else
@@ -1002,7 +1002,7 @@ C MARGINAL LIKELIHOOD
 	  WRITE(*,*) ' '
 	 ENDIF
 	 WRITE(15,*) 'Modified Harmonic mean (ML and Var)'
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       WRITE(fmt, '(a,i4,a)') '(', 2, '(F20.10))'
       WRITE(15,fmt) (MLHM(I,:),I=1,11)
       WRITE(15,*) 'Bridge Sampling'
@@ -1022,7 +1022,7 @@ C MARGINAL LIKELIHOOD
 	 DEALLOCATE(psi0,psi,psiprior,ZW)
 	ENDIF
 
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       call freelibrary(pdll)
 #else
 	STATUS = freelibrary(pdll) !libero la DLL dalla memoria alla fine del programma
@@ -1052,7 +1052,7 @@ C MARGINAL LIKELIHOOD
       ENDIF
       DEALLOCATE(np,ns,INFOS,IT1,IT2,DATE_ITIME,REAL_CLOCK)
 
-#if !defined(DYNARE)
+#if !defined(__GFORTRAN__)
 1111  FORMAT((<4>(F25.12)), '  ',A2)
 1112  FORMAT(I10,(<np(3)>(F25.12)), '  ',I2)
 #endif
@@ -1076,7 +1076,7 @@ C MARGINAL LIKELIHOOD
 1119  FORMAT(/,' Maximum Likelihood completed',
      #       /,' CPU-time (sec)=', I10,
      #       /,' Output printed in ',A)
-#if !defined(DYNARE)
+#if !defined(__GFORTRAN__)
       PAUSE
 #endif
 	STOP

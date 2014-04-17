@@ -43,7 +43,7 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C --------------------------------------------------------------------
 	SUBROUTINE SIMSTATE(nobs,d,ny,nz,nx,nu,ns,nt,yk,IYK,
 	1                    theta,S,pdll,STATE)
-#if !defined(DYNARE)
+#if !defined(__GFORTRAN__)
 	USE dfwin
 #endif
 	INTERFACE
@@ -82,7 +82,7 @@ C EXTERNAL FUNCTIONS
      3 WORK((nx+2)*(nx+1)/2),FP(nx,nx),WORK1(64*nx),UP(nu) )
 
 C	pdesign = getprocaddress(pdll, "DESIGN"C)
-#ifdef DYNARE
+#ifdef __GFORTRAN__
       pdesign = getprocaddress(pdll, "design_")
 #else
 	pdesign = getprocaddress(pdll, "design_"C)

@@ -1,7 +1,7 @@
 C -------------------------------------------------------------
 C LYAP solves the Lyapunov equation Ps-F*Ps*F'=RR
 C where RR and Ps are symmetric matrices.
-C Developed by DYNARE team
+C Developed by __GFORTRAN__ team
 C Recoded in Fortran by A.Rossi, C.Planas and G.Fiorentini
 C
 C Copyright (C) 2006-2012 Dynare Team
@@ -63,7 +63,7 @@ C	CALL F02EAF('V',nx,T,nx,WR,WI,Z,nx,WORK,LWORK,IFAIL) ! F = ZTZ'
      #           BWORK,IFAIL)
 	DO I = 1,nx
 	IF (WI(I)**2+WR(I)**2.GE.1.D0) THEN
-#ifdef DYNARE
+#ifdef __GFORTRAN__
        WRITE(*,*) ' '
        WRITE(*,*) ' LYAPUNOV SUBROUTINE: Some parameters out of '
        WRITE(*,*) ' stationary region. Check hyptheta in namelist '
