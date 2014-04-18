@@ -58,7 +58,7 @@ C Initial condition (stationary MS-VAR(1))
       CALL ergodic(nk,P,PE)
       inx = IYK(1,nx+1)
       DO J = 1,inx
-	 mu(J) = a(IYK(1,J),IS(4))+
+	 mu(J) = a(IYK(1,J),IS(4))
      #       + SUM(F(IYK(1,J),IYK(1,1:inx),IS(5))
      #       * yk(1,IYK(1,1:inx)))
      #       + SUM(c(IYK(1,J),1:nz,IS(1))*yk(1,nx+1:nx+nz))
@@ -92,7 +92,7 @@ C ----------------------------------------------------------
 c y(t) = c(t)z(t) + x(t)
 C x(t) = a(t)     + F(t)x(t-1) + R(t)u(t)
         DO J = 1,inx
-	   mu(J) = a(IYK(inobs,J),IS(4))+
+	   mu(J) = a(IYK(inobs,J),IS(4))
      #         + SUM(F(IYK(inobs,J),IYK(inobs,1:inx),IS(5))
      #         * yk(inobs-1,IYK(inobs-1,1:inx)))
      #         + SUM(c(IYK(inobs,J),1:nz,IS(1))*yk(inobs,nx+1:nx+nz))
@@ -149,7 +149,7 @@ C ------------------------------------------------------------------------------
 	  DO I=1,nk
          CALL int2seq(I,nv,INFOS,SEQ,IS)
          DO K = 1,inx
-	    mu(K) = a(IYK(inobs,K),IS(4))+
+	    mu(K) = a(IYK(inobs,K),IS(4))
      #          + SUM(F(IYK(inobs,K),IYK(inobs,1:inx),IS(5))
      #          * yk(inobs-1,IYK(inobs-1,1:inx)))
      #          + SUM(c(IYK(inobs,K),1:nz,IS(1))*yk(inobs,nx+1:nx+nz))

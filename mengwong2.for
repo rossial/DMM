@@ -418,7 +418,7 @@ C PRIOR for PSI and Q(PSI)~Dirichlet(a1,a2,...,aN)
       MLMW(1,1)   = DLOG(MLMW(2,1)) + DET
       MLMW(1:2,2) = SS(1,1)*G/SUM(MAT(:,1))**2 +
      +              SS(2,2)*G/SUM(MAT(:,2))**2 +
-     +     	    - 2.D0*SS(1,2)*G/(SUM(MAT(:,1))*SUM(MAT(:,2)))
+     +     	    (- 2.D0)*SS(1,2)*G/(SUM(MAT(:,1))*SUM(MAT(:,2)))
 
       MLMW(2,1) = MLMW(1,1) ! log scale
       DO 500 I=1,10
