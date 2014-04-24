@@ -120,8 +120,10 @@ C LOCALS
       CHARACTER*12 fmt
 #endif
 
+#ifdef __INTEL_COMPILER
 C EXTERNAL SUBROUTINES
       EXTERNAL GETARG
+#endif
 C EXTERNAL FUNCTIONS
       DOUBLE PRECISION genbet
 
@@ -136,7 +138,7 @@ C TIME
 C GET the namelist specified by FILEIN
 	DEB = 'D'
 	IF (DEB.EQ.'R') THEN
-	 CALL GETARG(1,FILEIN)  ! load name of input file
+       CALL GETARG(1,FILEIN)    ! load name of input file
       ELSE
       FILEIN = 'H:\AROSSI\DMM\NILE\nile.nml'
 C     FILEIN = 'H:\arossi\dmm\tfpf\tfpf_es.nml'
