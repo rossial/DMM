@@ -60,8 +60,14 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C ----------------------------------------------------------------------
 	SUBROUTINE GCK(nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,yk,IYK,
 	1               theta,psi,INFOS,pdll,Z,S)
+#if defined(__CYGWIN32__) || defined(_WIN32)
 #ifdef __INTEL_COMPILER
-	USE dfwin
+      USE dfwin
+#endif
+#else
+      USE ISO_C_BINDING
+      USE ISO_C_UTILITIES
+      USE DLFCN
 #endif
 	INTERFACE
 	 SUBROUTINE DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
@@ -71,8 +77,14 @@ C ----------------------------------------------------------------------
 	1 G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)),R(nx,nu,ns(6))
 	 END SUBROUTINE
 	END INTERFACE
-	POINTER (pdll,fittizia)  !  ASSOCIATE  pointer P alla DLL ad una varibile fittizia
-	POINTER (pdesign,DESIGN) ! IMPORTANT associo il puntatore pdesign alla Interface definita
+#if defined(__CYGWIN32__) || defined(_WIN32)
+	  POINTER (pdll,fittizia)	!  ASSOCIATE  pointer P alla DLL ad una varibile fittizia
+	  POINTER (pdesign,DESIGN)	! IMPORTANT associo il puntatore pdesign alla Interface definita
+#else
+	  TYPE(C_PTR) :: pdll
+      TYPE(C_FUNPTR) :: pdesign=C_NULL_FUNPTR
+#endif
+
 
 C INPUT
 	INTEGER nobs,d(2),ny,nz,nx,nu,nv,ns(6),nstot,nt,np,IYK(nobs,ny+1),
@@ -114,10 +126,13 @@ C LOCALS
 	DATA EPS/1.D-14/,ONE/1.0D0/,ZERO/0.0D0/
 	DOUBLE PRECISION genunf,LEMMA4,MARKOVP
 
-#ifdef __GFORTRAN__
-      pdesign = getprocaddress(pdll, "design_")
+#if defined(__CYGWIN32__) || defined(_WIN32)
+	  pdesign = getprocaddress(pdll, "design_"C)
 #else
-	pdesign = getprocaddress(pdll, "design_"C)
+	  pdesign = DLSym(pdll, 'design_'//C_NULL_CHAR)
+      IF(.NOT.C_ASSOCIATED(pdesign)) THEN
+         WRITE(*,*) ' Error in dlsym: ', C_F_STRING(DLError())
+	  END IF
 #endif
 	CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 	CALL DESIGNZ(nv,np,psi,INFOS,P1,P2,P3,P4,P5,P6)

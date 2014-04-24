@@ -37,8 +37,14 @@ C GNU General Public License for more details.
 C ----------------------------------------------------------------------------
 	SUBROUTINE FORECAST(zk,nf,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                    theta,psi,INFOS,Z,STATE,pdll,FORE)
+#if defined(__CYGWIN32__) || defined(_WIN32)
 #ifdef __INTEL_COMPILER
-	USE dfwin
+      USE dfwin
+#endif
+#else
+      USE ISO_C_BINDING
+      USE ISO_C_UTILITIES
+      USE DLFCN
 #endif
 	INTERFACE
 	 SUBROUTINE DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
@@ -49,8 +55,13 @@ C ----------------------------------------------------------------------------
 	 END SUBROUTINE
 	END INTERFACE
 	CHARACTER*1 fittizia
-	POINTER (pdll,fittizia)  ! ASSOCIATE  pointer pdll alla DLL ad una varibile fittizia
-	POINTER (pdesign,DESIGN)
+#if defined(__CYGWIN32__) || defined(_WIN32)
+	  POINTER (pdll,fittizia)	! ASSOCIATE  pointer pdll alla DLL ad una varibile fittizia
+	  POINTER (pdesign,DESIGN)
+#else
+	  TYPE(C_PTR) :: pdll
+      TYPE(C_FUNPTR) :: pdesign=C_NULL_FUNPTR
+#endif
 
 C INPUT
 	INTEGER nf,ny,nz,nx,nu,nv,nt,np(3),ns(6),nstot,Z,INFOS(9,6)
@@ -79,10 +90,13 @@ C EXTERNAL SUBROUTINES
 	1 G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)))
 
 C Call DESIGN
-#ifdef __GFORTRAN__
-      pdesign = getprocaddress(pdll, "design_")
+#if defined(__CYGWIN32__) || defined(_WIN32)
+	  pdesign = getprocaddress(pdll, "design_"C)
 #else
-	pdesign = getprocaddress(pdll, "design_"C)
+	  pdesign = DLSym(pdll, 'design_'//C_NULL_CHAR)
+      IF(.NOT.C_ASSOCIATED(pdesign)) THEN
+         WRITE(*,*) ' Error in dlsym: ', C_F_STRING(DLError())
+	  END IF
 #endif
 	CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 

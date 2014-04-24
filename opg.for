@@ -29,8 +29,14 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C ------------------------------------------------------------
 	SUBROUTINE OPG(nobs,d,ny,nz,nx,nu,nt,ns,pdll,yk,IYK,S,
 	1 theta,thetaprior,HESS,SE,XS,AKMSE,INN,IFAIL)
+#if defined(__CYGWIN32__) || defined(_WIN32)
 #ifdef __INTEL_COMPILER
-	USE dfwin
+      USE dfwin
+#endif
+#else
+      USE ISO_C_BINDING
+      USE ISO_C_UTILITIES
+      USE DLFCN
 #endif
 	INTERFACE
 	 SUBROUTINE DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
@@ -41,8 +47,13 @@ C ------------------------------------------------------------
 	 END SUBROUTINE
 	END INTERFACE
 	CHARACTER*1 fittizia
-	POINTER (pdll,fittizia)  ! ASSOCIATE  pointer pdll alla DLL ad una varibile fittizia
-	POINTER (pdesign,DESIGN) ! IMPORTANT associo il puntatore pdesign alla Interface definita
+#if defined(__CYGWIN32__) || defined(_WIN32)
+	  POINTER (pdll,fittizia)	! ASSOCIATE  pointer pdll alla DLL ad una varibile fittizia
+	  POINTER (pdesign,DESIGN)	! IMPORTANT associo il puntatore pdesign alla Interface definita
+#else
+	  TYPE(C_PTR) :: pdll
+      TYPE(C_FUNPTR) :: pdesign=C_NULL_FUNPTR
+#endif
 
 ! Input
 #ifdef __INTEL_COMPILER
@@ -93,10 +104,13 @@ C Using Hessian from E04UCF
      1 XT(0:nobs,nx),PT(0:nobs,nx,nx),Xdd(max(d(1),1),nx),
      1 Pdd(max(d(1),1),nx,nx))
 
-#ifdef __GFORTRAN__
-      pdesign = getprocaddress(pdll, "design_")
-#else
+#if defined(__CYGWIN32__) || defined(_WIN32)
       pdesign = getprocaddress(pdll, "design_"C)
+#else
+	  pdesign = DLSym(pdll, 'design_'//C_NULL_CHAR)
+      IF(.NOT.C_ASSOCIATED(pdesign)) THEN
+         WRITE(*,*) ' Error in dlsym: ', C_F_STRING(DLError())
+	  END IF
 #endif
      	CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 

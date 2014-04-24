@@ -30,9 +30,14 @@ C ------------------------------------------------------------
       SUBROUTINE OPGKIM(nobs,d,ny,nz,nx,nu,nt,nv,ns,nstot,np,pdll,yk,
      1                  IYK,INFOS,theta,psi,thetaprior,HESS,thetase,
      1                  psise,XS,XSSE,SSMOOTH,INN,IFAIL)
-
+#if defined(__CYGWIN32__) || defined(_WIN32)
 #ifdef __INTEL_COMPILER
-	USE dfwin
+      USE dfwin
+#endif
+#else
+      USE ISO_C_BINDING
+      USE ISO_C_UTILITIES
+      USE DLFCN
 #endif
 	INTERFACE
 	 SUBROUTINE DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
@@ -43,8 +48,13 @@ C ------------------------------------------------------------
 	 END SUBROUTINE
 	END INTERFACE
 	CHARACTER*1 fittizia
-	POINTER (pdll,fittizia)  ! ASSOCIATE  pointer pdll alla DLL ad una varibile fittizia
-	POINTER (pdesign,DESIGN) ! IMPORTANT associo il puntatore pdesign alla Interface definita
+#if defined(__CYGWIN32__) || defined(_WIN32)
+      POINTER (pdll,fittizia)   ! ASSOCIATE  pointer pdll alla DLL ad una varibile fittizia
+      POINTER (pdesign,DESIGN)  ! IMPORTANT associo il puntatore pdesign alla Interface definita
+#else
+	  TYPE(C_PTR) :: pdll
+      TYPE(C_FUNPTR) :: pdesign=C_NULL_FUNPTR
+#endif
 
 ! Input
 #ifdef __INTEL_COMPILER
@@ -96,10 +106,13 @@ C ------------------------------------------------------------
       IFAIL = 0
       CALL SYMINV(LTR,NFREE,LTR,W,J,IFAIL,RMAX)
 
-#ifdef __GFORTRAN__
-      pdesign = getprocaddress(pdll, "design_")
-#else
+#if defined(__CYGWIN32__) || defined(_WIN32)
       pdesign = getprocaddress(pdll, "design_"C)
+#else
+      pdesign = DLSym(pdll, 'design_'//C_NULL_CHAR)
+      IF(.NOT.C_ASSOCIATED(pdesign)) THEN
+         WRITE(*,*) ' Error in dlsym: ', C_F_STRING(DLError())
+	  END IF
 #endif
      	CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
       CALL KIM(nobs,d,ny,nz,nx,nu,ns,nstot,nv,np,INFOS,yk,IYK,

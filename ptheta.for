@@ -22,8 +22,14 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C ----------------------------------------------------------------
 	DOUBLE PRECISION FUNCTION PTHETA(it,nobs,d,ny,nz,nx,nu,ns,nt,
 	1 S,yk,IYK,theta,thetaprior,tipo,pdll)
+#if defined(__CYGWIN32__) || defined(_WIN32)
 #ifdef __INTEL_COMPILER
-	USE dfwin
+      USE dfwin
+#endif
+#else
+      USE ISO_C_BINDING
+      USE ISO_C_UTILITIES
+      USE DLFCN
 #endif
 	INTERFACE
 	 SUBROUTINE DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
@@ -34,8 +40,13 @@ C ----------------------------------------------------------------
 	 END SUBROUTINE
 	END INTERFACE
 	CHARACTER*1 fittizia
-	POINTER (pdll,fittizia)  ! ASSOCIATE  pointer pdll alla DLL ad una varibile fittizia
-	POINTER (pdesign,DESIGN) ! IMPORTANT associo il puntatore pdesign alla Interface definita
+#if defined(__CYGWIN32__) || defined(_WIN32)
+	  POINTER (pdll,fittizia)	! ASSOCIATE  pointer pdll alla DLL ad una varibile fittizia
+	  POINTER (pdesign,DESIGN)	! IMPORTANT associo il puntatore pdesign alla Interface definita
+#else
+	  TYPE(C_PTR) :: pdll
+      TYPE(C_FUNPTR) :: pdesign=C_NULL_FUNPTR
+#endif
 
 C INPUT
 	INTEGER it,nobs,d(2),ny,nz,nx,nu,ns(6),nt,S(nobs,6),
@@ -54,10 +65,13 @@ C LOCALS
      3 Pdd(max(d(1),1),nx,nx))
 
 C computes the log-posterior
-#ifdef __GFORTRAN__
-      pdesign = getprocaddress(pdll, "design_")
+#if defined(__CYGWIN32__) || defined(_WIN32)
+	  pdesign = getprocaddress(pdll, "design_"C)
 #else
-	pdesign = getprocaddress(pdll, "design_"C)
+	  pdesign = DLSym(pdll, 'design_'//C_NULL_CHAR)
+      IF(.NOT.C_ASSOCIATED(pdesign)) THEN
+         WRITE(*,*) ' Error in dlsym: ', C_F_STRING(DLError())
+	  END IF
 #endif
 	CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 	CALL IKF(d,ny,nz,nx,nu,ns,S(1:max(d(1),1),1:6),

@@ -35,8 +35,14 @@ C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C --------------------------------------------------------------------------------------
       PROGRAM DMM
+#if defined(__CYGWIN32__) || defined(_WIN32)
 #ifdef __INTEL_COMPILER
-	USE dfwin
+      USE dfwin
+#endif
+#else
+      USE ISO_C_BINDING
+      USE ISO_C_UTILITIES
+      USE DLFCN
 #endif
 C DECLARE an "interface block" to the .DLL that contains DESIGN
 
@@ -49,24 +55,32 @@ C DECLARE an "interface block" to the .DLL that contains DESIGN
 	 END SUBROUTINE
 	END INTERFACE
 	CHARACTER*1 fittizia
-	POINTER (pdll,fittizia)  ! ASSOCIATE  pointer pdll alla DLL ad una varibile fittizia
-	POINTER (pdesign,DESIGN)
 C DECLARE an "interface block" to the .DLL that contains SETFILEM
 	INTERFACE
 	 SUBROUTINE SETFILEM(mfile,pathmfile)
 	 CHARACTER*200 mfile,pathmfile
        END SUBROUTINE
       END INTERFACE
-      POINTER (psetfilem,SETFILEM)
 C DECLARE an "interface block" to the .DLL that contains GETERRSTR
 	INTERFACE
 	 SUBROUTINE GETERRSTR(matlaberror)
 	 CHARACTER*1024 matlaberror
        END SUBROUTINE
       END INTERFACE
-      POINTER (pgeterrstr,GETERRSTR)
 
-      LOGICAL status
+#if defined(__CYGWIN32__) || defined(_WIN32)
+      LOGICAL STATUS
+      POINTER (pdll,fittizia)   ! ASSOCIATE  pointer pdll alla DLL ad una varibile fittizia
+      POINTER (pdesign,DESIGN)
+      POINTER (psetfilem,SETFILEM)
+      POINTER (pgeterrstr,GETERRSTR)
+#else
+      INTEGER(C_INT) :: STATUS
+      TYPE(C_PTR) :: pdll=C_NULL_PTR
+      TYPE(C_FUNPTR) :: pdesign=C_NULL_FUNPTR
+      TYPE(C_FUNPTR) :: psetfilem=C_NULL_FUNPTR
+      TYPE(C_FUNPTR) :: pgeterrstr=C_NULL_FUNPTR
+#endif
 	CHARACTER*200 DLLNAME    ! name of the DLL (defined by the user)
 
 C NAMELIST DECLARATIONS
@@ -161,82 +175,82 @@ C       DLLNAME = TRIM(CURDIR) // '\matlabdll.dll'                 ! definitivo
       ENDIF
 
 C FIND the DLL and LOAD it into the memory
+#if defined(__CYGWIN32__) || defined(_WIN32)
       pdll = loadlibrary(DLLNAME)
-	IF (pdll.EQ.0) THEN
-#ifdef __GFORTRAN__
-       WRITE(*,*) ' '
-       WRITE(*,*) TRIM(DLLNAME) // ' cannot be found or opened'
-       WRITE(*,*) ' Program aborting'
+      IF (pdll.EQ.0) THEN
+         TYPE *, ' '
+         TYPE *, TRIM(DLLNAME) // ' cannot be found or opened'
+         TYPE *, ' Program aborting'
+         PAUSE
 #else
-	 TYPE *, ' '
-	 TYPE *, TRIM(DLLNAME) // ' cannot be found or opened'
-	 TYPE *, ' Program aborting'
-	 PAUSE
+      pdll = DLOpen(TRIM(DLLNAME)//C_NULL_CHAR, RTLD_NOW)
+      IF(.NOT.C_ASSOCIATED(pdll)) THEN
+         WRITE(*,*) ' '
+         WRITE(*,*) ' Error in dlopen: ', C_F_STRING(DLError())
+         WRITE(*,*) TRIM(DLLNAME) // ' cannot be found or opened'
+         WRITE(*,*) ' Program aborting'
 #endif
-	 STOP
-	ENDIF
+         STOP
+      ENDIF
 
 C SET UP the pointer to the DLL function
-#ifdef __GFORTRAN__
-      pdesign = getprocaddress(pdll, "design_")
+#if defined(__CYGWIN32__) || defined(_WIN32)
+      pdesign = getprocaddress(pdll, "design_"C)
+      IF (pdesign.EQ.0) THEN
+         TYPE *, ' '
+         TYPE *, ' Sub DESIGN cannot be found into '// DLLNAME
+         TYPE *, ' Program aborting'
+         PAUSE
 #else
-	pdesign = getprocaddress(pdll, "design_"C)
+      pdesign = DLSym(pdll, 'design_'//C_NULL_CHAR)
+      IF(.NOT.C_ASSOCIATED(pdesign)) THEN
+         WRITE(*,*) ' '
+         WRITE(*,*) ' Error in dlsym: ', C_F_STRING(DLError())
+         WRITE(*,*) ' Sub DESIGN cannot be found into '// DLLNAME
+         WRITE(*,*) ' Program aborting'
 #endif
-	IF (pdesign.EQ.0) THEN
-#ifdef __GFORTRAN__
-       WRITE(*,*) ' '
-       WRITE(*,*) ' Sub DESIGN cannot be found into '// DLLNAME
-       WRITE(*,*) ' Program aborting'
-#else
-	 TYPE *, ' '
-	 TYPE *, ' Sub DESIGN cannot be found into '// DLLNAME
-	 TYPE *, ' Program aborting'
-	 PAUSE
-#endif
-	 STOP
+         STOP
       ENDIF
 
 C CHECK the MatLab file if needed
       IF ((DLLEXT.EQ.'M  ').OR.(DLLEXT.EQ.'m  ')) THEN
 C SET UP the pointer to the DLL function
-#ifdef __GFORTRAN__
-         psetfilem = getprocaddress(pdll, "setfilem_")
+#if defined(__CYGWIN32__) || defined(_WIN32)
+         psetfilem = getprocaddress(pdll, "setfilem_"C)
+         IF (psetfilem.EQ.0) THEN
+            TYPE *, ' '
+            TYPE *, ' Sub SETFILEM cannot be found into '// DLLNAME
+            TYPE *, ' Program aborting'
+            PAUSE
 #else
-	 psetfilem = getprocaddress(pdll, "setfilem_"C)
+         psetfilem = DLSym(pdll, 'setfilem_'//C_NULL_CHAR)
+         IF(.NOT.C_ASSOCIATED(psetfilem)) THEN
+            WRITE(*,*) ' '
+            WRITE(*,*) ' Error in dlsym: ', C_F_STRING(DLError())
+            WRITE(*,*) ' Sub SETFILEM cannot be found into '// DLLNAME
+            WRITE(*,*) ' Program aborting'
 #endif
-	 IF (psetfilem.EQ.0) THEN
-#ifdef __GFORTRAN__
-        WRITE(*,*) ' '
-        WRITE(*,*) ' Sub SETFILEM cannot be found into '// DLLNAME
-        WRITE(*,*) ' Program aborting'
-#else
-	  TYPE *, ' '
-	  TYPE *, ' Sub SETFILEM cannot be found into '// DLLNAME
-	  TYPE *, ' Program aborting'
-	  PAUSE
-#endif
-	  STOP
-       ENDIF
+            STOP
+         ENDIF
 
 C SET UP the pointer to the DLL function
-#ifdef __GFORTRAN__
-       pgeterrstr = getprocaddress(pdll, "geterrstr_")
+#if defined(__CYGWIN32__) || defined(_WIN32)
+         pgeterrstr = getprocaddress(pdll, "geterrstr_"C)
+         IF (pgeterrstr.EQ.0) THEN
+            TYPE *, ' '
+            TYPE *, ' Sub GETERRSTR cannot be found into '// DLLNAME
+            TYPE *, ' Program aborting'
+            PAUSE
 #else
-	 pgeterrstr = getprocaddress(pdll, "geterrstr_"C)
+         pgeterrstr = DLSym(pdll, 'geterrstr_'//C_NULL_CHAR)
+         IF(.NOT.C_ASSOCIATED(pgeterrstr)) THEN
+            WRITE(*,*) ' '
+            WRITE(*,*) ' Error in dlsym: ', C_F_STRING(DLError())
+            WRITE(*,*) ' Sub GETERRSTR cannot be found into '// DLLNAME
+            WRITE(*,*) ' Program aborting'
 #endif
-	 IF (pgeterrstr.EQ.0) THEN
-#ifdef __GFORTRAN__
-        WRITE(*,*) ' '
-        WRITE(*,*) ' Sub GETERRSTR cannot be found into '// DLLNAME
-        WRITE(*,*) ' Program aborting'
-#else
-	  TYPE *, ' '
-	  TYPE *, ' Sub GETERRSTR cannot be found into '// DLLNAME
-	  TYPE *, ' Program aborting'
-	  PAUSE
-#endif
-	  STOP
-       ENDIF
+            STOP
+      ENDIF
 
 C Assign the name of the matlab file
        ALLOCATE( c(ny,max(nz,1),ns(1)),H(ny,nx,ns(2)),
@@ -1022,10 +1036,14 @@ C MARGINAL LIKELIHOOD
 	 DEALLOCATE(psi0,psi,psiprior,ZW)
 	ENDIF
 
-#ifdef __GFORTRAN__
-      call freelibrary(pdll)
+#if defined(__CYGWIN32__) || defined(_WIN32)
+      STATUS = freelibrary(pdll) !libero la DLL dalla memoria alla fine del programma
 #else
-	STATUS = freelibrary(pdll) !libero la DLL dalla memoria alla fine del programma
+      STATUS = DLClose(pdll)
+      IF(STATUS/=0) THEN
+         WRITE(*,*) ' Error in dlclose: ', C_F_STRING(DLError())
+         STOP
+      END IF
 #endif
 	IF (TRIM(PATH).EQ.'') THEN
 	 STATUS = getcwd(PATH) ! get current directory

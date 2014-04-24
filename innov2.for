@@ -39,8 +39,14 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C --------------------------------------------------------------------
       SUBROUTINE INNOV2(nobs,d,ny,nz,nx,nu,ns,nt,S,yk,
 	1                  theta,pdll,INN)
+#if defined(__CYGWIN32__) || defined(_WIN32)
 #ifdef __INTEL_COMPILER
-	USE dfwin
+      USE dfwin
+#endif
+#else
+      USE ISO_C_BINDING
+      USE ISO_C_UTILITIES
+      USE DLFCN
 #endif
 	INTERFACE
 	 SUBROUTINE DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
@@ -50,8 +56,13 @@ C --------------------------------------------------------------------
 	1 G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)),R(nx,nu,ns(6))
 	 END SUBROUTINE
 	END INTERFACE
-	POINTER (pdll,fittizia)  !  ASSOCIATE  pointer P alla DLL ad una varibile fittizia
-	POINTER (pdesign,DESIGN) ! IMPORTANT associo il puntatore pdesign alla Interface definita
+#if defined(__CYGWIN32__) || defined(_WIN32)
+      POINTER (pdll,fittizia)   !  ASSOCIATE  pointer P alla DLL ad una varibile fittizia
+      POINTER (pdesign,DESIGN)  ! IMPORTANT associo il puntatore pdesign alla Interface definita
+#else
+	  TYPE(C_PTR) :: pdll
+      TYPE(C_FUNPTR) :: pdesign=C_NULL_FUNPTR
+#endif
 
 C INPUT
 	INTEGER nobs,d(2),ny,nz,nx,nu,nt,ns(6),S(nobs,6)
@@ -75,10 +86,13 @@ C LOCALS
      1 Xdd(max(d(1),1),nx),Pdd(max(d(1),1),nx,nx),LIKE(max(d(1),1)),
      1 XT(nx),PT(nx,nx))
 
-#ifdef __GFORTRAN__
-      pdesign = getprocaddress(pdll, "design_")
-#else
+#if defined(__CYGWIN32__) || defined(_WIN32)
       pdesign = getprocaddress(pdll, "design_"C)
+#else
+      pdesign = DLSym(pdll, 'design_'//C_NULL_CHAR)
+      IF(.NOT.C_ASSOCIATED(pdesign)) THEN
+         WRITE(*,*) ' Error in dlsym: ', C_F_STRING(DLError())
+	  END IF
 #endif
 	INN(:,:) = 0.D0
 	CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)

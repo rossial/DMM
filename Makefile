@@ -1,8 +1,11 @@
 FC = gfortran
-FCFLAGS = -cpp -fcray-pointer -ffixed-line-length-none -fdefault-integer-8
-FFFLAGS = $(FCFLAGS) -ffixed-form -std=legacy
+FCFLAGS = -cpp -fcray-pointer -ffixed-line-length-none
+FFFLAGS = $(FCFLAGS) -std=legacy
 
-MOD_OBJS = 	gfortran.o
+MOD_OBJS = \
+	gfortran.o \
+	iso_c_utilities.o \
+	dlfcn.o
 
 OBJS = \
 	amh2.o \
@@ -108,7 +111,7 @@ MATLAB_OBJS = ReadMatLabDesign.o
 EXEC = dmm
 
 VPATH := $(VPATH) randlib
-LIBS = -llapack
+LIBS = -llapack -ldl
 
 all: $(MOD_OBJS) $(OBJS) $(RANDLIB_OBJS)
 	$(FC) $(FCFLAGS) $^ $(LIBS) -o $(EXEC)
