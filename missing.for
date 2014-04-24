@@ -45,6 +45,7 @@ C --------------------------------------------------------------------
 #else
 	  TYPE(C_PTR) :: pdll
       TYPE(C_FUNPTR) :: pdesign=C_NULL_FUNPTR
+	  PROCEDURE(DESIGN), POINTER :: ptrdesign=>NULL()
 #endif
 
 C INPUT
@@ -64,13 +65,15 @@ C LOCALS
 	1 G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)))
 #if defined(__CYGWIN32__) || defined(_WIN32)
 	  pdesign = getprocaddress(pdll, "design_"C)
+	  CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #else
 	  pdesign = DLSym(pdll, 'design_'//C_NULL_CHAR)
       IF(.NOT.C_ASSOCIATED(pdesign)) THEN
          WRITE(*,*) ' Error in dlsym: ', C_F_STRING(DLError())
 	  END IF
+	  CALL C_F_PROCPOINTER(CPTR=pdesign, FPTR=ptrdesign)
+	  CALL ptrdesign(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #endif
-	CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 
 C NIYK = not(IYK)
 	K = 0

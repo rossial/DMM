@@ -53,6 +53,7 @@ C ------------------------------------------------------------
 #else
 	  TYPE(C_PTR) :: pdll
       TYPE(C_FUNPTR) :: pdesign=C_NULL_FUNPTR
+	  PROCEDURE(DESIGN), POINTER :: ptrdesign=>NULL()
 #endif
 
 ! Input
@@ -106,14 +107,15 @@ C Using Hessian from E04UCF
 
 #if defined(__CYGWIN32__) || defined(_WIN32)
       pdesign = getprocaddress(pdll, "design_"C)
+	  CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #else
 	  pdesign = DLSym(pdll, 'design_'//C_NULL_CHAR)
       IF(.NOT.C_ASSOCIATED(pdesign)) THEN
          WRITE(*,*) ' Error in dlsym: ', C_F_STRING(DLError())
 	  END IF
+	  CALL C_F_PROCPOINTER(CPTR=pdesign, FPTR=ptrdesign)
+	  CALL ptrdesign(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #endif
-     	CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
-
       CALL IKF(d,ny,nz,nx,nu,ns,S(1:max(d(1),1),1:6),
 	1         yk(1:max(d(1),1),1:ny+nz),IYK(1:max(d(1),1),1:ny+1),
      2         c,H,G,a,F,R,Xdd,Pdd,DLL(1:max(d(1),1)))
@@ -148,7 +150,11 @@ C Using Hessian from E04UCF
 	DO 1000 I=1,NFREE
 	 THETAV(I) = THETAV(I) + P(I)
        theta(IFREE(I)) = THETAV(I)
-	 CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
+#if defined(__CYGWIN32__) || defined(_WIN32)
+	   CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
+#else
+	   CALL ptrdesign(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
+#endif
 	 CALL IKF(d,ny,nz,nx,nu,ns,S(1:max(d(1),1),1:6),
 	1          yk(1:max(d(1),1),1:ny+nz),IYK(1:max(d(1),1),1:ny+1),
      2          c,H,G,a,F,R,Xdd,Pdd,DLLM(1:max(d(1),1)))

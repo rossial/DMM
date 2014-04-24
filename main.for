@@ -80,6 +80,9 @@ C DECLARE an "interface block" to the .DLL that contains GETERRSTR
       TYPE(C_FUNPTR) :: pdesign=C_NULL_FUNPTR
       TYPE(C_FUNPTR) :: psetfilem=C_NULL_FUNPTR
       TYPE(C_FUNPTR) :: pgeterrstr=C_NULL_FUNPTR
+      PROCEDURE(DESIGN), POINTER :: ptrdesign=>NULL()
+      PROCEDURE(DESIGN), POINTER :: ptrsetfilem=>NULL()
+      PROCEDURE(DESIGN), POINTER :: ptrgeterrstr=>NULL()
 #endif
 	CHARACTER*200 DLLNAME    ! name of the DLL (defined by the user)
 
@@ -201,6 +204,8 @@ C SET UP the pointer to the DLL function
          TYPE *, ' Sub DESIGN cannot be found into '// DLLNAME
          TYPE *, ' Program aborting'
          PAUSE
+         STOP
+      ENDIF
 #else
       pdesign = DLSym(pdll, 'design_'//C_NULL_CHAR)
       IF(.NOT.C_ASSOCIATED(pdesign)) THEN
@@ -208,9 +213,10 @@ C SET UP the pointer to the DLL function
          WRITE(*,*) ' Error in dlsym: ', C_F_STRING(DLError())
          WRITE(*,*) ' Sub DESIGN cannot be found into '// DLLNAME
          WRITE(*,*) ' Program aborting'
-#endif
          STOP
       ENDIF
+      CALL C_F_PROCPOINTER(CPTR=pdesign, FPTR=ptrdesign)
+#endif
 
 C CHECK the MatLab file if needed
       IF ((DLLEXT.EQ.'M  ').OR.(DLLEXT.EQ.'m  ')) THEN
@@ -222,6 +228,8 @@ C SET UP the pointer to the DLL function
             TYPE *, ' Sub SETFILEM cannot be found into '// DLLNAME
             TYPE *, ' Program aborting'
             PAUSE
+            STOP
+         ENDIF
 #else
          psetfilem = DLSym(pdll, 'setfilem_'//C_NULL_CHAR)
          IF(.NOT.C_ASSOCIATED(psetfilem)) THEN
@@ -229,9 +237,10 @@ C SET UP the pointer to the DLL function
             WRITE(*,*) ' Error in dlsym: ', C_F_STRING(DLError())
             WRITE(*,*) ' Sub SETFILEM cannot be found into '// DLLNAME
             WRITE(*,*) ' Program aborting'
-#endif
             STOP
          ENDIF
+         CALL C_F_PROCPOINTER(CPTR=psetfilem, FPTR=ptrsetfilem)
+#endif
 
 C SET UP the pointer to the DLL function
 #if defined(__CYGWIN32__) || defined(_WIN32)
@@ -241,6 +250,8 @@ C SET UP the pointer to the DLL function
             TYPE *, ' Sub GETERRSTR cannot be found into '// DLLNAME
             TYPE *, ' Program aborting'
             PAUSE
+            STOP
+         ENDIF
 #else
          pgeterrstr = DLSym(pdll, 'geterrstr_'//C_NULL_CHAR)
          IF(.NOT.C_ASSOCIATED(pgeterrstr)) THEN
@@ -248,9 +259,10 @@ C SET UP the pointer to the DLL function
             WRITE(*,*) ' Error in dlsym: ', C_F_STRING(DLError())
             WRITE(*,*) ' Sub GETERRSTR cannot be found into '// DLLNAME
             WRITE(*,*) ' Program aborting'
-#endif
             STOP
-      ENDIF
+         ENDIF
+         CALL C_F_PROCPOINTER(CPTR=pgeterrstr, FPTR=ptrgeterrstr)
+#endif
 
 C Assign the name of the matlab file
        ALLOCATE( c(ny,max(nz,1),ns(1)),H(ny,nx,ns(2)),
@@ -258,7 +270,11 @@ C Assign the name of the matlab file
      1  theta(nt))
        CALL SETFILEM(mfile,pathmfile)  ! ONLY THE FIRST TIME
        theta(:) = 1.D0
+#if defined(__CYGWIN32__) || defined(_WIN32)
        CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
+#else
+       CALL ptrdesign(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
+#endif
        DEALLOCATE(c,H,G,a,F,R,theta)
        IF (ny.EQ.0) THEN
 #ifdef __GFORTRAN__

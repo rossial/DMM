@@ -54,6 +54,7 @@ C ------------------------------------------------------------
 #else
 	  TYPE(C_PTR) :: pdll
       TYPE(C_FUNPTR) :: pdesign=C_NULL_FUNPTR
+      PROCEDURE(DESIGN), POINTER :: ptrdesign=>NULL()
 #endif
 
 ! Input
@@ -108,13 +109,15 @@ C ------------------------------------------------------------
 
 #if defined(__CYGWIN32__) || defined(_WIN32)
       pdesign = getprocaddress(pdll, "design_"C)
+      CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #else
       pdesign = DLSym(pdll, 'design_'//C_NULL_CHAR)
       IF(.NOT.C_ASSOCIATED(pdesign)) THEN
          WRITE(*,*) ' Error in dlsym: ', C_F_STRING(DLError())
 	  END IF
+      CALL C_F_PROCPOINTER(CPTR=pdesign, FPTR=ptrdesign)
+	  CALL ptrdesign(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #endif
-     	CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
       CALL KIM(nobs,d,ny,nz,nx,nu,ns,nstot,nv,np,INFOS,yk,IYK,
      1         c,H,G,a,F,R,psi,1,XS,XSSE,SSMOOTH,INN,DLL)
 
@@ -159,7 +162,11 @@ C -----------
         ELSE
          psi(I-NFT) = PAR(I)
         ENDIF
-	  CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
+#if defined(__CYGWIN32__) || defined(_WIN32)
+        CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
+#else
+        CALL ptrdesign(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
+#endif
         CALL KIM(nobs,d,ny,nz,nx,nu,ns,nstot,nv,np,INFOS,yk,IYK,
      1           c,H,G,a,F,R,psi,0,XS,XSSE,SSMOOTH,INN,DLLM)
 

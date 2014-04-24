@@ -83,6 +83,7 @@ C ----------------------------------------------------------------------
 #else
 	  TYPE(C_PTR) :: pdll
       TYPE(C_FUNPTR) :: pdesign=C_NULL_FUNPTR
+	  PROCEDURE(DESIGN), POINTER :: ptrdesign=>NULL()
 #endif
 
 C INPUT
@@ -118,13 +119,15 @@ C LOCALS
 
 #if defined(__CYGWIN32__) || defined(_WIN32)
       pdesign = getprocaddress(pdll, "design_"C)
+	  CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #else
 	  pdesign = DLSym(pdll, 'design_'//C_NULL_CHAR)
       IF(.NOT.C_ASSOCIATED(pdesign)) THEN
          WRITE(*,*) ' Error in dlsym: ', C_F_STRING(DLError())
 	  END IF
+	  CALL C_F_PROCPOINTER(CPTR=pdesign, FPTR=ptrdesign)
+	  CALL ptrdesign(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #endif
-	CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 	CALL DESIGNZ(nv,np,psi,INFOS,P1,P2,P3,P4,P5,P6)
 C PALL(i,j) = Pr[Z(t+1)=i|Z(t)=j], Z = S1 x S2 x ... x Snv
 	CALL PPROD(nv,nstot,INFOS,P1,P2,P3,P4,P5,P6,PMAT)
