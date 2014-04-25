@@ -1,5 +1,5 @@
 FC = gfortran
-FCFLAGS = -cpp -fcray-pointer -ffixed-line-length-none
+FCFLAGS = -cpp -fcray-pointer -ffixed-line-length-none -fdefault-integer-8
 FFFLAGS = $(FCFLAGS) -std=legacy
 
 MOD_OBJS = \
