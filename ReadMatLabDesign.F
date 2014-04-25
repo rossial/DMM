@@ -19,6 +19,7 @@ C
 C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C ---------------------------------------------------------------------
+#include "fintrf.h"
 	SUBROUTINE DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 !DEC$ ATTRIBUTES DLLEXPORT, ALIAS:'design_' :: DESIGN
 
