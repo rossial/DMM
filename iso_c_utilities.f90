@@ -1,5 +1,4 @@
 !
-! Copyright 2014 Aleksandar Donev
 ! Public Domain
 ! From http://cims.nyu.edu/~donev/Fortran/DLL/DLL.Forum.txt
 !
