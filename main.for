@@ -139,9 +139,6 @@ C GET the namelist specified by FILEIN
 	DEB = 'D'
 	IF (DEB.EQ.'R') THEN
        CALL GETARG(1,FILEIN)    ! load name of input file
-      ELSE
-      FILEIN = 'H:\AROSSI\DMM\NILE\nile.nml'
-C     FILEIN = 'H:\arossi\dmm\tfpf\tfpf_es.nml'
 	ENDIF
 
 C CHECK FILEIN
