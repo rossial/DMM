@@ -102,7 +102,7 @@
 
  Note: use can be made of -99999 to assign missing values to the endogenous variables
 
- &dataset T=100 ny=1 nz=0 nf=10 datasim=n obs=
+ &dataset T=100 ny=1 nz=0 nf=10 datasim='n' obs=
   1120
   1160
   963
