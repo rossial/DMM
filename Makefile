@@ -134,4 +134,4 @@ all: $(MOD_OBJS) $(OBJS) $(RANDLIB_OBJS)
 	$(FC) $(FFFLAGS) -c $<
 
 clean:
-	rm -f *.o $(EXEC)
+	rm -f *.o $(EXEC) *.mod
