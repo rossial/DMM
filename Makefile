@@ -8,6 +8,8 @@ MOD_OBJS = \
 	dlfcn.o
 
 OBJS = \
+	setfilem.o \
+	geterrstr.o \
 	amh2.o \
 	gammln.o \
 	int2seq2.o \

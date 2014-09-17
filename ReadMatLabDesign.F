@@ -248,27 +248,3 @@ C
 
       RETURN
       END
-
-C -----------------------------------------
-C To make dynamic the name of the .m file
-C -----------------------------------------
-	SUBROUTINE SETFILEM(string1,string2)
-!DEC$ ATTRIBUTES DLLEXPORT, ALIAS:'setfilem_' :: SETFILEM
-	CHARACTER*200 string1,string2,mfile,pathmfile
-      COMMON /M/ mfile, pathmfile
-      mfile     = string1
-      pathmfile = string2
-	RETURN
-      END
-
-C --------------------
-C To get MatLab errors
-C --------------------
-      SUBROUTINE GETERRSTR(matlaberror)
-!DEC$ ATTRIBUTES DLLEXPORT, ALIAS:'geterrstr_' :: GETERRSTR
-      CHARACTER*1024 matlaberror
-      CHARACTER*1024 buffer
-      COMMON /ERRBUFFER/ buffer
-	 matlaberror = buffer
-      RETURN
-      END
