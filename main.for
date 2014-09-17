@@ -110,7 +110,6 @@ C LOCALS
 	INTEGER ntf,nstot,nmis,indmis,IT,I,J,K,L1,jjj,IND,IFAIL,IMAX(1),
      1 IMIN(1),IMSVAR
 	DOUBLE PRECISION AUX,lastl,lasth
-	CHARACTER*1 DEB
       CHARACTER*3 DLLEXT
       CHARACTER*200 mfile,pathmfile
 	CHARACTER*200 FILEIN,NMLNAME,PATH,FILEOUT,DMMTITLE,CURDIR
@@ -136,10 +135,7 @@ C TIME
       IT1(4:7) = DATE_ITIME(5:8)
 
 C GET the namelist specified by FILEIN
-	DEB = 'D'
-	IF (DEB.EQ.'R') THEN
-       CALL GETARG(1,FILEIN)    ! load name of input file
-	ENDIF
+      CALL GETARG(1,FILEIN)     ! load name of input file
 
 C CHECK FILEIN
 	IF (TRIM(FILEIN).EQ.'') THEN
