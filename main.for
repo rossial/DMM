@@ -55,12 +55,6 @@ C DECLARE an "interface block" to the .DLL that contains DESIGN
 	 END SUBROUTINE
 	END INTERFACE
 	CHARACTER*1 fittizia
-C DECLARE an "interface block" to the .DLL that contains SETFILEM
-	INTERFACE
-	 SUBROUTINE SETFILEM(mfile,pathmfile)
-	 CHARACTER*200 mfile,pathmfile
-       END SUBROUTINE
-      END INTERFACE
 C DECLARE an "interface block" to the .DLL that contains GETERRSTR
 	INTERFACE
 	 SUBROUTINE GETERRSTR(matlaberror)
@@ -72,16 +66,13 @@ C DECLARE an "interface block" to the .DLL that contains GETERRSTR
       LOGICAL STATUS
       POINTER (pdll,fittizia)   ! ASSOCIATE  pointer pdll alla DLL ad una varibile fittizia
       POINTER (pdesign,DESIGN)
-      POINTER (psetfilem,SETFILEM)
       POINTER (pgeterrstr,GETERRSTR)
 #else
       INTEGER(C_INT) :: STATUS
       TYPE(C_PTR) :: pdll=C_NULL_PTR
       TYPE(C_FUNPTR) :: pdesign=C_NULL_FUNPTR
-      TYPE(C_FUNPTR) :: psetfilem=C_NULL_FUNPTR
       TYPE(C_FUNPTR) :: pgeterrstr=C_NULL_FUNPTR
       PROCEDURE(DESIGN), POINTER :: ptrdesign=>NULL()
-      PROCEDURE(DESIGN), POINTER :: ptrsetfilem=>NULL()
       PROCEDURE(DESIGN), POINTER :: ptrgeterrstr=>NULL()
 #endif
 	CHARACTER*200 DLLNAME    ! name of the DLL (defined by the user)
@@ -217,28 +208,6 @@ C CHECK the MatLab file if needed
       IF ((DLLEXT.EQ.'M  ').OR.(DLLEXT.EQ.'m  ')) THEN
 C SET UP the pointer to the DLL function
 #if defined(__CYGWIN32__) || defined(_WIN32)
-         psetfilem = getprocaddress(pdll, "setfilem_"C)
-         IF (psetfilem.EQ.0) THEN
-            TYPE *, ' '
-            TYPE *, ' Sub SETFILEM cannot be found into '// DLLNAME
-            TYPE *, ' Program aborting'
-            PAUSE
-            STOP
-         ENDIF
-#else
-         psetfilem = DLSym(pdll, 'setfilem_'//C_NULL_CHAR)
-         IF(.NOT.C_ASSOCIATED(psetfilem)) THEN
-            WRITE(*,*) ' '
-            WRITE(*,*) ' Error in dlsym: ', C_F_STRING(DLError())
-            WRITE(*,*) ' Sub SETFILEM cannot be found into '// DLLNAME
-            WRITE(*,*) ' Program aborting'
-            STOP
-         ENDIF
-         CALL C_F_PROCPOINTER(CPTR=psetfilem, FPTR=ptrsetfilem)
-#endif
-
-C SET UP the pointer to the DLL function
-#if defined(__CYGWIN32__) || defined(_WIN32)
          pgeterrstr = getprocaddress(pdll, "geterrstr_"C)
          IF (pgeterrstr.EQ.0) THEN
             TYPE *, ' '
@@ -263,7 +232,11 @@ C Assign the name of the matlab file
        ALLOCATE( c(ny,max(nz,1),ns(1)),H(ny,nx,ns(2)),
 	1  G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)),R(nx,nu,ns(6)),
      1  theta(nt))
-       CALL SETFILEM(mfile,pathmfile)  ! ONLY THE FIRST TIME
+#if defined(DLL)
+       CALL SETFILEM(mfile,pathmfile) ! ONLY THE FIRST TIME
+#else
+#endif
+
        theta(:) = 1.D0
 #if defined(__CYGWIN32__) || defined(_WIN32)
        CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
