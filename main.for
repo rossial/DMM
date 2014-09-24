@@ -44,26 +44,13 @@ C ------------------------------------------------------------------------------
       USE ISO_C_UTILITIES
       USE DLFCN
 #endif
-C DECLARE an "interface block" to the .DLL that contains DESIGN
-
-	INTERFACE
-	 SUBROUTINE DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
-	 INTEGER ny,nz,nx,nu,ns(6),nt
-	 DOUBLE PRECISION theta(nt)
-	 DOUBLE PRECISION c(ny,max(1,nz),ns(1)),H(ny,nx,ns(2)),
-	1 G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)),R(nx,nu,ns(6))
-	 END SUBROUTINE
-	END INTERFACE
 	CHARACTER*1 fittizia
 #if defined(__CYGWIN32__) || defined(_WIN32)
       LOGICAL STATUS
       POINTER (pdll,fittizia)   ! ASSOCIATE  pointer pdll alla DLL ad una varibile fittizia
-      POINTER (pdesign,DESIGN)
 #else
       INTEGER(C_INT) :: STATUS
       TYPE(C_PTR) :: pdll=C_NULL_PTR
-      TYPE(C_FUNPTR) :: pdesign=C_NULL_FUNPTR
-      PROCEDURE(DESIGN), POINTER :: ptrdesign=>NULL()
 #endif
 	CHARACTER*200 DLLNAME    ! name of the DLL (defined by the user)
 
@@ -172,28 +159,6 @@ C FIND the DLL and LOAD it into the memory
          STOP
       ENDIF
 
-C SET UP the pointer to the DLL function
-#if defined(__CYGWIN32__) || defined(_WIN32)
-      pdesign = getprocaddress(pdll, "design_"C)
-      IF (pdesign.EQ.0) THEN
-         TYPE *, ' '
-         TYPE *, ' Sub DESIGN cannot be found into '// DLLNAME
-         TYPE *, ' Program aborting'
-         PAUSE
-         STOP
-      ENDIF
-#else
-      pdesign = DLSym(pdll, 'design_'//C_NULL_CHAR)
-      IF(.NOT.C_ASSOCIATED(pdesign)) THEN
-         WRITE(*,*) ' '
-         WRITE(*,*) ' Error in dlsym: ', C_F_STRING(DLError())
-         WRITE(*,*) ' Sub DESIGN cannot be found into '// DLLNAME
-         WRITE(*,*) ' Program aborting'
-         STOP
-      ENDIF
-      CALL C_F_PROCPOINTER(CPTR=pdesign, FPTR=ptrdesign)
-#endif
-
 C CHECK the MatLab file if needed
       IF ((DLLEXT.EQ.'M  ').OR.(DLLEXT.EQ.'m  ')) THEN
 C Assign the name of the matlab file
@@ -206,10 +171,9 @@ C Assign the name of the matlab file
 #endif
 
        theta(:) = 1.D0
-#if defined(__CYGWIN32__) || defined(_WIN32)
+#if defined(DLL)
        CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #else
-       CALL ptrdesign(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #endif
        DEALLOCATE(c,H,G,a,F,R,theta)
        IF (ny.EQ.0) THEN

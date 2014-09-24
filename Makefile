@@ -108,8 +108,6 @@ RANDLIB_OBJS = \
 	sexpo.o \
 	spofa.o
 
-MATLAB_OBJS = ReadMatLabDesign.o
-
 EXEC = dmm
 
 VPATH := $(VPATH) randlib
