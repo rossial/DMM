@@ -55,25 +55,15 @@ C DECLARE an "interface block" to the .DLL that contains DESIGN
 	 END SUBROUTINE
 	END INTERFACE
 	CHARACTER*1 fittizia
-C DECLARE an "interface block" to the .DLL that contains GETERRSTR
-	INTERFACE
-	 SUBROUTINE GETERRSTR(matlaberror)
-	 CHARACTER*1024 matlaberror
-       END SUBROUTINE
-      END INTERFACE
-
 #if defined(__CYGWIN32__) || defined(_WIN32)
       LOGICAL STATUS
       POINTER (pdll,fittizia)   ! ASSOCIATE  pointer pdll alla DLL ad una varibile fittizia
       POINTER (pdesign,DESIGN)
-      POINTER (pgeterrstr,GETERRSTR)
 #else
       INTEGER(C_INT) :: STATUS
       TYPE(C_PTR) :: pdll=C_NULL_PTR
       TYPE(C_FUNPTR) :: pdesign=C_NULL_FUNPTR
-      TYPE(C_FUNPTR) :: pgeterrstr=C_NULL_FUNPTR
       PROCEDURE(DESIGN), POINTER :: ptrdesign=>NULL()
-      PROCEDURE(DESIGN), POINTER :: ptrgeterrstr=>NULL()
 #endif
 	CHARACTER*200 DLLNAME    ! name of the DLL (defined by the user)
 
@@ -206,28 +196,6 @@ C SET UP the pointer to the DLL function
 
 C CHECK the MatLab file if needed
       IF ((DLLEXT.EQ.'M  ').OR.(DLLEXT.EQ.'m  ')) THEN
-C SET UP the pointer to the DLL function
-#if defined(__CYGWIN32__) || defined(_WIN32)
-         pgeterrstr = getprocaddress(pdll, "geterrstr_"C)
-         IF (pgeterrstr.EQ.0) THEN
-            TYPE *, ' '
-            TYPE *, ' Sub GETERRSTR cannot be found into '// DLLNAME
-            TYPE *, ' Program aborting'
-            PAUSE
-            STOP
-         ENDIF
-#else
-         pgeterrstr = DLSym(pdll, 'geterrstr_'//C_NULL_CHAR)
-         IF(.NOT.C_ASSOCIATED(pgeterrstr)) THEN
-            WRITE(*,*) ' '
-            WRITE(*,*) ' Error in dlsym: ', C_F_STRING(DLError())
-            WRITE(*,*) ' Sub GETERRSTR cannot be found into '// DLLNAME
-            WRITE(*,*) ' Program aborting'
-            STOP
-         ENDIF
-         CALL C_F_PROCPOINTER(CPTR=pgeterrstr, FPTR=ptrgeterrstr)
-#endif
-
 C Assign the name of the matlab file
        ALLOCATE( c(ny,max(nz,1),ns(1)),H(ny,nx,ns(2)),
 	1  G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)),R(nx,nu,ns(6)),
@@ -341,7 +309,11 @@ C Assign the name of the matlab file
 #endif
 	  STOP
        ELSEIF (ny.EQ.-8) THEN
+#if defined(DLL)
         CALL GETERRSTR(matlaberror)
+#else
+#endif
+
 #ifdef __GFORTRAN__
         WRITE(*,*) ' '
         WRITE(*,*) ' the MATLAB funtion can not be executed:'
