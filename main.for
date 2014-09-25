@@ -127,9 +127,7 @@ C CHECK DLL NAME AND FIND FILE EXTENSION (.dll or .m)
       IF ((DLLEXT.EQ.'M  ').OR.(DLLEXT.EQ.'m  ')) THEN
        mfile     = DLLNAME(J+1:I-1)
        pathmfile = DLLNAME(1:J-1)
-       DLLNAME   = 'H:\arossi\dmm64\matlabdll\debug\matlabdll.dll' ! provvisorio
        IND = GETCWD(CURDIR)  ! current directory
-C       DLLNAME = TRIM(CURDIR) // '\matlabdll.dll'                 ! definitivo
       ENDIF
 
 C CHECK the MatLab file if needed
@@ -268,12 +266,10 @@ C Assign the name of the matlab file
 #ifdef __GFORTRAN__
           WRITE(*,*) ' '
           WRITE(*,*) ' One of the output canot be assigned during the call'
-          WRITE(*,*) ' ' // trim(DLLNAME)
           WRITE(*,*) ' Program aborting'
 #else
         TYPE *, ' '
 	  TYPE *, ' One of the output canot be assigned during the call '
-        TYPE *, ' ' // trim(DLLNAME)
         TYPE *, ' Program aborting'
 	  PAUSE
 #endif
@@ -283,7 +279,7 @@ C Assign the name of the matlab file
 
 C SET SHELL title
 	DMMTITLE = 'title DMM input:' // TRIM(PATH) // TRIM(NMLNAME)
-     #     // '.nml' // ' - ' // TRIM(DLLNAME)
+     #     // '.nml' // ' - '
 	CALL system(DMMTITLE)
 
 C INITIALISE THE RANDOM NUMBER GENERATOR
