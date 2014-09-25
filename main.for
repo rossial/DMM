@@ -927,7 +927,7 @@ C MARGINAL LIKELIHOOD
 	 ELSE
 	  CALL HARMONIC2(GGG,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                 INFOS,yk(1:nobs,:),gibtheta,gibZ,thetaprior,
-     2                 psiprior,pdftheta,pdll,MLHM)
+     2                 psiprior,pdftheta,MLHM)
 	  WRITE(*,*) 'Modified harmonic mean: done!'
 	  CALL MENGWONG2(GGG,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                 INFOS,yk(1:nobs,:),gibtheta,gibZ,thetaprior,
