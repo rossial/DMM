@@ -480,7 +480,7 @@ C SIMULATION of DATA and UNOBSERVABLES
 	IF ((datasim.EQ.'Y').OR.(datasim.EQ.'y')) THEN
 	 CALL OPENFILES(ESTIMATION,SEED,NV,0,0,datasim,MARGLIK,
 	1                PATH,NMLNAME)
-	 CALL SIMDATA(nobs,d,ny,nz,nx,nu,ns,nstot,nt,nv,np,INFOS,pdll,
+	 CALL SIMDATA(nobs,d,ny,nz,nx,nu,ns,nstot,nt,nv,np,INFOS,
      2              theta0,psi0,Z,STATE,yk)
 	 IF (nv.EQ.0) THEN
 	  WRITE(9,'((F25.15))') theta0(1:nt)
