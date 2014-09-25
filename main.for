@@ -648,7 +648,7 @@ C MCMC BURN-IN
         DO it = 1,nt
 	   IF (thetaprior(it,3).LT.thetaprior(it,4)) THEN
 	    CALL SLICE2(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk(1:nobs,:),
-	1             theta0,thetaprior(it,:),pdftheta(it),pdll,
+	1             theta0,thetaprior(it,:),pdftheta(it),
      2                NEVAL(it),theta(it))
           theta0(it) = theta(it)
          ENDIF
@@ -818,7 +818,7 @@ C MCMC RECORDING phase
 	  DO it = 1,nt
 	   IF (thetaprior(it,3).LT.thetaprior(it,4)) THEN
 	    CALL SLICE2(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk(1:nobs,:),
-	1                 theta0,thetaprior(it,:),pdftheta(it),pdll,
+	1                 theta0,thetaprior(it,:),pdftheta(it),
      2                NEVAL(it),theta(it))
           theta0(it) = theta(it)
          ENDIF
