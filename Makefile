@@ -8,8 +8,6 @@ MOD_OBJS = \
 	dlfcn.o
 
 OBJS = \
-	setfilem.o \
-	geterrstr.o \
 	amh2.o \
 	gammln.o \
 	int2seq2.o \
@@ -111,25 +109,34 @@ RANDLIB_OBJS = \
 EXEC = dmm
 
 VPATH := $(VPATH) randlib
-LIBS = -llapack -ldl
 
-all: $(MOD_OBJS) $(OBJS) $(RANDLIB_OBJS)
+ifdef DLL
+INCLUDE = -I$(MATLABROOT)/extern/include
+DEFINE = -DORIGDLL
+MATLAB_LIBS = -L$(MATLABROOT)/bin/maci64 -leng -lmx
+LIBS = $(MATLAB_LIBS) -llapack -ldl
+DLL_OBJS += design.o setfilem.o geterrstr.o
+else
+LIBS = -llapack -ldl
+endif
+
+all: $(MOD_OBJS) $(OBJS) $(RANDLIB_OBJS) $(DLL_OBJS)
 	$(FC) $(FCFLAGS) $^ $(LIBS) -o $(EXEC)
 
 %.o: %.f90 %.mod
-	$(FC) $(FCFLAGS)  -c $<
+	$(FC) $(FCFLAGS) $(INCLUDE) $(DEFINE) -c $<
 
 %.o: %.f90
-	$(FC) $(FCFLAGS) -c $<
+	$(FC) $(FCFLAGS) $(INCLUDE) $(DEFINE) -c $<
 
 %.mod: %.f90 %.o
 	@true
 
 %.o : %.f
-	$(FC) $(FFFLAGS) -c $<
+	$(FC) $(FFFLAGS) $(INCLUDE) $(DEFINE) -c $<
 
 %.o : %.for
-	$(FC) $(FFFLAGS) -c $<
+	$(FC) $(FFFLAGS) $(INCLUDE) $(DEFINE) -c $<
 
 clean:
 	rm -f *.o $(EXEC) *.mod

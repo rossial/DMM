@@ -165,13 +165,13 @@ C Assign the name of the matlab file
        ALLOCATE( c(ny,max(nz,1),ns(1)),H(ny,nx,ns(2)),
 	1  G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)),R(nx,nu,ns(6)),
      1  theta(nt))
-#if defined(DLL)
+#if defined(ORIGDLL)
        CALL SETFILEM(mfile,pathmfile) ! ONLY THE FIRST TIME
 #else
 #endif
 
        theta(:) = 1.D0
-#if defined(DLL)
+#if defined(ORIGDLL)
        CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #else
 #endif
@@ -273,7 +273,7 @@ C Assign the name of the matlab file
 #endif
 	  STOP
        ELSEIF (ny.EQ.-8) THEN
-#if defined(DLL)
+#if defined(ORIGDLL)
         CALL GETERRSTR(matlaberror)
 #else
 #endif
