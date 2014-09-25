@@ -825,7 +825,7 @@ C MCMC RECORDING phase
 	  END DO
 	  CUMN = CUMN+NEVAL
 	  CALL SIMSTATE2(nobs,d,ny,nz,nx,nu,ns,nt,yk(1:nobs,:),
-	1                 theta,S,pdll,STATE)
+	1                 theta,S,STATE)
 	  CALL INNOV2(nobs,d,ny,nz,nx,nu,ns,nt,S,
 	1              yk(1:nobs,:),theta,pdll,INN)
 	  IF (nf.GT.0) THEN
