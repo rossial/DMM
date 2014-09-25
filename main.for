@@ -555,7 +555,7 @@ c	1         thetaprior,theta0,psi0,IMSVAR,HESS,AUX)
      1             INFOS,theta0,psi0,thetaprior,HESS,thetase,psise,
      1             SSMOOTH,INN,IFAIL)
         ELSE
-         CALL OPGKIM(nobs,d,ny,nz,nx,nu,nt,nv,ns,nstot,np(1),pdll,
+         CALL OPGKIM(nobs,d,ny,nz,nx,nu,nt,nv,ns,nstot,np(1),
      1               yk,IYK,INFOS,theta0,psi0,thetaprior,HESS,
      1               thetase,psise,STATE,AKMSE,SSMOOTH,INN,IFAIL)
 #ifdef __GFORTRAN__

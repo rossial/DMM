@@ -27,7 +27,7 @@ C
 C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C ------------------------------------------------------------
-      SUBROUTINE OPGKIM(nobs,d,ny,nz,nx,nu,nt,nv,ns,nstot,np,pdll,yk,
+      SUBROUTINE OPGKIM(nobs,d,ny,nz,nx,nu,nt,nv,ns,nstot,np,yk,
      1                  IYK,INFOS,theta,psi,thetaprior,HESS,thetase,
      1                  psise,XS,XSSE,SSMOOTH,INN,IFAIL)
 #if defined(__CYGWIN32__) || defined(_WIN32)
@@ -39,28 +39,8 @@ C ------------------------------------------------------------
       USE ISO_C_UTILITIES
       USE DLFCN
 #endif
-	INTERFACE
-	 SUBROUTINE DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
-	 INTEGER ny,nz,nx,nu,ns(6),nt
-	 DOUBLE PRECISION theta(nt)
-	 DOUBLE PRECISION c(ny,max(1,nz),ns(1)),H(ny,nx,ns(2)),
-	1 G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)),R(nx,nu,ns(6))
-	 END SUBROUTINE
-	END INTERFACE
-	CHARACTER*1 fittizia
-#if defined(__CYGWIN32__) || defined(_WIN32)
-      POINTER (pdll,fittizia)   ! ASSOCIATE  pointer pdll alla DLL ad una varibile fittizia
-      POINTER (pdesign,DESIGN)  ! IMPORTANT associo il puntatore pdesign alla Interface definita
-#else
-	  TYPE(C_PTR) :: pdll
-      TYPE(C_FUNPTR) :: pdesign=C_NULL_FUNPTR
-      PROCEDURE(DESIGN), POINTER :: ptrdesign=>NULL()
-#endif
 
 ! Input
-#ifdef __INTEL_COMPILER
-      INTEGER pdll
-#endif
 	INTEGER nobs,d(2),ny,nz,nx,nu,nt,nv,ns(6),nstot,np,IYK(nobs,ny+1),
      1 INFOS(9,6)
       DOUBLE PRECISION yk(nobs,ny+nz),theta(nt),psi(np),
@@ -107,16 +87,9 @@ C ------------------------------------------------------------
       IFAIL = 0
       CALL SYMINV(LTR,NFREE,LTR,W,J,IFAIL,RMAX)
 
-#if defined(__CYGWIN32__) || defined(_WIN32)
-      pdesign = getprocaddress(pdll, "design_"C)
+#if defined(ORIGDLL)
       CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #else
-      pdesign = DLSym(pdll, 'design_'//C_NULL_CHAR)
-      IF(.NOT.C_ASSOCIATED(pdesign)) THEN
-         WRITE(*,*) ' Error in dlsym: ', C_F_STRING(DLError())
-	  END IF
-      CALL C_F_PROCPOINTER(CPTR=pdesign, FPTR=ptrdesign)
-	  CALL ptrdesign(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #endif
       CALL KIM(nobs,d,ny,nz,nx,nu,ns,nstot,nv,np,INFOS,yk,IYK,
      1         c,H,G,a,F,R,psi,1,XS,XSSE,SSMOOTH,INN,DLL)
@@ -162,10 +135,9 @@ C -----------
         ELSE
          psi(I-NFT) = PAR(I)
         ENDIF
-#if defined(__CYGWIN32__) || defined(_WIN32)
+#if defined(ORIGDLL)
         CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #else
-        CALL ptrdesign(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #endif
         CALL KIM(nobs,d,ny,nz,nx,nu,ns,nstot,nv,np,INFOS,yk,IYK,
      1           c,H,G,a,F,R,psi,0,XS,XSSE,SSMOOTH,INN,DLLM)
