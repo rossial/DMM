@@ -718,7 +718,7 @@ C MCMC RECORDING phase
 	  IF (nf.GT.0) THEN
 	   CALL FORECAST(yk(nobs+1:nobs+nf,ny+1:ny+nz),nf,ny,nz,nx,nu,nv,
 	1                 ns,nstot,nt,np,theta,psi,INFOS,Z(nobs),
-     2                 STATE(nobs,:),pdll,FORE)
+     2                 STATE(nobs,:),FORE)
 	  ENDIF
 	  IF (INDMIS*nmis.GE.1) THEN
 	   J = 1
@@ -831,7 +831,7 @@ C MCMC RECORDING phase
 	  IF (nf.GT.0) THEN
 	   CALL FORECAST(yk(nobs+1:nobs+nf,ny+1:ny+nz),nf,ny,nz,nx,nu,nv,
 	1                 ns,nstot,nt,np,theta,psi,INFOS,Z(nobs),
-     2                 STATE(nobs,:),pdll,FORE)
+     2                 STATE(nobs,:),FORE)
 	  ENDIF
 	  IF (jjj/IND*IND.EQ.jjj) THEN
 	   IMIN    = MINLOC(CUMN(INDT(L1+1:ntf)))
