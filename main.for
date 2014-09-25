@@ -810,7 +810,7 @@ C MCMC RECORDING phase
 	   ELSE
 		CALL AMH2(hbl,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np(1),
 	1              yk(1:nobs,:),theta0,psi0,
-	2              PTR,PM,INFOS,pdll,Z,S,ACCRATE)
+	2              PTR,PM,INFOS,Z,S,ACCRATE)
 		CALL RECPR(jjj+burnin,nstot,nobs,Z,ZW,PM,PTR)
 	   ENDIF
 	   CALL DRAWPSI(nobs,nv,np,INFOS,Z,psiprior,psi0,psi)
