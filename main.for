@@ -827,7 +827,7 @@ C MCMC RECORDING phase
 	  CALL SIMSTATE2(nobs,d,ny,nz,nx,nu,ns,nt,yk(1:nobs,:),
 	1                 theta,S,STATE)
 	  CALL INNOV2(nobs,d,ny,nz,nx,nu,ns,nt,S,
-	1              yk(1:nobs,:),theta,pdll,INN)
+	1              yk(1:nobs,:),theta,INN)
 	  IF (nf.GT.0) THEN
 	   CALL FORECAST(yk(nobs+1:nobs+nf,ny+1:ny+nz),nf,ny,nz,nx,nu,nv,
 	1                 ns,nstot,nt,np,theta,psi,INFOS,Z(nobs),
