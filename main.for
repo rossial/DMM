@@ -551,7 +551,7 @@ c	1         thetaprior,theta0,psi0,IMSVAR,HESS,AUX)
        ELSE
         ALLOCATE(psise(np(1)),SSMOOTH(nobs,nstot))
         IF(IMSVAR.EQ.1)THEN
-         CALL OPGH(nobs,ny,nz,nx,nu,nt,nv,ns,nstot,np(1),pdll,yk,IYK,
+         CALL OPGH(nobs,ny,nz,nx,nu,nt,nv,ns,nstot,np(1),yk,IYK,
      1             INFOS,theta0,psi0,thetaprior,HESS,thetase,psise,
      1             SSMOOTH,INN,IFAIL)
         ELSE
