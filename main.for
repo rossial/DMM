@@ -472,7 +472,7 @@ C WRITE HYPERPARAMTERS for THETA and PSI plus DATA
 
 C CHECK DESIGN.dll
 	IF ((check.EQ.'Y').OR.(check.EQ.'y')) THEN
-	 CALL CHECKDESIGN(ny,nz,nx,nu,ns,nt,d,theta0,pdll,PATH,NMLNAME)
+	 CALL CHECKDESIGN(ny,nz,nx,nu,ns,nt,d,theta0,PATH,NMLNAME)
 	 GOTO 7777
 	ENDIF
 
