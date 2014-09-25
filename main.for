@@ -530,7 +530,7 @@ c	 CALL ML(nobs,d,ny,nz,nx,nu,nt,nv,ns,np(1),INFOS,pdll,INDT,yk,IYK,S,
 c	1         thetaprior,theta0,psi0,IMSVAR,HESS,AUX)
 	 ALLOCATE(THETASE(nt),AKMSE(nobs,nx),INN(nobs,ny))
 	 IF (nv.EQ.0) THEN
-        CALL OPG(nobs,d,ny,nz,nx,nu,nt,ns,pdll,yk,IYK,S,
+        CALL OPG(nobs,d,ny,nz,nx,nu,nt,ns,yk,IYK,S,
 	1           theta0,thetaprior,HESS,thetase,STATE,AKMSE,INN,IFAIL)
 #ifdef __GFORTRAN__
         WRITE(fmt, '(a,i4,a)') '(', 2, '(F25.15))'
