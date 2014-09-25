@@ -726,7 +726,7 @@ C MCMC RECORDING phase
 	    IF (IYK(I,ny+1).LT.ny) THEN
 		  K = ny-IYK(I,ny+1)
 	      CALL MISSING(yk(I,:),ny,nz,nx,nu,ns,nt,K,theta,
-	1                  S(I,1:6),STATE(I,:),pdll,ykmis(J:J+K-1))
+	1                  S(I,1:6),STATE(I,:),ykmis(J:J+K-1))
 	     J = J+K
 	    ENDIF
          ENDDO
