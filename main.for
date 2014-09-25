@@ -921,7 +921,7 @@ C MARGINAL LIKELIHOOD
 	  WRITE(*,*) 'Modified harmonic mean: done!'
 	  CALL MENGWONG(GGG,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                INFOS,yk(1:nobs,:),IYK(1:nobs,:),gibtheta,gibZ,
-     2                thetaprior,psiprior,pdftheta,pdll,MLHM(5,1),MLMW)
+     2                thetaprior,psiprior,pdftheta,MLHM(5,1),MLMW)
         WRITE(*,*) 'Bridge sampling: done!'
 	  WRITE(*,*) ' '
 	 ELSE
