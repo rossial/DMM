@@ -22,14 +22,12 @@ C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C -------------------------------------------------------------
 	SUBROUTINE SLICE(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk,IYK,
-	1                 theta,thetaprior,tipo,pdll,NEVAL,XSIM)
+	1                 theta,thetaprior,tipo,NEVAL,XSIM)
 C INPUT
 	INTEGER it,nobs,d(2),ny,nz,nx,nu,ns(6),nt,S(nobs,6),
 	1 IYK(nobs,ny+1)
 	DOUBLE PRECISION yk(nobs,ny+nz),theta(nt),thetaprior(4)
 	CHARACTER*2 tipo
-	CHARACTER*1 fittizia
-	POINTER (pdll,fittizia)
 
 C OUTPUT
 	INTEGER NEVAL
@@ -51,7 +49,7 @@ C    THIS DEFINES THE SLICE S={x: z < ln(f(x))}
 C -------------------------------------------------------
 	theta(it) = XOLD
 	FXOLD=PTHETA(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk,IYK,
-	1             theta,thetaprior,tipo,pdll)
+	1             theta,thetaprior,tipo)
 	NEVAL = NEVAL + 1
       U = genunf(0.D0,1.D0)
 	Z = FXOLD + DLOG(U)
@@ -72,14 +70,14 @@ C	U = G05CAF(U)
 	 DO 100 WHILE(L.GT.XLB)
         theta(it) = L
  	  FXL=PTHETA(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk,IYK,
-	1             theta,thetaprior,tipo,pdll)
+	1             theta,thetaprior,tipo)
 	  NEVAL = NEVAL + 1
 	  IF (FXL.LE.Z) GOTO 110
 100	 L = L - W
 110     DO 200 WHILE(R.LT.XUB)
         theta(it) = R
  	  FXR=PTHETA(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk,IYK,
-	1             theta,thetaprior,tipo,pdll)
+	1             theta,thetaprior,tipo)
 	  NEVAL = NEVAL + 1
 	  IF (FXR.LE.Z) GOTO 210
 200	 R = R + W
@@ -93,7 +91,7 @@ C	 U = G05CAF(U)
 	  IF (L.LE.XLB) GOTO 310
 	  theta(it) = L
  	  FXL=PTHETA(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk,IYK,
-	1             theta,thetaprior,tipo,pdll)
+	1             theta,thetaprior,tipo)
 	  NEVAL = NEVAL + 1
 	  IF (FXL.LE.Z) GOTO 310
 	  L = L - W
@@ -103,7 +101,7 @@ C	 U = G05CAF(U)
 	  IF (R.GE.XLB) GOTO 410
 	  theta(it) = R
  	  FXR=PTHETA(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk,IYK,
-	1             theta,thetaprior,tipo,pdll)
+	1             theta,thetaprior,tipo)
 	  NEVAL = NEVAL + 1
 	  IF (FXR.LE.Z) GOTO 410
 	  R = R + W
@@ -123,7 +121,7 @@ C	 U = G05CAF(U)
 	 XSIM = L + U*(R - L)
 	 theta(it) = XSIM
 	 FXSIM=PTHETA(it,nobs,d,ny,nz,nx,nu,ns,nt,S,yk,IYK,
-	1              theta,thetaprior,tipo,pdll)
+	1              theta,thetaprior,tipo)
 	 NEVAL = NEVAL + 1
 	 IF (FXSIM.GE.Z) OK = 1
 	 IF(XSIM.GT.XOLD) THEN
