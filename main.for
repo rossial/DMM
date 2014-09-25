@@ -44,14 +44,6 @@ C ------------------------------------------------------------------------------
       USE ISO_C_UTILITIES
       USE DLFCN
 #endif
-	CHARACTER*1 fittizia
-#if defined(__CYGWIN32__) || defined(_WIN32)
-      LOGICAL STATUS
-      POINTER (pdll,fittizia)   ! ASSOCIATE  pointer pdll alla DLL ad una varibile fittizia
-#else
-      INTEGER(C_INT) :: STATUS
-      TYPE(C_PTR) :: pdll=C_NULL_PTR
-#endif
 	CHARACTER*200 DLLNAME    ! name of the DLL (defined by the user)
 
 C NAMELIST DECLARATIONS
@@ -138,25 +130,6 @@ C CHECK DLL NAME AND FIND FILE EXTENSION (.dll or .m)
        DLLNAME   = 'H:\arossi\dmm64\matlabdll\debug\matlabdll.dll' ! provvisorio
        IND = GETCWD(CURDIR)  ! current directory
 C       DLLNAME = TRIM(CURDIR) // '\matlabdll.dll'                 ! definitivo
-      ENDIF
-
-C FIND the DLL and LOAD it into the memory
-#if defined(__CYGWIN32__) || defined(_WIN32)
-      pdll = loadlibrary(DLLNAME)
-      IF (pdll.EQ.0) THEN
-         TYPE *, ' '
-         TYPE *, TRIM(DLLNAME) // ' cannot be found or opened'
-         TYPE *, ' Program aborting'
-         PAUSE
-#else
-      pdll = DLOpen(TRIM(DLLNAME)//C_NULL_CHAR, RTLD_NOW)
-      IF(.NOT.C_ASSOCIATED(pdll)) THEN
-         WRITE(*,*) ' '
-         WRITE(*,*) ' Error in dlopen: ', C_F_STRING(DLError())
-         WRITE(*,*) TRIM(DLLNAME) // ' cannot be found or opened'
-         WRITE(*,*) ' Program aborting'
-#endif
-         STOP
       ENDIF
 
 C CHECK the MatLab file if needed
@@ -956,15 +929,6 @@ C MARGINAL LIKELIHOOD
 	 DEALLOCATE(psi0,psi,psiprior,ZW)
 	ENDIF
 
-#if defined(__CYGWIN32__) || defined(_WIN32)
-      STATUS = freelibrary(pdll) !libero la DLL dalla memoria alla fine del programma
-#else
-      STATUS = DLClose(pdll)
-      IF(STATUS/=0) THEN
-         WRITE(*,*) ' Error in dlclose: ', C_F_STRING(DLError())
-         STOP
-      END IF
-#endif
 	IF (TRIM(PATH).EQ.'') THEN
 	 STATUS = getcwd(PATH) ! get current directory
       ENDIF

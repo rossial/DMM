@@ -114,10 +114,10 @@ ifdef DLL
 INCLUDE = -I$(MATLABROOT)/extern/include
 DEFINE = -DORIGDLL
 MATLAB_LIBS = -L$(MATLABROOT)/bin/maci64 -leng -lmx
-LIBS = $(MATLAB_LIBS) -llapack -ldl
+LIBS = $(MATLAB_LIBS) -llapack
 DLL_OBJS += design.o setfilem.o geterrstr.o
 else
-LIBS = -llapack -ldl
+LIBS = -llapack
 endif
 
 all: $(MOD_OBJS) $(OBJS) $(RANDLIB_OBJS) $(DLL_OBJS)
