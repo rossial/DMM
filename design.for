@@ -50,18 +50,36 @@ C
 	DOUBLE PRECISION nsd(6)
 	INTEGER ny_ptr,nz_ptr,nx_ptr,nu_ptr,ns_ptr,nt_ptr,theta_ptr
 	INTEGER C_ptr, H_ptr, G_ptr, A_ptr, F_ptr, R_ptr
-
+      CHARACTER*1024 matlaberror
 
 C Try to open MatLab (just the first time)
       IF (ep .eq.0 ) THEN
         ep = engOpen('matlab ')
-        IF (ep .eq. 0) THEN
-          ny = 0 ! ' Can''t start MatLab engine'
-          RETURN
+        IF (ep .eq. 0) THEN ! Can''t start Matlab engine
+#ifdef __GFORTRAN__
+		   WRITE(*,*) ' '
+		   WRITE(*,*) ' Can''t start MATLAB engine'
+		   WRITE(*,*) ' Program aborting'
+#else
+		   TYPE *, ' '
+		   TYPE *, ' Can''t start MATLAB engine'
+		   TYPE *, ' Program aborting'
+		   PAUSE
+#endif
+		   STOP
         ENDIF
-        IF (engEvalString(ep,'cd ' // pathmfile).ne. 0) then
-          ny = -7 ! ' Can''t find or open the MatLab funtion'
-          RETURN
+        IF (engEvalString(ep,'cd ' // pathmfile).ne. 0) then ! Can''t find or open the MatLab funtion
+#ifdef __GFORTRAN__
+		   WRITE(*,*) ' '
+		   WRITE(*,*) ' Can''t find or open the MatLab function'
+		   WRITE(*,*) ' Program aborting'
+#else
+		   TYPE *, ' '
+		   TYPE *, ' Can''t find or open the MatLab function'
+		   TYPE *, ' Program aborting'
+		   PAUSE
+#endif
+		   STOP
         ENDIF
       ENDIF
 
@@ -74,9 +92,18 @@ C
 #else
       status = engPutVariable(ep, 'ny'C, ny_ptr)
 #endif
-      IF (status .ne. 0) THEN
-         ny = -1 ! ' Can''t read ny in the MatLab file'
-         RETURN
+      IF (status .ne. 0) THEN ! Can''t read ny in the Matlab file
+#ifdef __GFORTRAN__
+		 WRITE(*,*) ' '
+		 WRITE(*,*) ' Can''t read ny in the MATLAB file'
+		 WRITE(*,*) ' Program aborting'
+#else
+		 TYPE *, ' '
+		 TYPE *, ' Can''t read ny in the MATLAB file'
+		 TYPE *, ' Program aborting'
+		 PAUSE
+#endif
+		 STOP
       ENDIF
 
 	nz_ptr = mxCreateDoubleScalar(nz*1.0d0)
@@ -85,9 +112,18 @@ C
 #else
       status = engPutVariable(ep, 'nz'C, nz_ptr)
 #endif
-      IF (status .ne. 0) THEN
-         ny = -2 ! ' Can''t read nz in the MatLab file'
-         RETURN
+      IF (status .ne. 0) THEN ! Can''t read nz in the Matlab file
+#ifdef __GFORTRAN__
+		 WRITE(*,*) ' '
+		 WRITE(*,*) ' Can''t read nz in the MATLAB file'
+		 WRITE(*,*) ' Program aborting'
+#else
+		 TYPE *, ' '
+		 TYPE *, ' Can''t read nz in the MATLAB file'
+		 TYPE *, ' Program aborting'
+		 PAUSE
+#endif
+		 STOP
       ENDIF
 
 	nx_ptr = mxCreateDoubleScalar(nx*1.0d0)
@@ -96,9 +132,18 @@ C
 #else
       status = engPutVariable(ep, 'nx'C, nx_ptr)
 #endif
-      IF (status .ne. 0) THEN
-         ny = -3 ! ' Can''t read nx in the MatLab file'
-         RETURN
+      IF (status .ne. 0) THEN ! Can''t read nx in the Matlab file
+#ifdef __GFORTRAN__
+		 WRITE(*,*) ' '
+		 WRITE(*,*) ' Can''t read nx in the MATLAB file'
+		 WRITE(*,*) ' Program aborting'
+#else
+		 TYPE *, ' '
+		 TYPE *, ' Can''t read nx in the MATLAB file'
+		 TYPE *, ' Program aborting'
+		 PAUSE
+#endif
+		 STOP
       ENDIF
 
 	nu_ptr = mxCreateDoubleScalar(nu*1.0d0)
@@ -107,9 +152,18 @@ C
 #else
       status = engPutVariable(ep, 'nu'C, nu_ptr)
 #endif
-      IF (status .ne. 0) THEN
-         ny = -4 ! ' Can''t read nu in the MatLab file'
-         RETURN
+      IF (status .ne. 0) THEN ! Can''t read nu in the MatLab file
+#ifdef __GFORTRAN__
+		 WRITE(*,*) ' '
+		 WRITE(*,*) ' Can''t read nu in the MATLAB file'
+		 WRITE(*,*) ' Program aborting'
+#else
+		 TYPE *, ' '
+		 TYPE *, ' Can''t read nu in the MATLAB file'
+		 TYPE *, ' Program aborting'
+		 PAUSE
+#endif
+		 STOP
       ENDIF
 
       ns_ptr = mxCreateDoubleMatrix(1, 6, 0)
@@ -122,9 +176,18 @@ C
 #else
       status = engPutVariable(ep, 'ns'C, ns_ptr)
 #endif
-      IF (status .ne. 0) THEN
-         ny = -5 ! ' Can''t read ns in the MatLab file'
-         RETURN
+      IF (status .ne. 0) THEN ! Can''t read ns in the Matlab file
+#ifdef __GFORTRAN__
+		 WRITE(*,*) ' '
+		 WRITE(*,*) ' Can''t read ns in the MATLAB file'
+		 WRITE(*,*) ' Program aborting'
+#else
+		 TYPE *, ' '
+		 TYPE *, ' Can''t read ns in the MATLAB file'
+		 TYPE *, ' Program aborting'
+		 PAUSE
+#endif
+		 STOP
       ENDIF
 
       theta_ptr = mxCreateDoubleMatrix(1, nt, 0)
@@ -134,9 +197,18 @@ C
 #else
       status = engPutVariable(ep, 'theta'C, theta_ptr)
 #endif
-      IF (status .ne. 0) THEN
-         ny = -6 ! ' Can''t read theta in the MatLab file'
-         RETURN
+      IF (status .ne. 0) THEN ! Can''t read theta in the Matlab file
+#ifdef __GFORTRAN__
+		 WRITE(*,*) ' '
+		 WRITE(*,*) ' Can''t read nt in the MATLAB file'
+		 WRITE(*,*) ' Program aborting'
+#else
+		 TYPE *, ' '
+		 TYPE *, ' Can''t read nt in the MATLAB file'
+		 TYPE *, ' Program aborting'
+		 PAUSE
+#endif
+		 STOP
       ENDIF
 
 C
@@ -146,19 +218,51 @@ C
       status = engOutputBuffer(ep, buffer1)
       IF (engEvalString(ep, 'clear success;'//
      &   '[C,H,G,A,F,R]='//TRIM(mfile)//'( ny,nz,nx,'//
-     &   'nu,ns,theta);'//'success=1;') .ne. 0) then
-         ny = -8   ! engEvalString failed
-         RETURN
+     &   'nu,ns,theta);'//'success=1;') .ne. 0) then ! engEvalString failed
+#if defined(ORIGDLL)
+		 CALL GETERRSTR(matlaberror)
+#else
+#endif
+
+#ifdef __GFORTRAN__
+		 WRITE(*,*) ' '
+		 WRITE(*,*) ' the MATLAB funtion can not be executed:'
+		 WRITE(*,*) trim(matlaberror)
+		 WRITE(*,*) ' Program aborting'
+#else
+		 TYPE *, ' '
+		 TYPE *, ' the MATLAB funtion can not be executed:'
+		 TYPE *, trim(matlaberror)
+		 TYPE *, ' Program aborting'
+		 PAUSE
+#endif
+		 STOP
       ENDIF
 #ifdef __GFORTRAN__
       C_ptr = engGetVariable(ep, 'success')
 #else
       C_ptr = engGetVariable(ep, 'success'C)
 #endif
-      IF (C_ptr .eq. 0) then
+      IF (C_ptr .eq. 0) then ! engEvalString failed
           buffer=buffer1
-          ny=-8   ! engEvalString failed
-          RETURN
+#if defined(ORIGDLL)
+		 CALL GETERRSTR(matlaberror)
+#else
+#endif
+
+#ifdef __GFORTRAN__
+		 WRITE(*,*) ' '
+		 WRITE(*,*) ' the MATLAB funtion can not be executed:'
+		 WRITE(*,*) trim(matlaberror)
+		 WRITE(*,*) ' Program aborting'
+#else
+		 TYPE *, ' '
+		 TYPE *, ' the MATLAB funtion can not be executed:'
+		 TYPE *, trim(matlaberror)
+		 TYPE *, ' Program aborting'
+		 PAUSE
+#endif
+		 STOP
       ENDIF
 
 C
@@ -172,7 +276,17 @@ C
       IF(C_ptr.NE.0) THEN
        CALL mxCopyPtrToReal8(mxGetPr(C_ptr), c, ny*max(1,nz)*ns(1))
       ELSE
-       ny = -101
+#ifdef __GFORTRAN__
+		 WRITE(*,*) ' '
+		 WRITE(*,*) ' C could not be assigned during the call'
+		 WRITE(*,*) ' Program aborting'
+#else
+		 TYPE *, ' '
+		 TYPE *, ' C could not be assigned during the call '
+		 TYPE *, ' Program aborting'
+		 PAUSE
+#endif
+		 STOP
       ENDIF
 
 #ifdef __GFORTRAN__
@@ -183,7 +297,17 @@ C
       IF(H_ptr.NE.0) THEN
        CALL mxCopyPtrToReal8(mxGetPr(H_ptr), H, ny*nx*ns(2))
       ELSE
-       ny = -102
+#ifdef __GFORTRAN__
+		 WRITE(*,*) ' '
+		 WRITE(*,*) ' H could not be assigned during the call'
+		 WRITE(*,*) ' Program aborting'
+#else
+		 TYPE *, ' '
+		 TYPE *, ' H could not be assigned during the call '
+		 TYPE *, ' Program aborting'
+		 PAUSE
+#endif
+		 STOP
       ENDIF
 
 #ifdef __GFORTRAN__
@@ -194,7 +318,17 @@ C
       IF(G_ptr.NE.0) THEN
        CALL mxCopyPtrToReal8(mxGetPr(G_ptr), G, ny*nu*ns(3))
       ELSE
-       ny = -103
+#ifdef __GFORTRAN__
+		 WRITE(*,*) ' '
+		 WRITE(*,*) ' G could not be assigned during the call'
+		 WRITE(*,*) ' Program aborting'
+#else
+		 TYPE *, ' '
+		 TYPE *, ' G could not be assigned during the call '
+		 TYPE *, ' Program aborting'
+		 PAUSE
+#endif
+		 STOP
       ENDIF
 
 #ifdef __GFORTRAN__
@@ -205,7 +339,17 @@ C
       IF(A_ptr.NE.0) THEN
        CALL mxCopyPtrToReal8(mxGetPr(A_ptr), a, nx*ns(4))
       ELSE
-       ny = -104
+#ifdef __GFORTRAN__
+		 WRITE(*,*) ' '
+		 WRITE(*,*) ' A could not be assigned during the call'
+		 WRITE(*,*) ' Program aborting'
+#else
+		 TYPE *, ' '
+		 TYPE *, ' A could not be assigned during the call '
+		 TYPE *, ' Program aborting'
+		 PAUSE
+#endif
+		 STOP
       ENDIF
 
 #ifdef __GFORTRAN__
@@ -216,7 +360,17 @@ C
       IF(F_ptr.NE.0) THEN
        CALL mxCopyPtrToReal8(mxGetPr(F_ptr), F, nx*nx*ns(5))
       ELSE
-       ny = -105
+#ifdef __GFORTRAN__
+		 WRITE(*,*) ' '
+		 WRITE(*,*) ' F could not be assigned during the call'
+		 WRITE(*,*) ' Program aborting'
+#else
+		 TYPE *, ' '
+		 TYPE *, ' F could not be assigned during the call '
+		 TYPE *, ' Program aborting'
+		 PAUSE
+#endif
+		 STOP
       ENDIF
 
 #ifdef __GFORTRAN__
@@ -227,7 +381,17 @@ C
       IF(R_ptr.NE.0) THEN
        CALL mxCopyPtrToReal8(mxGetPr(R_ptr), R, nx*nu*ns(6))
       ELSE
-       ny = -106
+#ifdef __GFORTRAN__
+		 WRITE(*,*) ' '
+		 WRITE(*,*) ' r could not be assigned during the call'
+		 WRITE(*,*) ' Program aborting'
+#else
+		 TYPE *, ' '
+		 TYPE *, ' r could not be assigned during the call '
+		 TYPE *, ' Program aborting'
+		 PAUSE
+#endif
+		 STOP
       ENDIF
 
 C
