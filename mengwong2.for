@@ -34,7 +34,7 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C -------------------------------------------------------------------
 	SUBROUTINE MENGWONG2(G,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                     INFOS,yk,gibpar,gibZ,thetaprior,psiprior,
-     2                     tipo,pdll,MLSTART,MLMW)
+     2                     tipo,MLSTART,MLMW)
 #ifdef __GFORTRAN__
       USE gfortran
 #endif
@@ -44,7 +44,6 @@ C INPUT
 	DOUBLE PRECISION yk(nobs,ny+nz),gibpar(G,nt+np(1)),
 	1 thetaprior(nt,4),psiprior(np(2),np(3)),MLSTART
 	CHARACTER*2 tipo(nt)
-	POINTER (pdll,fittizia)
 
 C OUTPUT
 	DOUBLE PRECISION MLMW(2,2)
@@ -331,7 +330,7 @@ C PRIOR for PSI and Q(PSI)~Dirichlet(a1,a2,...,aN)
 
 	 Fpar = PTHETA2(NPOS(1),nobs,d,ny,nz,nx,nu,ns,nt,IS,yk,
 	1                par(1:nt),thetaprior(NPOS(1),:),
-     2                tipo(NPOS(1)),pdll)
+     2                tipo(NPOS(1)))
        Fpar = Fpar + SUM(Ppar(2:NPARTH+K)) ! log f(y|par,S)f(par,S)
 
 	 VQN(IG,1) = DEXP(QPSI)*QS*C*DEXP(-.5D0*MUC)/TRC
@@ -392,7 +391,7 @@ C PRIOR for PSI and Q(PSI)~Dirichlet(a1,a2,...,aN)
 
 	 Fpar = PTHETA2(NPOS(1),nobs,d,ny,nz,nx,nu,ns,nt,IS,yk,
 	1                gibpar(IG,1:nt),thetaprior(NPOS(1),:),
-     2                tipo(NPOS(1)),pdll)
+     2                tipo(NPOS(1)))
        Fpar = Fpar + SUM(Ppar(2:NPARTH+K)) ! log f(y|par,S)f(par,S)
 
 	 VHD(IG,1) = Fpar + DLOG(PS)
