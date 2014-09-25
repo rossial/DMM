@@ -609,7 +609,7 @@ C MCMC BURN-IN
 	  IF (nv.GT.0) THEN
 	   CALL GCK(nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np(1),
      1            yk(1:nobs,:),IYK(1:nobs,:),theta0,psi0,
-     2            INFOS,pdll,Z,S)
+     2            INFOS,Z,S)
 	   IF (HBL.GT.1) THEN
 		CALL RECPR(jjj,nstot,nobs,Z,ZW,PM,PTR)
 	   ENDIF
@@ -693,7 +693,7 @@ C MCMC RECORDING phase
 	   IF (HBL.EQ.1) THEN
 	    CALL GCK(nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np(1),
 	1             yk(1:nobs,:),IYK(1:nobs,:),theta0,psi0,
-     2             INFOS,pdll,Z,S)
+     2             INFOS,Z,S)
 	   ELSE
 	    CALL AMH(HBL,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np(1),
 	1             yk(1:nobs,:),IYK(1:nobs,:),theta0,psi0,
