@@ -111,11 +111,17 @@ EXEC = dmm
 VPATH := $(VPATH) randlib
 
 ifdef DLL
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S), Linux)
+MATLAB_LIBS = -L$(MATLABROOT)/bin/glnxa64
+endif
+ifeq ($(UNAME_S), Darwin)
+MATLAB_LIBS = -L$(MATLABROOT)/bin/maci64
+endif
+LIBS = $(MATLAB_LIBS) -llapack -leng -lmx
+DLL_OBJS += design.o setfilem.o geterrstr.o
 INCLUDE = -I$(MATLABROOT)/extern/include
 DEFINE = -DORIGDLL
-MATLAB_LIBS = -L$(MATLABROOT)/bin/maci64 -leng -lmx
-LIBS = $(MATLAB_LIBS) -llapack
-DLL_OBJS += design.o setfilem.o geterrstr.o
 else
 LIBS = -llapack
 endif
