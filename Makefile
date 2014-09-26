@@ -113,7 +113,7 @@ VPATH := $(VPATH) randlib
 ifdef DLL
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S), Linux)
-MATLAB_LIBS = -L$(MATLABROOT)/bin/glnxa64
+MATLAB_LIBS = -L$(MATLABROOT)/bin/glnxa64 -Wl,-rpath-link,$(MATLABROOT)/bin/glnxa64 -Wl,-rpath,$(MATLABROOT)/bin/glnxa64
 endif
 ifeq ($(UNAME_S), Darwin)
 MATLAB_LIBS = -L$(MATLABROOT)/bin/maci64
