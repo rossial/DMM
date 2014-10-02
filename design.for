@@ -54,7 +54,7 @@ C
 
 C Try to open MatLab (just the first time)
       IF (ep .eq.0 ) THEN
-        ep = engOpen('matlab ')
+        ep = engOpen('/Applications/MATLAB_R2014a.app/bin/matlab ')
         IF (ep .eq. 0) THEN ! Can''t start Matlab engine
 #ifdef __GFORTRAN__
 		   WRITE(*,*) ' '
@@ -105,7 +105,6 @@ C
 #endif
 		 STOP
       ENDIF
-
 	nz_ptr = mxCreateDoubleScalar(nz*1.0d0)
 #ifdef __GFORTRAN__
       status = engPutVariable(ep, 'nz', nz_ptr)
@@ -216,6 +215,12 @@ C     Evaluate the MatLab DESIGN Funtion with the input data from FORTRAN
 C
       buffer = ''
       status = engOutputBuffer(ep, buffer1)
+	  WRITE(*,*) 'ny: ', ny
+	  WRITE(*,*) 'nz: ', nz
+	  WRITE(*,*) 'nx: ', nx
+	  WRITE(*,*) 'nu: ', nu
+	  WRITE(*,*) 'ns: ', ns
+	  WRITE(*,*) 'theta: ', theta
       IF (engEvalString(ep, 'clear success;'//
      &   '[C,H,G,A,F,R]='//TRIM(mfile)//'( ny,nz,nx,'//
      &   'nu,ns,theta);'//'success=1;') .ne. 0) then ! engEvalString failed
@@ -310,8 +315,10 @@ C
 		 STOP
       ENDIF
 
+	  WRITE(*,*) '1'
 #ifdef __GFORTRAN__
       G_ptr = engGetVariable(ep, 'G')
+	  WRITE(*,*) '1a'
 #else
       G_ptr = engGetVariable(ep, 'G'C)
 #endif
@@ -330,7 +337,7 @@ C
 #endif
 		 STOP
       ENDIF
-
+	  WRITE(*,*) '2'
 #ifdef __GFORTRAN__
       A_ptr = engGetVariable(ep, 'A')
 #else
@@ -351,7 +358,7 @@ C
 #endif
 		 STOP
       ENDIF
-
+	  WRITE(*,*) '3'
 #ifdef __GFORTRAN__
       F_ptr = engGetVariable(ep, 'F')
 #else
@@ -372,28 +379,28 @@ C
 #endif
 		 STOP
       ENDIF
-
+	  WRITE(*,*) '4'
 #ifdef __GFORTRAN__
-      r_ptr = enggetvariable(ep, 'r')
+      r_ptr = enggetvariable(ep, 'R')
 #else
-      r_ptr = enggetvariable(ep, 'r'c)
+      r_ptr = enggetvariable(ep, 'R'c)
 #endif
       IF(R_ptr.NE.0) THEN
        CALL mxCopyPtrToReal8(mxGetPr(R_ptr), R, nx*nu*ns(6))
       ELSE
 #ifdef __GFORTRAN__
 		 WRITE(*,*) ' '
-		 WRITE(*,*) ' r could not be assigned during the call'
+		 WRITE(*,*) ' R could not be assigned during the call'
 		 WRITE(*,*) ' Program aborting'
 #else
 		 TYPE *, ' '
-		 TYPE *, ' r could not be assigned during the call '
+		 TYPE *, ' R could not be assigned during the call '
 		 TYPE *, ' Program aborting'
 		 PAUSE
 #endif
 		 STOP
       ENDIF
-
+	  WRITE(*,*) '5'
 C
 C Free dynamic memory allocated by MXCREATE function
 C
