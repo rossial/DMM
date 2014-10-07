@@ -54,7 +54,7 @@ C
 
 C Try to open MatLab (just the first time)
       IF (ep .eq.0 ) THEN
-        ep = engOpen('/Applications/MATLAB_R2014a.app/bin/matlab ')
+        ep = engOpen('/Applications/MATLAB_R2014b.app/bin/matlab ')
         IF (ep .eq. 0) THEN ! Can''t start Matlab engine
 #ifdef __GFORTRAN__
 		   WRITE(*,*) ' '
