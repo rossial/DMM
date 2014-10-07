@@ -76,6 +76,7 @@ C LOCALS
 
 #ifdef __GFORTRAN__
       CHARACTER*12 fmt
+      INTEGER IDX, IDX1
 #endif
 
 #ifdef __INTEL_COMPILER
@@ -273,8 +274,10 @@ C WRITE HYPERPARAMTERS for THETA and PSI plus DATA
        WRITE(10,'(A2)') estimation
        DO I =1,nt
 #ifdef __GFORTRAN__
-          WRITE(fmt, '(a,i4,a)') '(', 4, '(F25.12)), ''  '',A2'
-          WRITE(10,fmt) thetaprior(I,1:4),pdftheta(I)
+      DO IDX=1,4
+         WRITE(10,'(F25.12)',advance='no') thetaprior(I,IDX)
+      END DO
+      WRITE(10,'(A)') pdftheta(I)
 #else
 	  WRITE(10,1111) thetaprior(I,1:4),pdftheta(I)
 #endif
@@ -283,8 +286,11 @@ C WRITE HYPERPARAMTERS for THETA and PSI plus DATA
 	 DO I = 1,nv
 	  IF (INFOS(9,I).EQ.1) THEN
 #ifdef __GFORTRAN__
-         WRITE(fmt, '(a,i4,a)') 'I10,(', np(3), '(F25.12)), ''  '',I2'
-         WRITE(10,fmt) INFOS(8,I),psiprior(K+1,:),INFOS(9,I)
+         WRITE(10,'(I10)',advance='no') INFOS(8,I)
+         DO IDX=1,np(3)
+            WRITE(10,'(F25.12)',advance='no') psiprior(K+1,IDX)
+         END DO
+         WRITE(10,'(I2)') INFOS(9,I)
 #else
 	    WRITE(10,1112) INFOS(8,I),psiprior(K+1,:),INFOS(9,I)
 #endif
@@ -292,8 +298,11 @@ C WRITE HYPERPARAMTERS for THETA and PSI plus DATA
 	  ELSEIF (INFOS(9,I).EQ.2) THEN
 	    DO J = 1,INFOS(8,I)
 #ifdef __GFORTRAN__
-         WRITE(fmt, '(a,i4,a)') 'I10,(', np(3), '(F25.12)), ''  '',I2'
-         WRITE(10,fmt) INFOS(8,I),psiprior(K+1,:),INFOS(9,I)
+         WRITE(10,'(I10)',advance='no') INFOS(8,I)
+         DO IDX=1,np(3)
+            WRITE(10,'(F25.12)',advance='no') psiprior(K+1,IDX)
+         END DO
+         WRITE(10,'(I2)') INFOS(9,I)
 #else
 	     WRITE(10,1112) INFOS(8,I),psiprior(K+1,:),INFOS(9,I)
 #endif
@@ -303,8 +312,9 @@ C WRITE HYPERPARAMTERS for THETA and PSI plus DATA
        END DO
        DO I =1,nobs+nf
 #ifdef __GFORTRAN__
-      WRITE(fmt, '(a,i4,a)') '(', ny+nz, '(F20.10))'
-      WRITE(10,fmt) yk(I,1:ny+nz)
+          DO IDX=1,ny+nz
+             WRITE(10,'(F20.10)') yk(I,IDX)
+          END DO
 #else
 	  WRITE(10,'(<ny+nz>(F20.10))') yk(I,1:ny+nz)
 #endif
@@ -697,10 +707,18 @@ C MCMC RECORDING phase
 	    gibtheta(jjj/thin,1:nt) = theta(1:nt)
 	   ENDIF
 #ifdef __GFORTRAN__
-       WRITE(fmt, '(a,i4,a)') '(', nobs*ny, '(F20.10))'
-       WRITE(12,fmt) (INN(1:nobs,I),I=1,ny)
-       WRITE(fmt, '(a,i4,a)') '(', nobs*nx, '(F20.10))'
-	   WRITE(10,fmt) (STATE(1:nobs,I),I=1,nx)
+       DO IDX=1,nobs
+          DO IDX1=1,ny
+             WRITE(12, '(F20.10)',advance='no') INN(IDX, IDX1)
+          END DO
+          WRITE(12,*) ''
+       END DO
+       DO IDX=1,nobs
+          DO IDX1=1,nx
+             WRITE(12, '(F20.10)',advance='no') STATE(IDK, IDX1)
+          END DO
+          WRITE(12,*) ''
+       END DO
 #else
 	   WRITE(12,'(<nobs*ny>(F20.10))') (INN(1:nobs,I),I=1,ny)
 	   WRITE(10,'(<nobs*nx>(F20.10))') (STATE(1:nobs,I),I=1,nx)
