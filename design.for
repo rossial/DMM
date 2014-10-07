@@ -311,7 +311,6 @@ C
 
 #ifdef __GFORTRAN__
       G_ptr = engGetVariable(ep, 'G')
-	  WRITE(*,*) '1a'
 #else
       G_ptr = engGetVariable(ep, 'G'C)
 #endif
