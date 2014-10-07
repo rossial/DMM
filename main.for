@@ -149,9 +149,12 @@ C Assign the name of the matlab file
       ENDIF
 
 C SET SHELL title
+#ifdef __GFORTRAN__
+#else
 	DMMTITLE = 'title DMM input:' // TRIM(PATH) // TRIM(NMLNAME)
      #     // '.nml' // ' - '
 	CALL system(DMMTITLE)
+#endif
 
 C INITIALISE THE RANDOM NUMBER GENERATOR
       CALL INITRAND(SEED,DATE_ITIME)
