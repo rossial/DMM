@@ -315,7 +315,6 @@ C
 		 STOP
       ENDIF
 
-	  WRITE(*,*) '1'
 #ifdef __GFORTRAN__
       G_ptr = engGetVariable(ep, 'G')
 	  WRITE(*,*) '1a'
@@ -337,7 +336,7 @@ C
 #endif
 		 STOP
       ENDIF
-	  WRITE(*,*) '2'
+
 #ifdef __GFORTRAN__
       A_ptr = engGetVariable(ep, 'A')
 #else
@@ -358,7 +357,7 @@ C
 #endif
 		 STOP
       ENDIF
-	  WRITE(*,*) '3'
+
 #ifdef __GFORTRAN__
       F_ptr = engGetVariable(ep, 'F')
 #else
@@ -379,7 +378,7 @@ C
 #endif
 		 STOP
       ENDIF
-	  WRITE(*,*) '4'
+
 #ifdef __GFORTRAN__
       r_ptr = enggetvariable(ep, 'R')
 #else
@@ -400,7 +399,6 @@ C
 #endif
 		 STOP
       ENDIF
-	  WRITE(*,*) '5'
 C
 C Free dynamic memory allocated by MXCREATE function
 C
