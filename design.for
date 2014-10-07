@@ -215,12 +215,6 @@ C     Evaluate the MatLab DESIGN Funtion with the input data from FORTRAN
 C
       buffer = ''
       status = engOutputBuffer(ep, buffer1)
-	  WRITE(*,*) 'ny: ', ny
-	  WRITE(*,*) 'nz: ', nz
-	  WRITE(*,*) 'nx: ', nx
-	  WRITE(*,*) 'nu: ', nu
-	  WRITE(*,*) 'ns: ', ns
-	  WRITE(*,*) 'theta: ', theta
       IF (engEvalString(ep, 'clear success;'//
      &   '[C,H,G,A,F,R]='//TRIM(mfile)//'( ny,nz,nx,'//
      &   'nu,ns,theta);'//'success=1;') .ne. 0) then ! engEvalString failed
