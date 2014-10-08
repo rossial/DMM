@@ -733,8 +733,9 @@ C MCMC RECORDING phase
 #endif
 	   IF (nv.EQ.0) THEN
 #ifdef __GFORTRAN__
-       WRITE(fmt, '(a,i4,a)') '(', nt, '(F25.15))'
-       WRITE(9,fmt) theta(1:nt)
+       DO IDX=1,nt
+          WRITE(9, '(F25.15)', advance='no') theta(IDX)
+       END DO
 #else
 	    WRITE(9,'(<nt>(F25.15))') theta(1:nt)
 #endif
@@ -744,10 +745,17 @@ C MCMC RECORDING phase
 	     gibZ(jjj/thin,1:nobs) = Z(1:nobs)
 	    ENDIF
 #ifdef __GFORTRAN__
-        WRITE(fmt, '(a,i4,a)') '(', nt+np(1), '(F25.15))'
-	    WRITE(9,fmt) theta(1:nt),psi(1:np(1))
-        WRITE(fmt, '(a,i4,a)') '(', nobs, '(F25.15))'
-	    WRITE(11,fmt) Z(:)
+        DO IDX=1,nt
+           WRITE(9, '(F25.15)', advance='no') theta(IDX)
+        END DO
+        DO IDX=1,np(1)
+           WRITE(9, '(F25.15)', advance='no') psi(IDX)
+        END DO
+        WRITE(9,*)
+        DO IDX=1,nobs
+           WRITE(11, '(I3)', advance='no') Z(IDX)
+        END DO
+        WRITE(11,*)
 #else
 	    WRITE(9,'(<nt+np(1)>(F25.15))') theta(1:nt),psi(1:np(1))
 	    WRITE(11,'(<nobs>(I3))') Z(:)
@@ -756,8 +764,12 @@ C MCMC RECORDING phase
 	   IF (nf.GT.0) THEN
 	   J = min(nv,1)
 #ifdef __GFORTRAN__
-       WRITE(fmt, '(a,i4,a)') '(', nf*(nx+ny+J), '(F20.10))'
-       WRITE(13,fmt) (FORE(1:nf,I),I=1,nx+ny+J)
+       DO IDX1=1,(nx+ny+J)
+          DO IDX=1,nf
+             WRITE(13,'(F20.10)', advance='no') FORE(IDX,IDX1)
+          END DO
+          WRITE(13,*) ''
+       END DO
 #else
 	   WRITE(13,'(<nf*(nx+ny+J)>(F20.10))') (FORE(1:nf,I),I=1,nx+ny+J)
 #endif
@@ -806,10 +818,19 @@ C MARGINAL LIKELIHOOD
 	 ENDIF
 	 WRITE(15,*) 'Modified Harmonic mean (ML and Var)'
 #ifdef __GFORTRAN__
-      WRITE(fmt, '(a,i4,a)') '(', 2, '(F20.10))'
-      WRITE(15,fmt) (MLHM(I,:),I=1,11)
+      DO IDX1=1,2
+         DO IDX=1,11
+            WRITE(15,'(F20.10)', advance='no') MLHM(IDX,IDX1)
+         END DO
+         WRITE(15,*) ''
+      END DO
       WRITE(15,*) 'Bridge Sampling'
-      WRITE(15,fmt) (MLMW(I,:),I=1,2)
+      DO IDX1=1,2
+         DO IDX=1,11
+            WRITE(15,'(F20.10)', advance='no') MLMW(IDX,IDX1)
+         END DO
+         WRITE(15,*) ''
+      END DO
 #else
 	 WRITE(15,'(<2>(F20.10))') (MLHM(I,:),I=1,11)
 	 WRITE(15,*) 'Bridge Sampling'
