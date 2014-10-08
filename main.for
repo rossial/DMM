@@ -715,7 +715,7 @@ C MCMC RECORDING phase
        END DO
        DO IDX=1,nobs
           DO IDX1=1,nx
-             WRITE(12, '(F20.10)',advance='no') STATE(IDK, IDX1)
+             WRITE(12, '(F20.10)',advance='no') STATE(IDX, IDX1)
           END DO
           WRITE(12,*) ''
        END DO
