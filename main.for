@@ -483,7 +483,9 @@ C MCMC BURN-IN
 	   IMIN(1) = CUMN(INDT(IMIN(1))) !CUMN(IMIN(1))
 	   IMAX    = MAXLOC(CUMN(INDT(1:ntf)))
 	   IMAX(1) = CUMN(INDT(IMAX(1))) !CUMN(IMAX(1))
+#if defined(__CYGWIN32__) || defined(_WIN32)
 	   CALL system('cls')
+#endif
 	   WRITE(6,1113) jjj,ntf,IMIN(1)/dfloat(jjj),
      #             IMAX(1)/dfloat(jjj)
         ENDIF
@@ -512,7 +514,9 @@ C MCMC BURN-IN
 	   IMIN(1) = CUMN(INDT(IMIN(1))) !CUMN(IMIN(1))
 	   IMAX    = MAXLOC(CUMN(INDT(1:ntf)))
 	   IMAX(1) = CUMN(INDT(IMAX(1))) !CUMN(IMAX(1))
+#if defined(__CYGWIN32__) || defined(_WIN32)
 	   CALL system('cls')
+#endif
 	   WRITE(6,1113) jjj,ntf,IMIN(1)/dfloat(jjj),
      #             IMAX(1)/dfloat(jjj)
         ENDIF
@@ -589,7 +593,9 @@ C MCMC RECORDING phase
 	   IMIN(1) = CUMN(INDT(L1+IMIN(1)))
 	   IMAX    = MAXLOC(CUMN(INDT(L1+1:ntf)))
 	   IMAX(1) = CUMN(INDT(L1+IMAX(1)))
+#if defined(__CYGWIN32__) || defined(_WIN32)
 	   CALL system('cls')
+#endif
 	   WRITE(6,1113) BURNIN,ntf,lastl,lasth
 	   IF ((HBL.EQ.1).OR.(nv.EQ.0)) THEN
 	    WRITE(6,1114) jjj,ntf,IMIN(1)/dfloat(jjj),
@@ -691,7 +697,9 @@ C MCMC RECORDING phase
 	   IMIN(1) = CUMN(INDT(L1+IMIN(1)))
 	   IMAX    = MAXLOC(CUMN(INDT(L1+1:ntf)))
 	   IMAX(1) = CUMN(INDT(L1+IMAX(1)))
+#if defined(__CYGWIN32__) || defined(_WIN32)
 	   CALL system('cls')
+#endif
 	   WRITE(6,1113) BURNIN,ntf,lastl,lasth
 	   IF ((HBL.EQ.1).OR.(nv.EQ.0)) THEN
 	    WRITE(6,1114) jjj,ntf,IMIN(1)/dfloat(jjj),
