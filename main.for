@@ -277,7 +277,7 @@ C WRITE HYPERPARAMTERS for THETA and PSI plus DATA
       DO IDX=1,4
          WRITE(10,'(F25.12)',advance='no') thetaprior(I,IDX)
       END DO
-      WRITE(10,'(A)') pdftheta(I)
+      WRITE(10,'(A,A)') '  ', pdftheta(I)
 #else
 	  WRITE(10,1111) thetaprior(I,1:4),pdftheta(I)
 #endif
@@ -290,7 +290,7 @@ C WRITE HYPERPARAMTERS for THETA and PSI plus DATA
          DO IDX=1,np(3)
             WRITE(10,'(F25.12)',advance='no') psiprior(K+1,IDX)
          END DO
-         WRITE(10,'(I2)') INFOS(9,I)
+         WRITE(10, '(A, I1)') '   ', INFOS(9,I)
 #else
 	    WRITE(10,1112) INFOS(8,I),psiprior(K+1,:),INFOS(9,I)
 #endif
@@ -302,7 +302,7 @@ C WRITE HYPERPARAMTERS for THETA and PSI plus DATA
          DO IDX=1,np(3)
             WRITE(10,'(F25.12)',advance='no') psiprior(K+1,IDX)
          END DO
-         WRITE(10,'(I2)') INFOS(9,I)
+         WRITE(10, '(A, I1)') '   ', INFOS(9,I)
 #else
 	     WRITE(10,1112) INFOS(8,I),psiprior(K+1,:),INFOS(9,I)
 #endif
