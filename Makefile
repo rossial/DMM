@@ -145,4 +145,4 @@ all: $(MOD_OBJS) $(OBJS) $(RANDLIB_OBJS) $(DLL_OBJS)
 	$(FC) $(FFFLAGS) $(INCLUDE) $(DEFINE) -c $<
 
 clean:
-	rm -f *.o $(EXEC) *.mod
+	rm -f *.o $(EXEC) *.mod *.PRI *.DIS *.FST *.INN *.ML *.PAR *.UNB
