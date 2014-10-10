@@ -75,7 +75,7 @@ C LOCALS
 	CHARACTER*200 FILEIN,NMLNAME,PATH,FILEOUT,DMMTITLE,CURDIR
 
 #ifdef __GFORTRAN__
-      CHARACTER*12 fmt
+      CHARACTER*16 fmt
       INTEGER IDX, IDX1
 #endif
 
@@ -392,7 +392,7 @@ c	1         thetaprior,theta0,psi0,IMSVAR,HESS,AUX)
         WRITE(fmt, '(a,i4,a)') '(', nx, '(F20.10))'
         WRITE(10,fmt) (STATE(I,1:nx),I=1,nobs)
         WRITE(10,fmt) (AKMSE(I,1:nx),I=1,nobs)
-        WRITE(fmt, '(a,i4,a)') '(', ny, '(F20.10))'
+        WRITE(fmt, '(a,i4,a)') '(', ny, 'F20.10)'
         WRITE(12,fmt) (INN(I,1:ny),I=1,nobs)
 #else
         WRITE(9,'(<2>(F25.15))') (theta0(I),thetase(I),I=1,nt)
@@ -422,7 +422,7 @@ c	1         thetaprior,theta0,psi0,IMSVAR,HESS,AUX)
 	  WRITE(9,fmt) AUX,IFAIL
       WRITE(fmt, '(a,i4,a)') '(', nstot, '(F20.10))'
       WRITE(11,fmt) (SSMOOTH(I,1:nstot),I=1,nobs)
-      WRITE(fmt, '(a,i4,a)') '(', ny, '(F20.10))'
+      WRITE(fmt, '(a,i4,a)') '(', ny, 'F20.10)'
       WRITE(12,fmt) (INN(I,1:ny),I=1,nobs)
 #else
 	   WRITE(10,'(<nx>(F20.10))') (STATE(I,1:nx),I=1,nobs)
@@ -608,7 +608,7 @@ C MCMC RECORDING phase
         ENDIF
         IF (jjj/thin*thin.EQ.jjj) THEN
 #ifdef __GFORTRAN__
-           WRITE(fmt, '(a,i4,a)') '(', nobs*ny, '(F20.10))'
+           WRITE(fmt, '(a,i4,a)') '(', nobs*ny, 'F20.10)'
            WRITE(12,fmt) (INN(1:nobs,I),I=1,ny)
            WRITE(fmt, '(a,i4,a)') '(', nobs*nx, '(F20.10))'
            WRITE(10,fmt) (STATE(1:nobs,I),I=1,nx)
@@ -715,18 +715,10 @@ C MCMC RECORDING phase
 	    gibtheta(jjj/thin,1:nt) = theta(1:nt)
 	   ENDIF
 #ifdef __GFORTRAN__
-       DO IDX=1,nobs
-          DO IDX1=1,ny
-             WRITE(12, '(F20.10)',advance='no') INN(IDX, IDX1)
-          END DO
-          WRITE(12,*) ''
-       END DO
-       DO IDX=1,nobs
-          DO IDX1=1,nx
-             WRITE(12, '(F20.10)',advance='no') STATE(IDX, IDX1)
-          END DO
-          WRITE(12,*) ''
-       END DO
+       WRITE(fmt, '(a,i4,a)') '(', nobs*ny, 'F20.10)'
+       WRITE(12,fmt) (INN(1:nobs,I),I=1,ny)
+       WRITE(fmt, '(a,i4,a)') '(', nobs*nx, 'F20.10)'
+       WRITE(10,fmt) (STATE(1:nobs,I),I=1,nx)
 #else
 	   WRITE(12,'(<nobs*ny>(F20.10))') (INN(1:nobs,I),I=1,ny)
 	   WRITE(10,'(<nobs*nx>(F20.10))') (STATE(1:nobs,I),I=1,nx)
