@@ -265,7 +265,7 @@ C WRITE HYPERPARAMTERS for THETA and PSI plus DATA
 	FILEOUT = TRIM(PATH)//TRIM(NMLNAME)//'.PRI'
  	OPEN(10,FILE = FILEOUT, ACCESS='SEQUENTIAL')
 #ifdef __GFORTRAN__
-      WRITE(fmt, '(a,i4,a)') '(', nv+11, '(I6))'
+      WRITE(fmt, '(a,i4,a)') '(', nv+11, 'I6)'
       WRITE(10,fmt) nt,np(1:3),nf,nz,seed,nx,ny,nobs,nv,INFOS(8,1:nv)
 #else
 	 WRITE(10,'(<11+nv>(I6))') nt,np(1:3),nf,nz,seed,nx,ny,nobs,
@@ -340,16 +340,16 @@ C SIMULATION of DATA and UNOBSERVABLES
 	 ELSE
 	  WRITE(9,'((F25.15))') theta0(1:nt),psi0(1:np(1))
 #ifdef __GFORTRAN__
-      WRITE(fmt, '(a,i4,a)') '(', 1, '(I3))'
+      WRITE(fmt, '(a,i4,a)') '(', 1, 'I3)'
 	  WRITE(11,fmt) Z(:)
 #else
 	  WRITE(11,'(<1>(I3))') Z(:)
 #endif
 	 ENDIF
 #ifdef __GFORTRAN__
-      WRITE(fmt, '(a,i4,a)') '(', nx, '(F20.10))'
+      WRITE(fmt, '(a,i4,a)') '(', nx, 'F20.10)'
       WRITE(10,fmt) (STATE(I,1:nx),I=1,nobs)
-      WRITE(fmt, '(a,i4,a)') '(', nx, '(F20.10))'
+      WRITE(fmt, '(a,i4,a)') '(', nx, 'F20.10)'
       WRITE(15,fmt) (yk(I,1:ny),I=1,nobs)
 #else
 	 WRITE(10,'(<nx>(F20.10))') (STATE(I,1:nx),I=1,nobs)
@@ -386,10 +386,10 @@ c	1         thetaprior,theta0,psi0,IMSVAR,HESS,AUX)
         CALL OPG(nobs,d,ny,nz,nx,nu,nt,ns,yk,IYK,S,
 	1           theta0,thetaprior,HESS,thetase,STATE,AKMSE,INN,IFAIL)
 #ifdef __GFORTRAN__
-        WRITE(fmt, '(a,i4,a)') '(', 2, '(F25.15))'
+        WRITE(fmt, '(a,i4,a)') '(', 2, 'F25.15)'
         WRITE(9,fmt) (theta0(I),thetase(I),I=1,nt)
         WRITE(9,fmt) AUX,IFAIL
-        WRITE(fmt, '(a,i4,a)') '(', nx, '(F20.10))'
+        WRITE(fmt, '(a,i4,a)') '(', nx, 'F20.10)'
         WRITE(10,fmt) (STATE(I,1:nx),I=1,nobs)
         WRITE(10,fmt) (AKMSE(I,1:nx),I=1,nobs)
         WRITE(fmt, '(a,i4,a)') '(', ny, 'F20.10)'
@@ -412,15 +412,15 @@ c	1         thetaprior,theta0,psi0,IMSVAR,HESS,AUX)
      1               yk,IYK,INFOS,theta0,psi0,thetaprior,HESS,
      1               thetase,psise,STATE,AKMSE,SSMOOTH,INN,IFAIL)
 #ifdef __GFORTRAN__
-         WRITE(fmt, '(a,i4,a)') '(', nx, '(F20.10))'
+         WRITE(fmt, '(a,i4,a)') '(', nx, 'F20.10)'
          WRITE(10,fmt) (STATE(I,1:nx),I=1,nobs)
          WRITE(10,fmt) (AKMSE(I,1:nx),I=1,nobs)
       ENDIF
-      WRITE(fmt, '(a,i4,a)') '(', 2, '(F25.15))'
+      WRITE(fmt, '(a,i4,a)') '(', 2, 'F25.15)'
       WRITE(9,fmt) (theta0(I),thetase(I),I=1,nt)
       WRITE(9,fmt) (psi0(I),psise(I),I=1,np(1))
 	  WRITE(9,fmt) AUX,IFAIL
-      WRITE(fmt, '(a,i4,a)') '(', nstot, '(F20.10))'
+      WRITE(fmt, '(a,i4,a)') '(', nstot, 'F20.10)'
       WRITE(11,fmt) (SSMOOTH(I,1:nstot),I=1,nobs)
       WRITE(fmt, '(a,i4,a)') '(', ny, 'F20.10)'
       WRITE(12,fmt) (INN(I,1:ny),I=1,nobs)
@@ -610,7 +610,7 @@ C MCMC RECORDING phase
 #ifdef __GFORTRAN__
            WRITE(fmt, '(a,i4,a)') '(', nobs*ny, 'F20.10)'
            WRITE(12,fmt) (INN(1:nobs,I),I=1,ny)
-           WRITE(fmt, '(a,i4,a)') '(', nobs*nx, '(F20.10))'
+           WRITE(fmt, '(a,i4,a)') '(', nobs*nx, 'F20.10)'
            WRITE(10,fmt) (STATE(1:nobs,I),I=1,nx)
 #else
 	   WRITE(12,'(<nobs*ny>(F20.10))') (INN(1:nobs,I),I=1,ny)
@@ -621,7 +621,7 @@ C MCMC RECORDING phase
 	   ENDIF
 	   IF (nv.EQ.0) THEN
 #ifdef __GFORTRAN__
-          WRITE(fmt, '(a,i4,a)') '(', nt, '(F25.15))'
+          WRITE(fmt, '(a,i4,a)') '(', nt, 'F25.15)'
           WRITE(9,fmt) theta(1:nt)
 #else
 	    WRITE(9,'(<nt>(F25.15))') theta(1:nt)
@@ -632,9 +632,9 @@ C MCMC RECORDING phase
 	    gibZ(jjj/thin,1:nobs) = Z(1:nobs)
 	   ENDIF
 #ifdef __GFORTRAN__
-       WRITE(fmt, '(a,i4,a)') '(', nt+np(1), '(F25.15))'
+       WRITE(fmt, '(a,i4,a)') '(', nt+np(1), 'F25.15)'
        WRITE(9,fmt) theta(1:nt),psi(1:np(1))
-       WRITE(fmt, '(a,i4,a)') '(', nobs, '(I3))'
+       WRITE(fmt, '(a,i4,a)') '(', nobs, 'I3)'
 	   WRITE(11,fmt) Z(:)
 #else
 	   WRITE(9,'(<nt+np(1)>(F25.15))') theta(1:nt),psi(1:np(1))
@@ -644,7 +644,7 @@ C MCMC RECORDING phase
 	  IF (nf.GT.0) THEN
 	   J = min(nv,1)
 #ifdef __GFORTRAN__
-       WRITE(fmt, '(a,i4,a)') '(', nf*(nx+ny+J), '(F20.10))'
+       WRITE(fmt, '(a,i4,a)') '(', nf*(nx+ny+J), 'F20.10)'
        WRITE(13,fmt) (FORE(1:nf,I),I=1,nx+ny+J)
 #else
 	   WRITE(13,'(<nf*(nx+ny+J)>(F20.10))') (FORE(1:nf,I),I=1,nx+ny+J)
@@ -652,7 +652,7 @@ C MCMC RECORDING phase
 	  ENDIF
 #ifdef __GFORTRAN__
       IF (INDMIS*nmis.GE.1) THEN
-         WRITE(fmt, '(a,i4,a)') '(', nmis, '(F20.10))'
+         WRITE(fmt, '(a,i4,a)') '(', nmis, 'F20.10)'
          WRITE(14,fmt) ykmis(1:nmis)
       END IF
 #else
