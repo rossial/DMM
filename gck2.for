@@ -101,7 +101,7 @@ C LOCALS
 	DATA EPS/1.D-14/,ONE/1.0D0/,ZERO/0.0D0/
 	DOUBLE PRECISION genunf,LEMMA4,MARKOVP
 
-#if defined(ORIGDLL)
+#if defined(MEX)
 	  CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #else
 #endif

@@ -72,7 +72,7 @@ C LOCALS
      1 Xdd(max(d(1),1),nx),Pdd(max(d(1),1),nx,nx),LIKE(max(d(1),1)),
      1 XT(nx),PT(nx,nx),INN0(ny))
 
-#if defined(ORIGDLL)
+#if defined(MEX)
       CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #else
 #endif

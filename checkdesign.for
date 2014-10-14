@@ -70,7 +70,7 @@ C EXTERNAL SUBROUTINES
 	ALLOCATE(c(ny,max(nz,1),ns(1)),H(ny,nx,ns(2)),
 	1 G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)),R(nx,nu,ns(6))) !,HRG(ny,nu),HRGRH(ny,ny))
 
-#if defined(ORIGDLL)
+#if defined(MEX)
 	  CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #else
 #endif

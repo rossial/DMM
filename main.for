@@ -34,7 +34,11 @@ C
 C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C --------------------------------------------------------------------------------------
+#if defined(MEX)
+      SUBROUTINE DMMMAIN(FILEIN)
+#else
       PROGRAM DMM
+#endif
 #if defined(__CYGWIN32__) || defined(_WIN32)
 #ifdef __INTEL_COMPILER
       USE dfwin
@@ -93,8 +97,10 @@ C TIME
       IT1(1:3) = DATE_ITIME(1:3)
       IT1(4:7) = DATE_ITIME(5:8)
 
+#if !defined(MEX)
 C GET the namelist specified by FILEIN
       CALL GETARG(1,FILEIN)     ! load name of input file
+#endif
 
 C CHECK FILEIN
 	IF (TRIM(FILEIN).EQ.'') THEN
@@ -135,15 +141,13 @@ C Assign the name of the matlab file
        ALLOCATE( c(ny,max(nz,1),ns(1)),H(ny,nx,ns(2)),
 	1  G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)),R(nx,nu,ns(6)),
      1  theta(nt))
-#if defined(ORIGDLL)
+#if defined(MEX)
        CALL SETFILEM(mfile,pathmfile) ! ONLY THE FIRST TIME
-#else
 #endif
 
        theta(:) = 1.D0
-#if defined(ORIGDLL)
+#if defined(MEX)
        CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
-#else
 #endif
        DEALLOCATE(c,H,G,a,F,R,theta)
       ENDIF
