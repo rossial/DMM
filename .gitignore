@@ -6,10 +6,10 @@
 dmm
 *.nml
 *.m
-*.pri
-*.dis
-*.fst
-*.inn
-*.ml
-*.par
-*.unb
+*.PRI
+*.DIS
+*.FST
+*.INN
+*.ML
+*.PAR
+*.UNB
