@@ -76,7 +76,7 @@ C EXTERNAL FUNCTIONS
      3 Xdd(MAX(d(1),1),nx),Pdd(MAX(d(1),1),nx,nx),
      3 WORK((nx+2)*(nx+1)/2),FP(nx,nx),WORK1(64*nx),UP(nu) )
 
-#if defined(MEX)
+#if defined(ORIGDLL) || defined(MEX)
 	  CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #else
 #endif

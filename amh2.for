@@ -107,7 +107,7 @@ C LOCALS
 	id1   = max(d(1),1)
 	Z0    = Z
 	delta = 1.D-3
-#if defined(MEX)
+#if defined(ORIGDLL) || defined(MEX)
 	  CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #else
 #endif

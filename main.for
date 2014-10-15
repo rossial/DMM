@@ -96,12 +96,10 @@ C TIME
      1                   DATE_ITIME)
       IT1(1:3) = DATE_ITIME(1:3)
       IT1(4:7) = DATE_ITIME(5:8)
-
 #if !defined(MEX)
 C GET the namelist specified by FILEIN
       CALL GETARG(1,FILEIN)     ! load name of input file
 #endif
-
 C CHECK FILEIN
 	IF (TRIM(FILEIN).EQ.'') THEN
 #ifdef __GFORTRAN__
@@ -141,12 +139,12 @@ C Assign the name of the matlab file
        ALLOCATE( c(ny,max(nz,1),ns(1)),H(ny,nx,ns(2)),
 	1  G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)),R(nx,nu,ns(6)),
      1  theta(nt))
-#if defined(MEX)
+#if defined(ORIGDLL) || defined(MEX)
        CALL SETFILEM(mfile,pathmfile) ! ONLY THE FIRST TIME
 #endif
 
        theta(:) = 1.D0
-#if defined(MEX)
+#if defined(ORIGDLL) || defined(MEX)
        CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #endif
        DEALLOCATE(c,H,G,a,F,R,theta)

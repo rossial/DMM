@@ -218,7 +218,7 @@ C
       IF (engEvalString(ep, 'clear success;'//
      &   '[C,H,G,A,F,R]='//TRIM(mfile)//'( ny,nz,nx,'//
      &   'nu,ns,theta);'//'success=1;') .ne. 0) then ! engEvalString failed
-#if defined(MEX)
+#if defined(ORIGDLL) || defined(MEX)
 		 CALL GETERRSTR(matlaberror)
 #else
 #endif
@@ -244,7 +244,7 @@ C
 #endif
       IF (C_ptr .eq. 0) then ! engEvalString failed
           buffer=buffer1
-#if defined(MEX)
+#if defined(ORIGDLL) || defined(MEX)
 		 CALL GETERRSTR(matlaberror)
 #else
 #endif
