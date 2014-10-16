@@ -136,7 +136,7 @@ C X-filter initialization
 
         ENDDO
       ELSE
-        WRITE(*,*) 'WARNING: d(1)=2 not implemeted yet'
+        WRITE(*,*) 'ERROR: d(1)=2 not implemeted yet'
         PAUSE
         STOP
       ENDIF
