@@ -136,6 +136,9 @@ C X-filter initialization
 
         ENDDO
       ELSE
+#if defined(MEX)
+       CALL mexErrMsgTxt('\nERROR: d(1)=2 not implemeted yet\n')
+#endif
         WRITE(*,*) 'ERROR: d(1)=2 not implemeted yet'
         PAUSE
         STOP

@@ -35,6 +35,7 @@ C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C --------------------------------------------------------------------------------------
 #if defined(MEX)
+#include "fintrf.h"
       SUBROUTINE DMMMAIN(FILEIN)
 #else
       PROGRAM DMM
@@ -76,7 +77,15 @@ C LOCALS
 	DOUBLE PRECISION AUX,lastl,lasth
       CHARACTER*3 DLLEXT
       CHARACTER*200 mfile,pathmfile
-	CHARACTER*200 FILEIN,NMLNAME,PATH,FILEOUT,DMMTITLE,CURDIR
+	CHARACTER*200 FILEIN,NMLNAME,PATH,FILEOUT,CURDIR
+#ifndef __GFORTRAN__
+      CHARACTER*200 DMMTITLE
+#endif
+#if defined(MEX)
+      CHARACTER(len=200) :: MEXPRINT
+      INTEGER*4 mexPrintf
+      INTEGER*4 mpfout
+#endif
 
 #ifdef __GFORTRAN__
       CHARACTER*16 fmt
@@ -102,7 +111,9 @@ C GET the namelist specified by FILEIN
 #endif
 C CHECK FILEIN
 	IF (TRIM(FILEIN).EQ.'') THEN
-#ifdef __GFORTRAN__
+#if defined(MEX)
+       CALL mexErrMsgTxt('\nNo input file provided\nProgram Aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' '
        WRITE(*,*) ' No input file provided'
        WRITE(*,*) ' Program aborting'
@@ -151,8 +162,7 @@ C Assign the name of the matlab file
       ENDIF
 
 C SET SHELL title
-#ifdef __GFORTRAN__
-#else
+#ifndef __GFORTRAN__
 	DMMTITLE = 'title DMM input:' // TRIM(PATH) // TRIM(NMLNAME)
      #     // '.nml' // ' - '
 	CALL system(DMMTITLE)
@@ -361,7 +371,9 @@ C SIMULATION of DATA and UNOBSERVABLES
 C MAXIMUM LIKELIHOOD ESTIMATION
 	IF ((estimation.EQ.'ML').OR.(estimation.EQ.'ml').OR.
      &    (estimation.EQ.'Ml').OR.(estimation.EQ.'mL')) THEN
-#ifdef __GFORTRAN__
+#if defined(MEX)
+       CALL mexErrMsgTxt('\nMaximum Likelihood inference not allowed\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' '
        WRITE(*,*) ' Maximum Likelihood inference not allowed '
        WRITE(*,*) ' Program aborting'
@@ -769,28 +781,59 @@ C MCMC RECORDING phase
 
 C MARGINAL LIKELIHOOD
 	IF ((MargLik.EQ.'Y').OR.(MargLik.EQ.'y')) THEN
+#if defined(MEX)
+       WRITE(MEXPRINT,*) ' '
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(MEXPRINT,*) 'Computing the marginal likelihood. Please wait ...'
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+#else
 	 WRITE(*,*) ' '
        WRITE(*,*) 'Computing the marginal likelihood. Please wait ...'
+#endif
 	 IF (nmis.GT.0) THEN
 	  CALL HARMONIC(GGG,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                INFOS,yk(1:nobs,:),IYK(1:nobs,:),gibtheta,gibZ,
      2                thetaprior,psiprior,pdftheta,MLHM)
+#if defined(MEX)
+       WRITE(MEXPRINT,*) 'Modified harmonic mean: done!'
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+#else
 	  WRITE(*,*) 'Modified harmonic mean: done!'
+#endif
 	  CALL MENGWONG(GGG,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                INFOS,yk(1:nobs,:),IYK(1:nobs,:),gibtheta,gibZ,
      2                thetaprior,psiprior,pdftheta,MLHM(5,1),MLMW)
+#if defined(MEX)
+       WRITE(MEXPRINT,*) 'Bridge sampling: done!'
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(MEXPRINT,*) ' '
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+#else
         WRITE(*,*) 'Bridge sampling: done!'
 	  WRITE(*,*) ' '
+#endif
 	 ELSE
 	  CALL HARMONIC2(GGG,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                 INFOS,yk(1:nobs,:),gibtheta,gibZ,thetaprior,
      2                 psiprior,pdftheta,MLHM)
+#if defined(MEX)
+       WRITE(MEXPRINT,*) 'Modified harmonic mean: done!'
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+#else
 	  WRITE(*,*) 'Modified harmonic mean: done!'
+#endif
 	  CALL MENGWONG2(GGG,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                 INFOS,yk(1:nobs,:),gibtheta,gibZ,thetaprior,
      2                 psiprior,pdftheta,MLHM(5,1),MLMW)
+#if defined(MEX)
+       WRITE(MEXPRINT,*) 'Bridge sampling: done!'
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(MEXPRINT,*) ' '
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+#else
         WRITE(*,*) 'Bridge sampling: done!'
 	  WRITE(*,*) ' '
+#endif
 	 ENDIF
 	 WRITE(15,*) 'Modified Harmonic mean (ML and Var)'
 #ifdef __GFORTRAN__

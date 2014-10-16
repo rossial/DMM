@@ -105,7 +105,9 @@ C CHEK theta
 	   IF (NN.LE.1000) THEN
 	     GOTO 7777
 	   ELSE
-#ifdef __GFORTRAN__
+#if defined(MEX)
+       CALL mexErrMsgTxt('\nReduce skcriterium or use Slice sampling\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
           WRITE(*,*) ' '
           WRITE(*,*) 'Reduce skcriterium or use Slice sampling'
           WRITE(*,*) 'Program aborting'
