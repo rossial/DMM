@@ -593,10 +593,10 @@ C FIND namelist S4
 	 CLOSE(1)
 	 IF (IFAIL.EQ.-1) THEN
 #ifdef __GFORTRAN__
-        WRITE(*,*) ' Namlist S4 not found'
+        WRITE(*,*) ' Namelist S4 not found'
         WRITE(*,*) ' Program aborting'
 #else
-	  TYPE *, ' Namlist S4 not found'
+	  TYPE *, ' Namelist S4 not found'
 	  TYPE *, ' Program aborting'
 	  PAUSE
 #endif
@@ -719,10 +719,10 @@ C FIND namelist S5
 	 CLOSE(1)
 	 IF (IFAIL.EQ.-1) THEN
 #ifdef __GFORTRAN__
-        WRITE(*,*) ' Namlist S5 not found'
+        WRITE(*,*) ' Namelist S5 not found'
         WRITE(*,*) ' Program aborting'
 #else
-	  TYPE *, ' Namlist S5 not found'
+	  TYPE *, ' Namelist S5 not found'
 	  TYPE *, ' Program aborting'
 	  PAUSE
 #endif
@@ -845,10 +845,10 @@ C FIND namelist S6
 	 CLOSE(1)
 	 IF (IFAIL.EQ.-1) THEN
 #ifdef __GFORTRAN__
-        WRITE(*,*) ' Namlist S6 not found'
+        WRITE(*,*) ' Namelist S6 not found'
         WRITE(*,*) ' Program aborting'
 #else
-	  TYPE *, ' Namlist S6 not found'
+	  TYPE *, ' Namelist S6 not found'
 	  TYPE *, ' Program aborting'
 	  PAUSE
 #endif
