@@ -494,8 +494,13 @@ C MCMC BURN-IN
 #if defined(__CYGWIN32__) || defined(_WIN32)
 	   CALL system('cls')
 #endif
+#if defined(MEX)
+       WRITE(MEXPRINT,1113) jjj,ntf,IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+#else
 	   WRITE(6,1113) jjj,ntf,IMIN(1)/dfloat(jjj),
      #             IMAX(1)/dfloat(jjj)
+#endif
         ENDIF
        ENDDO
 	ELSE  ! NO MISSING
@@ -525,8 +530,13 @@ C MCMC BURN-IN
 #if defined(__CYGWIN32__) || defined(_WIN32)
 	   CALL system('cls')
 #endif
+#if defined(MEX)
+       WRITE(MEXPRINT,1113) jjj,ntf,IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+#else
 	   WRITE(6,1113) jjj,ntf,IMIN(1)/dfloat(jjj),
      #             IMAX(1)/dfloat(jjj)
+#endif
         ENDIF
        ENDDO
 	ENDIF
@@ -604,14 +614,29 @@ C MCMC RECORDING phase
 #if defined(__CYGWIN32__) || defined(_WIN32)
 	   CALL system('cls')
 #endif
+#if defined(MEX)
+       WRITE(MEXPRINT,1113) BURNIN,ntf,lastl,lasth
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+#else
 	   WRITE(6,1113) BURNIN,ntf,lastl,lasth
+#endif
 	   IF ((HBL.EQ.1).OR.(nv.EQ.0)) THEN
+#if defined(MEX)
+          WRITE(MEXPRINT,1114) jjj,ntf,IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
+          mpfout = mexPrintf(MEXPRINT//achar(13))
+#else
 	    WRITE(6,1114) jjj,ntf,IMIN(1)/dfloat(jjj),
      #           IMAX(1)/dfloat(jjj)
+#endif
          ELSEIF ((HBL.GT.1).AND.(nv.GT.0)) THEN
+#if defined(MEX)
+            WRITE(MEXPRINT,1115) jjj,ntf,IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj),SUM(1.D0-ACCRATE(1:nobs)/DFLOAT(jjj))/DFLOAT(nobs)
+            mpfout = mexPrintf(MEXPRINT//achar(13))
+#else
 	    WRITE(6,1115) jjj,ntf,IMIN(1)/dfloat(jjj),
      #           IMAX(1)/dfloat(jjj),
      #           SUM(1.D0-ACCRATE(1:nobs)/DFLOAT(jjj))/DFLOAT(nobs)
+#endif
 	   ENDIF
         ENDIF
         IF (jjj/thin*thin.EQ.jjj) THEN
@@ -708,14 +733,29 @@ C MCMC RECORDING phase
 #if defined(__CYGWIN32__) || defined(_WIN32)
 	   CALL system('cls')
 #endif
+#if defined(MEX)
+       WRITE(MEXPRINT,1113) BURNIN,ntf,lastl,lasth
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+#else
 	   WRITE(6,1113) BURNIN,ntf,lastl,lasth
+#endif
 	   IF ((HBL.EQ.1).OR.(nv.EQ.0)) THEN
+#if defined(MEX)
+          WRITE(MEXPRINT,1114) jjj,ntf,IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
+          mpfout = mexPrintf(MEXPRINT//achar(13))
+#else
 	    WRITE(6,1114) jjj,ntf,IMIN(1)/dfloat(jjj),
      #           IMAX(1)/dfloat(jjj)
+#endif
          ELSEIF ((HBL.GT.1).AND.(nv.GT.0)) THEN
+#if defined(MEX)
+            WRITE(MEXPRINT,1115) jjj,ntf,IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj),SUM(1.D0-ACCRATE(1:nobs)/DFLOAT(jjj))/DFLOAT(nobs)
+            mpfout = mexPrintf(MEXPRINT//achar(13))
+#else
 	    WRITE(6,1115) jjj,ntf,IMIN(1)/dfloat(jjj),
      #           IMAX(1)/dfloat(jjj),
      #           SUM(1.D0-ACCRATE(1:nobs)/DFLOAT(jjj))/DFLOAT(nobs)
+#endif
 	   ENDIF
         ENDIF
         IF (jjj/thin*thin.EQ.jjj) THEN
@@ -865,16 +905,36 @@ C MARGINAL LIKELIHOOD
       IT2(4:7) = DATE_ITIME(5:8)
 	IT=(IT2(4)-IT1(4))*3600+(IT2(5)-IT1(5))*60+(IT2(6)-IT1(6))
       IF ((check.EQ.'Y').OR.(check.EQ.'y')) THEN
+#if defined(MEX)
+       WRITE(MEXPRINT,1117) TRIM(PATH)
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+#else
         WRITE(6,1117) TRIM(PATH)
+#endif
       ELSE
           IF ((datasim.EQ.'Y').OR.(datasim.EQ.'y')) THEN
+#if defined(MEX)
+             WRITE(MEXPRINT,1118) TRIM(PATH)
+             mpfout = mexPrintf(MEXPRINT//achar(13))
+#else
             WRITE(6,1118) TRIM(PATH)
+#endif
           ELSE
             IF ((estimation.EQ.'ML').OR.(estimation.EQ.'ml').OR.
      &          (estimation.EQ.'Ml').OR.(estimation.EQ.'mL')) THEN
+#if defined(MEX)
+               WRITE(MEXPRINT,1119) TRIM(PATH)
+               mpfout = mexPrintf(MEXPRINT//achar(13))
+#else
               WRITE(6,1119) IT,TRIM(PATH)
+#endif
             ELSE
+#if defined(MEX)
+               WRITE(MEXPRINT,1116) TRIM(PATH)
+               mpfout = mexPrintf(MEXPRINT//achar(13))
+#else
               WRITE(6,1116) IT,TRIM(PATH)
+#endif
             ENDIF
           ENDIF
       ENDIF
