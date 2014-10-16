@@ -436,7 +436,7 @@ C LOCALS
       INTEGER*4 mpfout
 #endif
       IF (V.GT.200) THEN
-#ifdef __GFORTRAN__
+#if defined(MEX)
          WRITE(MEXPRINT,*) 'CHI2INV: Too many degrees of freedom'
          mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
