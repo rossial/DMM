@@ -944,6 +944,28 @@ C MARGINAL LIKELIHOOD
 1111  FORMAT((<4>(F25.12)), '  ',A2)
 1112  FORMAT(I10,(<np(3)>(F25.12)), '  ',I2)
 #endif
+#if defined(MEX)
+1113  FORMAT(' Burn-in draws = ',I8,'\n',
+     #       ' Parameters sampled by SLICE ',I5,'\n',
+     #       ' SLICE likelihood eval. Min/Max = ',F6.2, ' / ',F6.2,'\n')
+1114  FORMAT(' Recording draws = ',I8,'\n',
+     #       ' Parameters sampled by SLICE ',I5,'\n',
+     #       ' SLICE likelihood eval. Min/Max = ',F6.2, ' / ',F6.2,'\n')
+1115  FORMAT(' Recording draws = ',I8,'\n',
+     #       ' Parameters sampled by SLICE ',I5,'\n',
+     #       ' SLICE likelihood eval. Min/Max = ',F6.2, ' / ',F6.2,'\n',
+     #       ' Adaptive MH accettance rate = ',F6.2,'\n')
+1116  FORMAT(' MCMC completed','\n',
+     #       ' CPU-time (sec)=', I10,'\n',
+     #       ' Output printed in ',A)
+1117  FORMAT(' Check completed','\n',
+     #       ' Output printed in ',A)
+1118  FORMAT(' Data simulation completed','\n',
+     #       ' Output printed in 'A)
+1119  FORMAT(' Maximum Likelihood completed','\n',
+     #       ' CPU-time (sec)=', I10,'\n',
+     #       ' Output printed in ',A)
+#else
 1113  FORMAT(/,' Burn-in draws = ',I8,
      #       /,' Parameters sampled by SLICE ',I5,
      #       /,' SLICE likelihood eval. Min/Max = ',F6.2, ' / ',F6.2)
@@ -964,6 +986,7 @@ C MARGINAL LIKELIHOOD
 1119  FORMAT(/,' Maximum Likelihood completed',
      #       /,' CPU-time (sec)=', I10,
      #       /,' Output printed in ',A)
+#endif
 #ifdef __INTEL_COMPILER
       PAUSE
 #endif
