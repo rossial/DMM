@@ -923,14 +923,14 @@ C MARGINAL LIKELIHOOD
             IF ((estimation.EQ.'ML').OR.(estimation.EQ.'ml').OR.
      &          (estimation.EQ.'Ml').OR.(estimation.EQ.'mL')) THEN
 #if defined(MEX)
-               WRITE(MEXPRINT,1119) TRIM(PATH)
+               WRITE(MEXPRINT,1119) IT,TRIM(PATH)
                mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
               WRITE(6,1119) IT,TRIM(PATH)
 #endif
             ELSE
 #if defined(MEX)
-               WRITE(MEXPRINT,1116) TRIM(PATH)
+               WRITE(MEXPRINT,1116) IT,TRIM(PATH)
                mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
               WRITE(6,1116) IT,TRIM(PATH)
