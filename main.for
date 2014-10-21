@@ -990,5 +990,7 @@ C MARGINAL LIKELIHOOD
 #ifdef __INTEL_COMPILER
       PAUSE
 #endif
+#if !(defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE))
 	STOP
+#endif
       END
