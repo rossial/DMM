@@ -73,7 +73,7 @@ C EXTERNAL SUBROUTINES
 	ALLOCATE(R(nx,nu,ns(6)),c(ny,max(nz,1),ns(1)),H(ny,nx,ns(2)),
 	1 G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)))
 
-#if defined(ORIGDLL) || defined(MEX)
+#if defined(ORIGDLL) || defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
 	  CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #else
 #endif

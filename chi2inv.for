@@ -430,13 +430,13 @@ C LOCALS
       DATA T(198,6:10)/199.8400, 205.0857, 211.0344, 218.6401, 231.8292/
       DATA T(199,6:10)/200.8463, 206.1051, 212.0684, 219.6922, 232.9118/
       DATA T(200,6:10)/201.8526,207.1244, 213.1022, 220.7441, 233.9943/
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
       CHARACTER(len=200) :: MEXPRINT
       INTEGER*4 mexPrintf
       INTEGER*4 mpfout
 #endif
       IF (V.GT.200) THEN
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
          WRITE(MEXPRINT,*) 'CHI2INV: Too many degrees of freedom'
          mpfout = mexPrintf(MEXPRINT//achar(13))
 #else

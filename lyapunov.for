@@ -63,7 +63,7 @@ C	CALL F02EAF('V',nx,T,nx,WR,WI,Z,nx,WORK,LWORK,IFAIL) ! F = ZTZ'
      #           BWORK,IFAIL)
 	DO I = 1,nx
 	IF (WI(I)**2+WR(I)**2.GE.1.D0) THEN
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
        CALL mexErrMsgTxt('\nLYAPUNOV SUBROUTINE: Some parameters out of\nstationary region. Check hyptheta in namelist prior.\nProgram aborting')
 #elif defined(__GFORTRAN__)
        WRITE(*,*) ' '

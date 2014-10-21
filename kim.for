@@ -136,7 +136,7 @@ C X-filter initialization
 
         ENDDO
       ELSE
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
        CALL mexErrMsgTxt('\nERROR: d(1)=2 not implemeted yet\n')
 #endif
         WRITE(*,*) 'ERROR: d(1)=2 not implemeted yet'

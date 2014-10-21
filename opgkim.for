@@ -87,7 +87,7 @@ C ------------------------------------------------------------
       IFAIL = 0
       CALL SYMINV(LTR,NFREE,LTR,W,J,IFAIL,RMAX)
 
-#if defined(ORIGDLL) || defined(MEX)
+#if defined(ORIGDLL) || defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
       CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #else
 #endif
@@ -135,7 +135,7 @@ C -----------
         ELSE
          psi(I-NFT) = PAR(I)
         ENDIF
-#if defined(ORIGDLL) || defined(MEX)
+#if defined(ORIGDLL) || defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
         CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #else
 #endif

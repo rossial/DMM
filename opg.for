@@ -85,7 +85,7 @@ C Using Hessian from E04UCF
      1 XT(0:nobs,nx),PT(0:nobs,nx,nx),Xdd(max(d(1),1),nx),
      1 Pdd(max(d(1),1),nx,nx))
 
-#if defined(ORIGDLL) || defined(MEX)
+#if defined(ORIGDLL) || defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
 	  CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #else
 #endif
@@ -123,7 +123,7 @@ C Using Hessian from E04UCF
 	DO 1000 I=1,NFREE
 	 THETAV(I) = THETAV(I) + P(I)
        theta(IFREE(I)) = THETAV(I)
-#if defined(ORIGDLL) || defined(MEX)
+#if defined(ORIGDLL) || defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
 	   CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #else
 #endif

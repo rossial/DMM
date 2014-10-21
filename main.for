@@ -34,7 +34,7 @@ C
 C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C --------------------------------------------------------------------------------------
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
 #include "fintrf.h"
       SUBROUTINE DMMMAIN(FILEIN)
 #else
@@ -81,7 +81,7 @@ C LOCALS
 #ifndef __GFORTRAN__
       CHARACTER*200 DMMTITLE
 #endif
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
       CHARACTER(len=200) :: MEXPRINT
       INTEGER*4 mexPrintf
       INTEGER*4 mpfout
@@ -105,13 +105,13 @@ C TIME
      1                   DATE_ITIME)
       IT1(1:3) = DATE_ITIME(1:3)
       IT1(4:7) = DATE_ITIME(5:8)
-#if !defined(MEX)
+#if !(defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE))
 C GET the namelist specified by FILEIN
       CALL GETARG(1,FILEIN)     ! load name of input file
 #endif
 C CHECK FILEIN
 	IF (TRIM(FILEIN).EQ.'') THEN
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
        CALL mexErrMsgTxt('\nNo input file provided\nProgram Aborting\n')
 #elif defined(__GFORTRAN__)
        WRITE(*,*) ' '
@@ -150,12 +150,12 @@ C Assign the name of the matlab file
        ALLOCATE( c(ny,max(nz,1),ns(1)),H(ny,nx,ns(2)),
 	1  G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)),R(nx,nu,ns(6)),
      1  theta(nt))
-#if defined(ORIGDLL) || defined(MEX)
+#if defined(ORIGDLL) || defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
        CALL SETFILEM(mfile,pathmfile) ! ONLY THE FIRST TIME
 #endif
 
        theta(:) = 1.D0
-#if defined(ORIGDLL) || defined(MEX)
+#if defined(ORIGDLL) || defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
        CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #endif
        DEALLOCATE(c,H,G,a,F,R,theta)
@@ -371,7 +371,7 @@ C SIMULATION of DATA and UNOBSERVABLES
 C MAXIMUM LIKELIHOOD ESTIMATION
 	IF ((estimation.EQ.'ML').OR.(estimation.EQ.'ml').OR.
      &    (estimation.EQ.'Ml').OR.(estimation.EQ.'mL')) THEN
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
        CALL mexErrMsgTxt('\nMaximum Likelihood inference not allowed\nProgram aborting\n')
 #elif defined(__GFORTRAN__)
        WRITE(*,*) ' '
@@ -494,7 +494,7 @@ C MCMC BURN-IN
 #if defined(__CYGWIN32__) || defined(_WIN32)
 	   CALL system('cls')
 #endif
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
        WRITE(MEXPRINT,1113) jjj,ntf,IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
        mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
@@ -530,7 +530,7 @@ C MCMC BURN-IN
 #if defined(__CYGWIN32__) || defined(_WIN32)
 	   CALL system('cls')
 #endif
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
        WRITE(MEXPRINT,1113) jjj,ntf,IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
        mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
@@ -614,14 +614,14 @@ C MCMC RECORDING phase
 #if defined(__CYGWIN32__) || defined(_WIN32)
 	   CALL system('cls')
 #endif
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
        WRITE(MEXPRINT,1113) BURNIN,ntf,lastl,lasth
        mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
 	   WRITE(6,1113) BURNIN,ntf,lastl,lasth
 #endif
 	   IF ((HBL.EQ.1).OR.(nv.EQ.0)) THEN
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
           WRITE(MEXPRINT,1114) jjj,ntf,IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
           mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
@@ -629,7 +629,7 @@ C MCMC RECORDING phase
      #           IMAX(1)/dfloat(jjj)
 #endif
          ELSEIF ((HBL.GT.1).AND.(nv.GT.0)) THEN
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
             WRITE(MEXPRINT,1115) jjj,ntf,IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj),SUM(1.D0-ACCRATE(1:nobs)/DFLOAT(jjj))/DFLOAT(nobs)
             mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
@@ -733,14 +733,14 @@ C MCMC RECORDING phase
 #if defined(__CYGWIN32__) || defined(_WIN32)
 	   CALL system('cls')
 #endif
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
        WRITE(MEXPRINT,1113) BURNIN,ntf,lastl,lasth
        mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
 	   WRITE(6,1113) BURNIN,ntf,lastl,lasth
 #endif
 	   IF ((HBL.EQ.1).OR.(nv.EQ.0)) THEN
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
           WRITE(MEXPRINT,1114) jjj,ntf,IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
           mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
@@ -748,7 +748,7 @@ C MCMC RECORDING phase
      #           IMAX(1)/dfloat(jjj)
 #endif
          ELSEIF ((HBL.GT.1).AND.(nv.GT.0)) THEN
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
             WRITE(MEXPRINT,1115) jjj,ntf,IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj),SUM(1.D0-ACCRATE(1:nobs)/DFLOAT(jjj))/DFLOAT(nobs)
             mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
@@ -821,7 +821,7 @@ C MCMC RECORDING phase
 
 C MARGINAL LIKELIHOOD
 	IF ((MargLik.EQ.'Y').OR.(MargLik.EQ.'y')) THEN
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
        WRITE(MEXPRINT,*) ' '
        mpfout = mexPrintf(MEXPRINT//achar(13))
        WRITE(MEXPRINT,*) 'Computing the marginal likelihood. Please wait ...'
@@ -834,7 +834,7 @@ C MARGINAL LIKELIHOOD
 	  CALL HARMONIC(GGG,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                INFOS,yk(1:nobs,:),IYK(1:nobs,:),gibtheta,gibZ,
      2                thetaprior,psiprior,pdftheta,MLHM)
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
        WRITE(MEXPRINT,*) 'Modified harmonic mean: done!'
        mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
@@ -843,7 +843,7 @@ C MARGINAL LIKELIHOOD
 	  CALL MENGWONG(GGG,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                INFOS,yk(1:nobs,:),IYK(1:nobs,:),gibtheta,gibZ,
      2                thetaprior,psiprior,pdftheta,MLHM(5,1),MLMW)
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
        WRITE(MEXPRINT,*) 'Bridge sampling: done!'
        mpfout = mexPrintf(MEXPRINT//achar(13))
        WRITE(MEXPRINT,*) ' '
@@ -856,7 +856,7 @@ C MARGINAL LIKELIHOOD
 	  CALL HARMONIC2(GGG,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                 INFOS,yk(1:nobs,:),gibtheta,gibZ,thetaprior,
      2                 psiprior,pdftheta,MLHM)
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
        WRITE(MEXPRINT,*) 'Modified harmonic mean: done!'
        mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
@@ -865,7 +865,7 @@ C MARGINAL LIKELIHOOD
 	  CALL MENGWONG2(GGG,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                 INFOS,yk(1:nobs,:),gibtheta,gibZ,thetaprior,
      2                 psiprior,pdftheta,MLHM(5,1),MLMW)
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
        WRITE(MEXPRINT,*) 'Bridge sampling: done!'
        mpfout = mexPrintf(MEXPRINT//achar(13))
        WRITE(MEXPRINT,*) ' '
@@ -905,7 +905,7 @@ C MARGINAL LIKELIHOOD
       IT2(4:7) = DATE_ITIME(5:8)
 	IT=(IT2(4)-IT1(4))*3600+(IT2(5)-IT1(5))*60+(IT2(6)-IT1(6))
       IF ((check.EQ.'Y').OR.(check.EQ.'y')) THEN
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
        WRITE(MEXPRINT,1117) TRIM(PATH)
        mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
@@ -913,7 +913,7 @@ C MARGINAL LIKELIHOOD
 #endif
       ELSE
           IF ((datasim.EQ.'Y').OR.(datasim.EQ.'y')) THEN
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
              WRITE(MEXPRINT,1118) TRIM(PATH)
              mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
@@ -922,14 +922,14 @@ C MARGINAL LIKELIHOOD
           ELSE
             IF ((estimation.EQ.'ML').OR.(estimation.EQ.'ml').OR.
      &          (estimation.EQ.'Ml').OR.(estimation.EQ.'mL')) THEN
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
                WRITE(MEXPRINT,1119) IT,TRIM(PATH)
                mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
               WRITE(6,1119) IT,TRIM(PATH)
 #endif
             ELSE
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
                WRITE(MEXPRINT,1116) IT,TRIM(PATH)
                mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
@@ -944,7 +944,7 @@ C MARGINAL LIKELIHOOD
 1111  FORMAT((<4>(F25.12)), '  ',A2)
 1112  FORMAT(I10,(<np(3)>(F25.12)), '  ',I2)
 #endif
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
 1113  FORMAT(' Burn-in draws = ',I8,'\n',
      #       ' Parameters sampled by SLICE ',I5,'\n',
      #       ' SLICE likelihood eval. Min/Max = ',F6.2, ' / ',F6.2,'\n')

@@ -105,7 +105,7 @@ C CHEK theta
 	   IF (NN.LE.1000) THEN
 	     GOTO 7777
 	   ELSE
-#if defined(MEX)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
        CALL mexErrMsgTxt('\nReduce skcriterium or use Slice sampling\nProgram aborting\n')
 #elif defined(__GFORTRAN__)
           WRITE(*,*) ' '
