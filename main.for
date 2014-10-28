@@ -495,7 +495,11 @@ C MCMC BURN-IN
 	   CALL system('cls')
 #endif
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-       WRITE(MEXPRINT,1113) jjj,ntf,IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
+       WRITE(MEXPRINT,11131) jjj
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(MEXPRINT,11132) ntf
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(MEXPRINT,11133) IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
        mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
 	   WRITE(6,1113) jjj,ntf,IMIN(1)/dfloat(jjj),
@@ -531,7 +535,11 @@ C MCMC BURN-IN
 	   CALL system('cls')
 #endif
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-       WRITE(MEXPRINT,1113) jjj,ntf,IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
+       WRITE(MEXPRINT,11131) jjj
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(MEXPRINT,11132) ntf
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(MEXPRINT,11133) IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
        mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
 	   WRITE(6,1113) jjj,ntf,IMIN(1)/dfloat(jjj),
@@ -615,14 +623,22 @@ C MCMC RECORDING phase
 	   CALL system('cls')
 #endif
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-       WRITE(MEXPRINT,1113) BURNIN,ntf,lastl,lasth
+       WRITE(MEXPRINT,11131) BURNIN
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(MEXPRINT,11132) ntf
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(MEXPRINT,11133) lastl,lasth
        mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
 	   WRITE(6,1113) BURNIN,ntf,lastl,lasth
 #endif
 	   IF ((HBL.EQ.1).OR.(nv.EQ.0)) THEN
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-          WRITE(MEXPRINT,1114) jjj,ntf,IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
+          WRITE(MEXPRINT,11141) jjj
+          mpfout = mexPrintf(MEXPRINT//achar(13))
+          WRITE(MEXPRINT,11142) ntf
+          mpfout = mexPrintf(MEXPRINT//achar(13))
+          WRITE(MEXPRINT,11143) IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
           mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
 	    WRITE(6,1114) jjj,ntf,IMIN(1)/dfloat(jjj),
@@ -630,7 +646,13 @@ C MCMC RECORDING phase
 #endif
          ELSEIF ((HBL.GT.1).AND.(nv.GT.0)) THEN
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-            WRITE(MEXPRINT,1115) jjj,ntf,IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj),SUM(1.D0-ACCRATE(1:nobs)/DFLOAT(jjj))/DFLOAT(nobs)
+            WRITE(MEXPRINT,11151) jjj
+            mpfout = mexPrintf(MEXPRINT//achar(13))
+            WRITE(MEXPRINT,11152) ntf
+            mpfout = mexPrintf(MEXPRINT//achar(13))
+            WRITE(MEXPRINT,11153) IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
+            mpfout = mexPrintf(MEXPRINT//achar(13))
+            WRITE(MEXPRINT,11154) SUM(1.D0-ACCRATE(1:nobs)/DFLOAT(jjj))/DFLOAT(nobs)
             mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
 	    WRITE(6,1115) jjj,ntf,IMIN(1)/dfloat(jjj),
@@ -734,14 +756,22 @@ C MCMC RECORDING phase
 	   CALL system('cls')
 #endif
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-       WRITE(MEXPRINT,1113) BURNIN,ntf,lastl,lasth
+       WRITE(MEXPRINT,11131) BURNIN
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(MEXPRINT,11132) ntf
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(MEXPRINT,11133) lastl,lasth
        mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
 	   WRITE(6,1113) BURNIN,ntf,lastl,lasth
 #endif
 	   IF ((HBL.EQ.1).OR.(nv.EQ.0)) THEN
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-          WRITE(MEXPRINT,1114) jjj,ntf,IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
+          WRITE(MEXPRINT,11141) jjj
+          mpfout = mexPrintf(MEXPRINT//achar(13))
+          WRITE(MEXPRINT,11142) ntf
+          mpfout = mexPrintf(MEXPRINT//achar(13))
+          WRITE(MEXPRINT,11143) IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
           mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
 	    WRITE(6,1114) jjj,ntf,IMIN(1)/dfloat(jjj),
@@ -749,7 +779,13 @@ C MCMC RECORDING phase
 #endif
          ELSEIF ((HBL.GT.1).AND.(nv.GT.0)) THEN
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-            WRITE(MEXPRINT,1115) jjj,ntf,IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj),SUM(1.D0-ACCRATE(1:nobs)/DFLOAT(jjj))/DFLOAT(nobs)
+            WRITE(MEXPRINT,11151) jjj
+            mpfout = mexPrintf(MEXPRINT//achar(13))
+            WRITE(MEXPRINT,11152) ntf
+            mpfout = mexPrintf(MEXPRINT//achar(13))
+            WRITE(MEXPRINT,11153) IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
+            mpfout = mexPrintf(MEXPRINT//achar(13))
+            WRITE(MEXPRINT,11154) SUM(1.D0-ACCRATE(1:nobs)/DFLOAT(jjj))/DFLOAT(nobs)
             mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
 	    WRITE(6,1115) jjj,ntf,IMIN(1)/dfloat(jjj),
@@ -906,7 +942,9 @@ C MARGINAL LIKELIHOOD
 	IT=(IT2(4)-IT1(4))*3600+(IT2(5)-IT1(5))*60+(IT2(6)-IT1(6))
       IF ((check.EQ.'Y').OR.(check.EQ.'y')) THEN
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-       WRITE(MEXPRINT,1117) TRIM(PATH)
+       WRITE(MEXPRINT,11171)
+       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(MEXPRINT,11172) TRIM(PATH)
        mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
         WRITE(6,1117) TRIM(PATH)
@@ -914,7 +952,9 @@ C MARGINAL LIKELIHOOD
       ELSE
           IF ((datasim.EQ.'Y').OR.(datasim.EQ.'y')) THEN
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-             WRITE(MEXPRINT,1118) TRIM(PATH)
+             WRITE(MEXPRINT,11181)
+             mpfout = mexPrintf(MEXPRINT//achar(13))
+             WRITE(MEXPRINT,11182) TRIM(PATH)
              mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
             WRITE(6,1118) TRIM(PATH)
@@ -923,14 +963,22 @@ C MARGINAL LIKELIHOOD
             IF ((estimation.EQ.'ML').OR.(estimation.EQ.'ml').OR.
      &          (estimation.EQ.'Ml').OR.(estimation.EQ.'mL')) THEN
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-               WRITE(MEXPRINT,1119) IT,TRIM(PATH)
+               WRITE(MEXPRINT,11191)
+               mpfout = mexPrintf(MEXPRINT//achar(13))
+               WRITE(MEXPRINT,11192) IT
+               mpfout = mexPrintf(MEXPRINT//achar(13))
+               WRITE(MEXPRINT,11193) TRIM(PATH)
                mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
               WRITE(6,1119) IT,TRIM(PATH)
 #endif
             ELSE
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-               WRITE(MEXPRINT,1116) IT,TRIM(PATH)
+               WRITE(MEXPRINT,11161)
+               mpfout = mexPrintf(MEXPRINT//achar(13))
+               WRITE(MEXPRINT,11162) IT
+               mpfout = mexPrintf(MEXPRINT//achar(13))
+               WRITE(MEXPRINT,11163) TRIM(PATH)
                mpfout = mexPrintf(MEXPRINT//achar(13))
 #else
               WRITE(6,1116) IT,TRIM(PATH)
@@ -945,26 +993,26 @@ C MARGINAL LIKELIHOOD
 1112  FORMAT(I10,(<np(3)>(F25.12)), '  ',I2)
 #endif
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-1113  FORMAT(' Burn-in draws = ',I8,'\n',
-     #       ' Parameters sampled by SLICE ',I5,'\n',
-     #       ' SLICE likelihood eval. Min/Max = ',F6.2, ' / ',F6.2,'\n')
-1114  FORMAT(' Recording draws = ',I8,'\n',
-     #       ' Parameters sampled by SLICE ',I5,'\n',
-     #       ' SLICE likelihood eval. Min/Max = ',F6.2, ' / ',F6.2,'\n')
-1115  FORMAT(' Recording draws = ',I8,'\n',
-     #       ' Parameters sampled by SLICE ',I5,'\n',
-     #       ' SLICE likelihood eval. Min/Max = ',F6.2, ' / ',F6.2,'\n',
-     #       ' Adaptive MH accettance rate = ',F6.2,'\n')
-1116  FORMAT(' MCMC completed','\n',
-     #       ' CPU-time (sec)=', I10,'\n',
-     #       ' Output printed in ',A)
-1117  FORMAT(' Check completed','\n',
-     #       ' Output printed in ',A)
-1118  FORMAT(' Data simulation completed','\n',
-     #       ' Output printed in 'A)
-1119  FORMAT(' Maximum Likelihood completed','\n',
-     #       ' CPU-time (sec)=', I10,'\n',
-     #       ' Output printed in ',A)
+11131 FORMAT(' Burn-in draws = ',I8)
+11132 FORMAT(' Parameters sampled by SLICE ',I5)
+11133 FORMAT(' SLICE likelihood eval. Min/Max = ',F6.2, ' / ',F6.2)
+11141 FORMAT(' Recording draws = ',I8)
+11142 FORMAT(' Parameters sampled by SLICE ',I5)
+11143 FORMAT(' SLICE likelihood eval. Min/Max = ',F6.2, ' / ',F6.2)
+11151 FORMAT(' Recording draws = ',I8)
+11152 FORMAT(' Parameters sampled by SLICE ',I5)
+11153 FORMAT(' SLICE likelihood eval. Min/Max = ',F6.2, ' / ',F6.2)
+11154 FORMAT(' Adaptive MH accettance rate = ',F6.2)
+11161 FORMAT(' MCMC completed')
+11162 FORMAT(' CPU-time (sec)=', I10)
+11163 FORMAT(' Output printed in ',A)
+11171 FORMAT(' Check completed')
+11172 FORMAT(' Output printed in ',A)
+11181 FORMAT(' Data simulation completed')
+11182 FORMAT(' Output printed in 'A)
+11191 FORMAT(' Maximum Likelihood completed')
+11192 FORMAT(' CPU-time (sec)=', I10)
+11193 FORMAT(' Output printed in ',A)
 #else
 1113  FORMAT(/,' Burn-in draws = ',I8,
      #       /,' Parameters sampled by SLICE ',I5,
