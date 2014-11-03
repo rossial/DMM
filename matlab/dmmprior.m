@@ -1,7 +1,27 @@
 function y = dmmprior(x,a,b,tipo)
+% ------------------------------------------------------------------------
 % tipo: NT normal, BE beta, IG inverted gamma 2 pdf
-% A.Rossi (November 2014)
-y = zeros(size(x));
+%
+% Copyright (C) 2010-2014 European Commission
+%
+% This file is part of Program DMM
+%
+% DMM is free software developed at the Joint Research Centre of the
+% European Commission: you can redistribute it and/or modify it under
+% the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% DMM is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with DMM.  If not, see <http://www.gnu.org/licenses/>.
+% --------------------------------------------------------------------------
+
+  y = zeros(size(x));
 if nargin ~= 4,
     error('dmmprior requires 4 input arguments');
 end
