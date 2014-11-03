@@ -36,7 +36,7 @@
  check   = to debug the system matrices c, H, G, a, F, and R
 
  &ssm
-  nx=1 nu=2 d=1 1 nv=2 check=n estimation=BA dllname = path\NILE1.m
+  nx=1 nu=2 d=1 1 nv=2 check='n' estimation='BA' dllname = 'path\NILE1.m'
  &end
 
  Namelist Sj describes discrete latent variables Sj, j = 1,...,nv:
@@ -47,9 +47,9 @@
             of dimension k ordered by columns
  matSj    = matrices impacted by Sj (one or more of c H G a F R)
 
- &S1 dynS1=I nS1=2 hypS1(1,1)=16 2 matS1=G &end
+ &S1 dynS1='I' nS1=2 hypS1(1,1)=16 2 matS1='G' &end
 
- &S2 dynS2=I nS2=2 hypS2(1,1)=16 2 matS2=R &end
+ &S2 dynS2='I' nS2=2 hypS2(1,1)=16 2 matS2='R' &end
 
  Namelist prior describes priors pdf of model parameters (except transition probs):
  nt       = number of theta parameters
@@ -59,25 +59,25 @@
             value is fixed at lb=ub
 
  &prior nt = 3
-  pdftheta(1) = IG hyptheta(1,1) = 6000 6  0 500000
-  pdftheta(2) = IG hyptheta(1,2) = 6000 6  0 500000
-  pdftheta(3) = BE hyptheta(1,3) = 2 4  1 20
+  pdftheta(1) = 'IG' hyptheta(1,1) = 6000 6  0 500000
+  pdftheta(2) = 'IG' hyptheta(1,2) = 6000 6  0 500000
+  pdftheta(3) = 'BE' hyptheta(1,3) = 2 4  1 20
  &end
 
   ML:
-  pdftheta(1) = IG hyptheta(1,1) = 10000 6  0 50000
-  pdftheta(2) = IG hyptheta(1,2) = 10000 6  0 50000
-  pdftheta(3) = BE hyptheta(1,3) = 6     4  1 20
+  pdftheta(1) = 'IG' hyptheta(1,1) = 10000 6  0 50000
+  pdftheta(2) = 'IG' hyptheta(1,2) = 10000 6  0 50000
+  pdftheta(3) = 'BE' hyptheta(1,3) = 6     4  1 20
 
   Fixed:
-  pdftheta(1) = IG hyptheta(1,1) = 60000 6 12000 12000
-  pdftheta(2) = IG hyptheta(1,2) = 60000 6 9000 9000
-  pdftheta(3) = BE hyptheta(1,3) = 2 4 4 4
+  pdftheta(1) = 'IG' hyptheta(1,1) = 60000 6 12000 12000
+  pdftheta(2) = 'IG' hyptheta(1,2) = 60000 6 9000 9000
+  pdftheta(3) = 'BE' hyptheta(1,3) = 2 4 4 4
 
   Bayes:
-  pdftheta(1) = IG hyptheta(1,1) = 60000 6 0 50000
-  pdftheta(2) = IG hyptheta(1,2) = 60000 6 0 50000
-  pdftheta(3) = BE hyptheta(1,3) = 2     4 1 20
+  pdftheta(1) = 'IG' hyptheta(1,1) = 60000 6 0 50000
+  pdftheta(2) = 'IG' hyptheta(1,2) = 60000 6 0 50000
+  pdftheta(3) = 'BE' hyptheta(1,3) = 2     4 1 20
 
  Namelist mcmc contains the Markov Chain Monte Carlo options:
  seed        = seed of random number generator (0-999; 0 default)
@@ -87,7 +87,7 @@
  hbl         = block length discrete latent variable (1:GCK, >1: AMH)
 
  &mcmc
-  seed=0 thin=1 burnin=100 simulrec=500 hbl=1 MargLik=y
+  seed=0 thin=1 burnin=100 simulrec=500 hbl=1 MargLik='y'
  &end
 
  Namelist dataset provides data:
@@ -102,7 +102,7 @@
 
  Note: use can be made of -99999 to assign missing values to the endogenous variables
 
- &dataset T=100 ny=1 nz=0 nf=10 datasim=n obs=
+ &dataset T=100 ny=1 nz=0 nf=10 datasim='n' obs=
   1120
   1160
   963

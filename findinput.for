@@ -48,9 +48,13 @@ C LOCALS
 	ERRMSG = 'INPUT ERROR: '// STR2 //' is not set'
 	IPOS = INDEX(TRIM(STR1),STR2)
 	IF (IPOS.EQ.0) THEN
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt(ERRMSG)
+#else
 	 WRITE(*,*) ERRMSG
 	 PAUSE
 	 STOP
+#endif
       ELSE
 	 IPOS = IPOS+2
 	 DO WHILE ((OSTR.NE.'=').AND.(OSTR.NE.'$'))
@@ -66,9 +70,13 @@ C LOCALS
 	  READ(STR1(IPOS:IPOS2-2),'(F20.10)') NUM
 	  READ(STR1(IPOS:IPOS2-2),*) NUM
 	 ELSE
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt(ERRMSG)
+#else
 	  WRITE(*,*) ERRMSG
 	  PAUSE
 	  STOP
+#endif
 	 ENDIF
 	ENDIF
 

@@ -106,7 +106,9 @@ C FIND namelist ssm
 #endif
 	CLOSE(1)
 	IF (IFAIL.EQ.-1) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nNamelist ssm not found\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' Namelist ssm not found'
        WRITE(*,*) ' Program aborting'
 #else
@@ -134,7 +136,9 @@ C READ namelist ssm
 	estimation = 'BA'
 	READ(1,NML=ssm,END=5001,ERR=5001)
 	IF (nx.LE.0) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck nx in namelist ssm\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
 	 WRITE(*,*) ' Check nx in namelist ssm'
 	 WRITE(*,*) ' Program aborting'
 #else
@@ -145,7 +149,9 @@ C READ namelist ssm
 	 STOP
 	ENDIF
 	IF(nu.LE.0) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck nu in namelist ssm\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' Check nu in namelist ssm'
        WRITE(*,*) ' Program aborting'
 #else
@@ -156,7 +162,9 @@ C READ namelist ssm
 	 STOP
 	ENDIF
 	IF((d(1).LT.0).OR.(d(2).LT.0).OR.(d(2).GT.nx)) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck d in namelist ssm\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' Check d in namelist ssm'
        WRITE(*,*) ' Program aborting'
 #else
@@ -167,7 +175,9 @@ C READ namelist ssm
 	 STOP
 	ENDIF
 	IF((nv.LT.0).OR.(nv.GT.6)) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck nv in namelist ssm\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' Check nv in namelist ssm'
        WRITE(*,*) ' Program aborting'
 #else
@@ -178,7 +188,9 @@ C READ namelist ssm
 	 STOP
       ENDIF
       IF(dllname.EQ.'') THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck dllname in namelist ssm\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
          WRITE(*,*) ' Check dllname in namelist ssm'
          WRITE(*,*) ' Program aborting'
 #else
@@ -214,7 +226,9 @@ C FIND namelist S1
 #endif
 	 CLOSE(1)
 	 IF (IFAIL.EQ.-1) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nNamelist S1 not found\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
         WRITE(*,*) ' Namelist S1 not found'
         WRITE(*,*) ' Program aborting'
 #else
@@ -234,7 +248,9 @@ C READ namelist S1
 	 READ(1,NML=S1,END=5002,ERR=5002)
 
 	 IF ((dynS1.NE.'I').AND.(dynS1.NE.'M'))THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck dynS1 in namelist S1\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
         WRITE(*,*) ' Check dynS1 in namelist S1'
         WRITE(*,*) ' Program aborting'
 #else
@@ -246,7 +262,9 @@ C READ namelist S1
 	 ENDIF
 
 	 IF (ns1.LT.2) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck ns1 in namelist S1\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
         WRITE(*,*) ' Check ns1 in namelist S1'
         WRITE(*,*) ' Program aborting'
 #else
@@ -260,7 +278,9 @@ C READ namelist S1
 	 IF (dynS1.EQ.'I') THEN
         DO J = 1,ns1
 	   IF (hypS1(J,1).LE.0) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck hypS1 in namelist S1\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
           WRITE(*,*) ' Check hypS1 in namelist S1'
           WRITE(*,*) ' Program aborting'
 #else
@@ -275,7 +295,9 @@ C READ namelist S1
 	  DO J = 1,ns1
 	  DO K = 1,ns1
 	   IF (hypS1(J,K).LE.0) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck hypS1 in namelist S1\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
           WRITE(*,*) ' Check hypS1 in namelist S1'
           WRITE(*,*) ' Program aborting'
 #else
@@ -293,7 +315,9 @@ C READ namelist S1
      #	  .AND.(matS1(1).NE.'H').AND.(matS1(1).NE.'G')
      #	  .AND.(matS1(1).NE.'c').AND.(matS1(1).NE.'F')
      #	  .AND.(matS1(1).NE.'R'))) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck matS1 in namelist S1\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
         WRITE(*,*) ' Check matS1 in namelist S1'
         WRITE(*,*) ' Program aborting'
 #else
@@ -308,7 +332,9 @@ C READ namelist S1
      #	  .AND.(matS1(I).NE.'H').AND.(matS1(I).NE.'G')
      #	  .AND.(matS1(I).NE.'c').AND.(matS1(I).NE.'F')
      #	  .AND.(matS1(I).NE.'R')) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck matS1 in namelist S1\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
          WRITE(*,*) ' Check matS1 in namelist S1'
          WRITE(*,*) ' Program aborting'
 #else
@@ -341,7 +367,9 @@ C FIND namelist S2
 #endif
 	 CLOSE(1)
 	 IF (IFAIL.EQ.-1) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nNamelist S2 not found\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
         WRITE(*,*) ' Namelist S2 not found'
         WRITE(*,*) ' Program aborting'
 #else
@@ -360,7 +388,9 @@ C READ namelist S2
 	 READ(1,NML=S2,END=5003,ERR=5003)
 
 	 IF ((dynS2.NE.'I').AND.(dynS2.NE.'M'))THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck dynS2 in namelist S2\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
         WRITE(*,*) ' Check dynS2 in namelist S2'
         WRITE(*,*) ' Program aborting'
 #else
@@ -372,7 +402,9 @@ C READ namelist S2
 	 ENDIF
 
 	 IF (ns2.LT.2) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck ns2 in namelist S2\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
         WRITE(*,*) ' Check ns2 in namelist S2'
         WRITE(*,*) ' Program aborting'
 #else
@@ -386,7 +418,9 @@ C READ namelist S2
 	 IF (dynS2.EQ.'I') THEN
         DO J = 1,ns2
 	   IF (hypS2(J,1).LE.0) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck hypS2 in namelist S2\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
           WRITE(*,*) ' Check hypS2 in namelist S2'
           WRITE(*,*) ' Program aborting'
 #else
@@ -401,7 +435,9 @@ C READ namelist S2
 	  DO J = 1,ns2
 	  DO K = 1,ns2
 	   IF (hypS2(J,K).LE.0) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck hypS2 in namelist S2\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
           WRITE(*,*) ' Check hypS2 in namelist S2'
           WRITE(*,*) ' Program aborting'
 #else
@@ -419,7 +455,9 @@ C READ namelist S2
      #	  .AND.(matS2(I).NE.'H').AND.(matS2(I).NE.'G')
      #	  .AND.(matS2(I).NE.'c').AND.(matS2(I).NE.'F')
      #	  .AND.(matS2(I).NE.'R'))) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck matS2 in namelist S2\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
         WRITE(*,*) ' Check matS2 in namelist S2'
         WRITE(*,*) ' Program aborting'
 #else
@@ -434,7 +472,9 @@ C READ namelist S2
      #	  .AND.(matS2(I).NE.'H').AND.(matS2(I).NE.'G')
      #	  .AND.(matS2(I).NE.'c').AND.(matS2(I).NE.'F')
      #	  .AND.(matS2(I).NE.'R')) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck matS2 in namelist S2\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' Check matS2 in namelist S2'
        WRITE(*,*) ' Program aborting'
 #else
@@ -466,7 +506,9 @@ C FIND namelist S3
 #endif
 	 CLOSE(1)
 	 IF (IFAIL.EQ.-1) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck S3 in namelist S3\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
         WRITE(*,*) ' Namelist S3 not found'
         WRITE(*,*) ' Program aborting'
 #else
@@ -486,7 +528,9 @@ C READ namelist S3
 	 READ(1,NML=S3,END=5004,ERR=5004)
 
 	 IF ((dynS3.NE.'I').AND.(dynS3.NE.'M'))THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck dynS3 in namelist S3\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
         WRITE(*,*) ' Check dynS3 in namelist S3'
         WRITE(*,*) ' Program aborting'
 #else
@@ -498,7 +542,9 @@ C READ namelist S3
 	 ENDIF
 
 	 IF (ns3.LT.2) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck ns3 in namelist S3\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
         WRITE(*,*) ' Check ns3 in namelist S3'
         WRITE(*,*) ' Program aborting'
 #else
@@ -512,7 +558,9 @@ C READ namelist S3
 	 IF (dynS3.EQ.'I') THEN
         DO J = 1,ns3
 	   IF (hypS3(J,1).LE.0) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck hypS3 in namelist S3\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
           WRITE(*,*) ' Check hypS3 in namelist S3'
           WRITE(*,*) ' Program aborting'
 #else
@@ -527,7 +575,9 @@ C READ namelist S3
 	  DO J = 1,ns3
 	  DO K = 1,ns3
 	   IF (hypS3(J,K).LE.0) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck hypS3 in namelist S3\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
           WRITE(*,*) ' Check hypS3 in namelist S3'
           WRITE(*,*) ' Program aborting'
 #else
@@ -545,7 +595,9 @@ C READ namelist S3
      #	  .AND.(matS3(1).NE.'H').AND.(matS3(1).NE.'G')
      #	  .AND.(matS3(1).NE.'c').AND.(matS3(1).NE.'F')
      #	  .AND.(matS3(1).NE.'R'))) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck matS3 in namelist S3\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
         WRITE(*,*) ' Check matS3 in namelist S3'
         WRITE(*,*) ' Program aborting'
 #else
@@ -560,7 +612,9 @@ C READ namelist S3
      #	  .AND.(matS3(I).NE.'H').AND.(matS3(I).NE.'G')
      #	  .AND.(matS3(I).NE.'c').AND.(matS3(I).NE.'F')
      #	  .AND.(matS3(I).NE.'R')) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck matS3 in namelist S3\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
          WRITE(*,*) ' Check matS3 in namelist S3'
          WRITE(*,*) ' Program aborting'
 #else
@@ -592,11 +646,13 @@ C FIND namelist S4
 #endif
 	 CLOSE(1)
 	 IF (IFAIL.EQ.-1) THEN
-#ifdef __GFORTRAN__
-        WRITE(*,*) ' Namlist S4 not found'
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nNamelist S4 not found\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
+        WRITE(*,*) ' Namelist S4 not found'
         WRITE(*,*) ' Program aborting'
 #else
-	  TYPE *, ' Namlist S4 not found'
+	  TYPE *, ' Namelist S4 not found'
 	  TYPE *, ' Program aborting'
 	  PAUSE
 #endif
@@ -612,7 +668,9 @@ C READ namelist S4
 	 READ(1,NML=S4,END=5005,ERR=5005)
 
 	 IF ((dynS4.NE.'I').AND.(dynS4.NE.'M'))THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck dynS4 in namelist S4\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
         WRITE(*,*) ' Check dynS4 in namelist S4'
         WRITE(*,*) ' Program aborting'
 #else
@@ -624,7 +682,9 @@ C READ namelist S4
 	 ENDIF
 
 	 IF (ns4.LT.2) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck ns4 in namelist S4\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
         WRITE(*,*) ' Check ns4 in namelist S4'
         WRITE(*,*) ' Program aborting'
 #else
@@ -638,7 +698,9 @@ C READ namelist S4
 	 IF (dynS4.EQ.'I') THEN
         DO J = 1,ns4
 	   IF (hypS4(J,1).LE.0) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck hypS4 in namelist S4\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
           WRITE(*,*) ' Check hypS4 in namelist S4'
           WRITE(*,*) ' Program aborting'
 #else
@@ -653,7 +715,9 @@ C READ namelist S4
 	  DO J = 1,ns4
 	  DO K = 1,ns4
 	   IF (hypS4(J,K).LE.0) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck hypS4 in namelist S4\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
           WRITE(*,*) ' Check hypS4 in namelist S4'
           WRITE(*,*) ' Program aborting'
 #else
@@ -671,7 +735,9 @@ C READ namelist S4
      #	  .AND.(matS4(1).NE.'H').AND.(matS4(1).NE.'G')
      #	  .AND.(matS4(1).NE.'c').AND.(matS4(1).NE.'F')
      #	  .AND.(matS4(1).NE.'R'))) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck matS4 in namelist S4\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
         WRITE(*,*) ' Check matS4 in namelist S4'
         WRITE(*,*) ' Program aborting'
 #else
@@ -686,7 +752,9 @@ C READ namelist S4
      #	  .AND.(matS4(I).NE.'H').AND.(matS4(I).NE.'G')
      #	  .AND.(matS4(I).NE.'c').AND.(matS4(I).NE.'F')
      #	  .AND.(matS4(I).NE.'R')) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck matS4 in namelist S4\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
          WRITE(*,*) ' Check matS4 in namelist S4'
          WRITE(*,*) ' Program aborting'
 #else
@@ -718,11 +786,13 @@ C FIND namelist S5
 #endif
 	 CLOSE(1)
 	 IF (IFAIL.EQ.-1) THEN
-#ifdef __GFORTRAN__
-        WRITE(*,*) ' Namlist S5 not found'
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nNamelist S5 not found\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
+        WRITE(*,*) ' Namelist S5 not found'
         WRITE(*,*) ' Program aborting'
 #else
-	  TYPE *, ' Namlist S5 not found'
+	  TYPE *, ' Namelist S5 not found'
 	  TYPE *, ' Program aborting'
 	  PAUSE
 #endif
@@ -738,7 +808,9 @@ C READ namelist S5
 	 READ(1,NML=S5,END=5006,ERR=5006)
 
 	 IF ((dynS5.NE.'I').AND.(dynS5.NE.'M'))THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck dynS5 in namelist S5\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
         WRITE(*,*) ' Check dynS5 in namelist S5'
         WRITE(*,*) ' Program aborting'
 #else
@@ -750,7 +822,9 @@ C READ namelist S5
 	 ENDIF
 
 	 IF (ns5.LT.2) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck ns5 in namelist S5\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
         WRITE(*,*) ' Check ns5 in namelist S5'
         WRITE(*,*) ' Program aborting'
 #else
@@ -764,7 +838,9 @@ C READ namelist S5
 	 IF (dynS5.EQ.'I') THEN
         DO J = 1,ns5
 	   IF (hypS5(J,1).LE.0) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck hypS5 in namelist S5\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
           WRITE(*,*) ' Check hypS5 in namelist S5'
           WRITE(*,*) ' Program aborting'
 #else
@@ -779,7 +855,9 @@ C READ namelist S5
 	  DO J = 1,ns5
 	  DO K = 1,ns5
 	   IF (hypS5(J,K).LE.0) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck hypS5 in namelist S5\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
           WRITE(*,*) ' Check hypS5 in namelist S5'
           WRITE(*,*) ' Program aborting'
 #else
@@ -797,7 +875,9 @@ C READ namelist S5
      #	  .AND.(matS5(1).NE.'H').AND.(matS5(1).NE.'G')
      #	  .AND.(matS5(1).NE.'c').AND.(matS5(1).NE.'F')
      #	  .AND.(matS5(1).NE.'R'))) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck matS5 in namelist S5\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
         WRITE(*,*) ' Check matS5 in namelist S5'
         WRITE(*,*) ' Program aborting'
 #else
@@ -812,7 +892,9 @@ C READ namelist S5
      #	  .AND.(matS5(I).NE.'H').AND.(matS5(I).NE.'G')
      #	  .AND.(matS5(I).NE.'c').AND.(matS5(I).NE.'F')
      #	  .AND.(matS5(I).NE.'R')) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck matS5 in namelist S5\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
          WRITE(*,*) ' Check matS5 in namelist S5'
          WRITE(*,*) ' Program aborting'
 #else
@@ -844,11 +926,13 @@ C FIND namelist S6
 #endif
 	 CLOSE(1)
 	 IF (IFAIL.EQ.-1) THEN
-#ifdef __GFORTRAN__
-        WRITE(*,*) ' Namlist S6 not found'
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nNamelist S6 not found\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
+        WRITE(*,*) ' Namelist S6 not found'
         WRITE(*,*) ' Program aborting'
 #else
-	  TYPE *, ' Namlist S6 not found'
+	  TYPE *, ' Namelist S6 not found'
 	  TYPE *, ' Program aborting'
 	  PAUSE
 #endif
@@ -864,7 +948,9 @@ C READ namelist S6
 	 READ(1,NML=S6,END=5007,ERR=5007)
 
 	 IF ((dynS6.NE.'I').AND.(dynS6.NE.'M'))THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck dynS6 in namelist S6\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
         WRITE(*,*) ' Check dynS6 in namelist S6'
         WRITE(*,*) ' Program aborting'
 #else
@@ -876,7 +962,9 @@ C READ namelist S6
 	 ENDIF
 
 	 IF (ns6.LT.2) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck ns6 in namelist S6\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
         WRITE(*,*) ' Check ns6 in namelist S6'
         WRITE(*,*) ' Program aborting'
 #else
@@ -890,7 +978,9 @@ C READ namelist S6
 	 IF (dynS6.EQ.'I') THEN
         DO J = 1,ns6
 	   IF (hypS6(J,1).LE.0) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck hypS6 in namelist S6\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
           WRITE(*,*) ' Check hypS6 in namelist S6'
           WRITE(*,*) ' Program aborting'
 #else
@@ -905,7 +995,9 @@ C READ namelist S6
 	  DO J = 1,ns6
 	  DO K = 1,ns6
 	   IF (hypS6(J,K).LE.0) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck hypS6 in namelist S6\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
           WRITE(*,*) ' Check hypS6 in namelist S6'
           WRITE(*,*) ' Program aborting'
 #else
@@ -923,7 +1015,9 @@ C READ namelist S6
      #	  .AND.(matS6(1).NE.'H').AND.(matS6(1).NE.'G')
      #	  .AND.(matS6(1).NE.'c').AND.(matS6(1).NE.'F')
      #	  .AND.(matS6(1).NE.'R'))) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck matS6 in namelist S6\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
         WRITE(*,*) ' Check matS6 in namelist S6'
         WRITE(*,*) ' Program aborting'
 #else
@@ -938,7 +1032,9 @@ C READ namelist S6
      #	  .AND.(matS6(I).NE.'H').AND.(matS6(I).NE.'G')
      #	  .AND.(matS6(I).NE.'c').AND.(matS6(I).NE.'F')
      #	  .AND.(matS6(I).NE.'R')) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck matS6 in namelist S6\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
          WRITE(*,*) ' Check matS6 in namelist S6'
          WRITE(*,*) ' Program aborting'
 #else
@@ -969,7 +1065,9 @@ C FIND namelist prior
 #endif
 	CLOSE(1)
 	IF (IFAIL.EQ.-1) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nNamelist prior not found\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' Namelist prior not found'
        WRITE(*,*) ' Program aborting'
 #else
@@ -986,7 +1084,9 @@ C READ namelist prior
 	hyptheta(:,:) = -1
 	READ(1,NML = prior,END=5008,ERR=5008)
 	IF (nt.LE.0) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck nt in namelist prior\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' Check nt in namelist prior'
        WRITE(*,*) ' Program aborting'
 #else
@@ -997,7 +1097,9 @@ C READ namelist prior
 	 STOP
       ENDIF
 	IF (nt.GT.200) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nnt is too large\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' nt is too large '
        WRITE(*,*) ' Program aborting'
 #else
@@ -1012,7 +1114,9 @@ C READ namelist prior
 	  WRITE(IC,'(I3)') I
 	  IF ((pdftheta(I).NE.'BE').AND.(pdftheta(I).NE.'NT').AND.
      #     (pdftheta(I).NE.'IG')) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck pdftheta('//IC//') in namelist prior\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
          WRITE(*,*) ' Check pdftheta('//IC//') in namelist prior'
          WRITE(*,*) ' Program aborting'
 #else
@@ -1023,7 +1127,9 @@ C READ namelist prior
 	   STOP
 	  ENDIF
 	  IF (hyptheta(3,I).GT.hyptheta(4,I)) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck hyptheta('//IC//') in namelist prior\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
          WRITE(*,*) ' Check hyptheta('//IC//') in namelist prior'
          WRITE(*,*) ' Program aborting'
 #else
@@ -1037,7 +1143,9 @@ C READ namelist prior
 	   IF (hyptheta(3,I).LT.hyptheta(4,I)) THEN
 	    IF ((hyptheta(1,I).LE.0.).OR.(hyptheta(2,I).LE.0.).OR.
      #       (hyptheta(3,I).GT.hyptheta(4,I))) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck hyptheta('//IC//') in namelist prior\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
            WRITE(*,*) ' Check hyptheta('//IC//') in namelist prior'
            WRITE(*,*) ' Program aborting'
 #else
@@ -1052,7 +1160,9 @@ C READ namelist prior
 	   IF (hyptheta(3,I).LT.hyptheta(4,I)) THEN
 	    IF ((hyptheta(2,I).LE.0.).OR.(hyptheta(3,I).GT.hyptheta(4,I)))
      #     THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck hyptheta('//IC//') in namelist prior\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
            WRITE(*,*) ' Check hyptheta('//IC//') in namelist prior'
            WRITE(*,*) ' Program aborting'
 #else
@@ -1067,7 +1177,9 @@ C READ namelist prior
  	   IF (hyptheta(3,I).LT.hyptheta(4,I)) THEN
 	    IF ((hyptheta(1,I).LE.0.).OR.(hyptheta(2,I).LE.0.).OR.
      #    (hyptheta(3,I).GT.hyptheta(4,I)).OR.(hyptheta(3,I).LT.0.))THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck hyptheta('//IC//') in namelist prior\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
            WRITE(*,*) ' Check hyptheta('//IC//') in namelist prior'
            WRITE(*,*) ' Program aborting'
 #else
@@ -1084,7 +1196,9 @@ C READ namelist prior
        DO I = 1,nt  ! ML check
         WRITE(IC,'(I3)') I
         IF (hyptheta(3,I).GT.hyptheta(4,I)) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck hyptheta('//IC//') in namelist prior\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
            WRITE(*,*) ' Check hyptheta('//IC//') in namelist prior'
            WRITE(*,*) ' Program aborting'
 #else
@@ -1115,7 +1229,9 @@ C FIND namelist mcmc
 #endif
 	CLOSE(1)
 	IF (IFAIL.EQ.-1) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nNamelist mcmc not found\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' Namelist mcmc not found'
        WRITE(*,*) ' Program aborting'
 #else
@@ -1138,7 +1254,9 @@ C READ namelist mcmc
 	MargLik      = 'N'
 	READ(1,NML=mcmc,END=5009,ERR=5009)
 	IF ((seed.LT.0).OR.(seed.GT.999)) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck seed in namelist mcmc\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' Check seed in namelist mcmc'
        WRITE(*,*) ' Program aborting'
 #else
@@ -1149,7 +1267,9 @@ C READ namelist mcmc
 	 STOP
 	ENDIF
 	IF (thin.LT.1) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck thin in namelist mcmc\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' Check thin in namelist mcmc'
        WRITE(*,*) ' Program aborting'
 #else
@@ -1160,7 +1280,9 @@ C READ namelist mcmc
 	 STOP
 	ENDIF
 	IF (burnin.LE.0) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck burnin in namelist mcmc\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' Check burnin in namelist mcmc'
        WRITE(*,*) ' Program aborting'
 #else
@@ -1171,7 +1293,9 @@ C READ namelist mcmc
 	 STOP
 	ENDIF
 	IF (simulrec.LE.1) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck simulrec in namelist mcmc\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' Check simulrec in namelist mcmc'
        WRITE(*,*) ' Program aborting'
 #else
@@ -1182,7 +1306,9 @@ C READ namelist mcmc
 	 STOP
 	ENDIF
 	IF ((sampler.NE.'SL').AND.(sampler.NE.'MH')) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck sampler in namelist mcmc\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' Check sampler in namelist mcmc'
        WRITE(*,*) ' Program aborting'
 #else
@@ -1226,7 +1352,9 @@ C FIND namelist dataset
 #endif
 	CLOSE(1)
 	IF (IFAIL.EQ.-1) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nNamelist dataset not found\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' Namelist dataset not found'
        WRITE(*,*) ' Program aborting'
 #else
@@ -1244,7 +1372,9 @@ C READ namelist dataset
 	datasim = 'N'
 	READ(1,NML=dataset,END=5010,ERR=5010)
 	IF ((T.LE.0).OR.(T.GT.3000)) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck T in namelist dataset\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' Check T in namelist dataset (T<=3000)'
        WRITE(*,*) ' Program aborting'
 #else
@@ -1255,7 +1385,9 @@ C READ namelist dataset
 	 STOP
 	ENDIF
 	IF (ny.LE.0) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck ny in namelist dataset\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' Check ny in namelist dataset'
        WRITE(*,*) ' Program aborting'
 #else
@@ -1266,7 +1398,9 @@ C READ namelist dataset
 	 STOP
 	ENDIF
 	IF (nz.LT.0) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck nz in namelist dataset\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' Check nz in namelist dataset'
        WRITE(*,*) ' Program aborting'
 #else
@@ -1277,7 +1411,9 @@ C READ namelist dataset
 	 STOP
 	ENDIF
 	IF (nf.LT.0) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck nf in namelist dataset\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' Check nf in namelist dataset'
        WRITE(*,*) ' Program aborting'
 #else
@@ -1288,7 +1424,9 @@ C READ namelist dataset
 	 STOP
 	ENDIF
 	IF (T.LT.hbl) THEN
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+       CALL mexErrMsgTxt('\nCheck hbl in namelist mcmc (hbl > T)\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
        WRITE(*,*) ' Check hbl in namelist mcmc (hbl > T)'
        WRITE(*,*) ' Program aborting'
 #else
@@ -1406,8 +1544,19 @@ C -----------------------------------------------------------------------
 	ENDIF
 
 	GO TO 7777
-
-#ifdef __GFORTRAN__
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+ 5000 CALL mexErrMsgTxt('\nInput file not found\nProgram aborting\n')
+ 5001 CALL mexErrMsgTxt('\nInput error in namelist ssm\nProgram aborting\n')
+ 5002 CALL mexErrMsgTxt('\nInput error in namelist S1\nProgram aborting\n')
+ 5003 CALL mexErrMsgTxt('\nInput error in namelist S2\nProgram aborting\n')
+ 5004 CALL mexErrMsgTxt('\nInput error in namelist S3\nProgram aborting\n')
+ 5005 CALL mexErrMsgTxt('\nInput error in namelist S4\nProgram aborting\n')
+ 5006 CALL mexErrMsgTxt('\nInput error in namelist S5\nProgram aborting\n')
+ 5007 CALL mexErrMsgTxt('\nInput error in namelist S6\nProgram aborting\n')
+ 5008 CALL mexErrMsgTxt('\nInput error in namelist prior\nProgram aborting\n')
+ 5009 CALL mexErrMsgTxt('\nInput error in namelist mcmc\nProgram aborting\n')
+ 5010 CALL mexErrMsgTxt('\nInput error in namelist dataset\nProgram aborting\n')
+#elif defined(__GFORTRAN__)
  5000 WRITE(*,*)'Input file not found'
       WRITE(*,*)'Program aborting'
       STOP

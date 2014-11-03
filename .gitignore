@@ -3,3 +3,13 @@
 .dirstamp
 *.mod
 *~
+dmm
+*.nml
+*.m
+*.PRI
+*.DIS
+*.FST
+*.INN
+*.ML
+*.PAR
+*.UNB

@@ -27,7 +27,7 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C --------------------------------------------------------------------------
 	SUBROUTINE HARMONIC(G,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                    INFOS,yk,IYK,gibpar,gibZ,thetaprior,
-     2                    psiprior,tipo,pdll,MLH)
+     2                    psiprior,tipo,MLH)
 
 #ifdef __GFORTRAN__
       USE gfortran
@@ -39,7 +39,6 @@ C INPUT
 	DOUBLE PRECISION yk(nobs,ny+nz),gibpar(G,nt+np(1)),
 	1 thetaprior(nt,4),psiprior(np(2),np(3))
 	CHARACTER*2 tipo(nt)
-	POINTER (pdll,fittizia)  !  ASSOCIATE  pointer P alla DLL ad una varibile fittizia
 
 C OUTPUT
 	DOUBLE PRECISION MLH(11,2)
@@ -245,7 +244,7 @@ C Mothod of Moments: a0 = m1(1-m1)/V1+1, ai = mi*a0, i=1,2,..,N
 
 	 Fpar = PTHETA(NPOS(1),nobs,d,ny,nz,nx,nu,ns,nt,IS,yk,IYK,
 	1               gibpar(IG,1:nt),thetaprior(NPOS(1),:),
-     2               tipo(NPOS(1)),pdll)
+     2               tipo(NPOS(1)))
 	 Fpar = Fpar + SUM(Ppar(2:NPARTH+K))  ! log[f(y|par,S)f(par)]
 
 	 DEN2(IG) = QTHETA+QPSI+QS-Fpar-PS

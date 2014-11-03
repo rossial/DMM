@@ -106,30 +106,43 @@ RANDLIB_OBJS = \
 	sexpo.o \
 	spofa.o
 
-MATLAB_OBJS = ReadMatLabDesign.o
-
 EXEC = dmm
 
 VPATH := $(VPATH) randlib
-LIBS = -llapack -ldl
 
-all: $(MOD_OBJS) $(OBJS) $(RANDLIB_OBJS)
+ifdef DLL
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S), Linux)
+MATLAB_LIBS = -L$(MATLABROOT)/bin/glnxa64 -Wl,-rpath-link,$(MATLABROOT)/bin/glnxa64 -Wl,-rpath,$(MATLABROOT)/bin/glnxa64
+endif
+ifeq ($(UNAME_S), Darwin)
+MATLAB_LIBS = -L$(MATLABROOT)/bin/maci64
+endif
+LIBS = $(MATLAB_LIBS) -llapack -leng -lmx
+DLL_OBJS += design.o setfilem.o geterrstr.o
+INCLUDE = -I$(MATLABROOT)/extern/include
+DEFINE = -DORIGDLL
+else
+LIBS = -llapack
+endif
+
+all: $(MOD_OBJS) $(OBJS) $(RANDLIB_OBJS) $(DLL_OBJS)
 	$(FC) $(FCFLAGS) $^ $(LIBS) -o $(EXEC)
 
 %.o: %.f90 %.mod
-	$(FC) $(FCFLAGS)  -c $<
+	$(FC) $(FCFLAGS) $(INCLUDE) $(DEFINE) -c $<
 
 %.o: %.f90
-	$(FC) $(FCFLAGS) -c $<
+	$(FC) $(FCFLAGS) $(INCLUDE) $(DEFINE) -c $<
 
 %.mod: %.f90 %.o
 	@true
 
 %.o : %.f
-	$(FC) $(FFFLAGS) -c $<
+	$(FC) $(FFFLAGS) $(INCLUDE) $(DEFINE) -c $<
 
 %.o : %.for
-	$(FC) $(FFFLAGS) -c $<
+	$(FC) $(FFFLAGS) $(INCLUDE) $(DEFINE) -c $<
 
 clean:
-	rm -f *.o $(EXEC)
+	rm -f *.o $(EXEC) *.mod *.PRI *.DIS *.FST *.INN *.ML *.PAR *.UNB

@@ -48,7 +48,7 @@ C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C --------------------------------------------------------------------
 	SUBROUTINE SIMDATA(nobs,d,ny,nz,nx,nu,ns,nstot,nt,nv,np,INFOS,
-	1                   pdll,theta,psi,Z,STATE,yk)
+	1                   theta,psi,Z,STATE,yk)
 #if defined(__CYGWIN32__) || defined(_WIN32)
 #ifdef __INTEL_COMPILER
       USE dfwin
@@ -57,22 +57,6 @@ C --------------------------------------------------------------------
       USE ISO_C_BINDING
       USE ISO_C_UTILITIES
       USE DLFCN
-#endif
-	INTERFACE
-	 SUBROUTINE DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
-	 INTEGER ny,nz,nx,nu,ns(6),nt
-	 DOUBLE PRECISION theta(nt)
-	 DOUBLE PRECISION c(ny,max(1,nz),ns(1)),H(ny,nx,ns(2)),
-	1 G(ny,nu,ns(3)),a(nx,ns(4)),F(nx,nx,ns(5)),R(nx,nu,ns(6))
-	 END SUBROUTINE
-	END INTERFACE
-#if defined(__CYGWIN32__) || defined(_WIN32)
-	POINTER (pdll,fittizia)  ! ASSOCIATE  pointer pdll alla DLL ad una varibile fittizia
-	POINTER (pdesign,DESIGN) ! IMPORTANT associo il puntatore pdesign alla Interface definita
-#else
-	  TYPE(C_PTR) :: pdll
-      TYPE(C_FUNPTR) :: pdesign=C_NULL_FUNPTR
-	  PROCEDURE(DESIGN), POINTER :: ptrdesign=>NULL()
 #endif
 
 C INPUT
@@ -108,16 +92,9 @@ C EXTERNAL SUBROUTINES
      3 Xdd(MAX(d(1),1),nx),Pdd(MAX(d(1),1),nx,nx),
      3 WORK((nx+2)*(nx+1)/2),FP(nx,nx),WORK1(64*nx),UP(nu) )
 
-#if defined(__CYGWIN32__) || defined(_WIN32)
-      pdesign = getprocaddress(pdll, "design_"C)
+#if defined(ORIGDLL) || defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
 	  CALL DESIGN(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #else
-	  pdesign = DLSym(pdll, 'design_'//C_NULL_CHAR)
-      IF(.NOT.C_ASSOCIATED(pdesign)) THEN
-         WRITE(*,*) ' Error in dlsym: ', C_F_STRING(DLError())
-	  END IF
-	  CALL C_F_PROCPOINTER(CPTR=pdesign, FPTR=ptrdesign)
-	  CALL ptrdesign(ny,nz,nx,nu,ns,nt,theta,c,H,G,a,F,R)
 #endif
 
 C DRAW Z ~ Pr(S1 x ... x Snv|psi)
