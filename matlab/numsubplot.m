@@ -16,7 +16,7 @@ if n <= 64
     elseif n == 4
         nr = 2;
         nc = 2;
-    elseif n == 5 | n == 6 
+    elseif n == 5 | n == 6
         nr = 3;
         nc = 2;
     elseif n == 7 | n == 8 | n == 9
@@ -34,18 +34,18 @@ if n <= 64
     elseif n == 21 | n == 22 | n == 23 | n == 24 | n == 25
         nr = 5;
         nc = 5;
-    elseif n >25 & n <31 
+    elseif n >25 & n <31
         nr = 6;
         nc = 5;
-    elseif n >30 & n <=36 
+    elseif n >30 & n <=36
         nr = 6;
         nc = 6;
-    elseif n >36 & n <=42 
+    elseif n >36 & n <=42
         nr = 7;
-        nc = 6;    
-    else 
+        nc = 6;
+    else
         nr = 8;
-        nc = 8;    
+        nc = 8;
     end
     figure
     set(0,'defaultlinelinewidth',2);

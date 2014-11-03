@@ -13,7 +13,7 @@ switch freq
 case 1
     for i=1:nobs
         appo=num2str(anno);
-        lab(i)=cellstr(appo(3:end));   
+        lab(i)=cellstr(appo(3:end));
         anno =anno+1;
     end
 case 4
@@ -27,7 +27,7 @@ case 4
             stper=1;
             anno=anno+1;
         end
-    end  
+    end
 case 12
     for i=1:nobs
         appo=num2str(anno);
@@ -42,6 +42,6 @@ case 12
         else
             stper=1;
             anno=anno+1;
-        end        
+        end
     end
-end   
+end

@@ -9,9 +9,9 @@ path = 'h:\arossi\dmm\nile\';   % location of the .nml file e.g. nile.nml
 file = 'nile';                  % name of the nml file
 
 freq      = 1;                  % 1 annual, 4 quarterly, 12 monthly
-startyear = 1985;               
+startyear = 1985;
 startper  = 1;
-space     = 8;                  % spacing for the tme labels 
+space     = 8;                  % spacing for the tme labels
 NHIST     = 200;                % to compute percentiles
 % -------------------------------------------------------------------------
 
@@ -111,31 +111,31 @@ end
 [nr,nc] = numsubplot(nt+np);
 for i = 1:nt
     if prior(i,3)-prior(i,4) ~= 0
-        [prc,iqr] = myprc(theta(:,i),NHIST,.01,.99);        
+        [prc,iqr] = myprc(theta(:,i),NHIST,.01,.99);
         hh = 0.79*length(theta(:,i))^(-1/5)*iqr;
         step = (prc(2)-prc(1))/200;
-        [x,fx] = ker1boun(theta(:,i),hh,step,prc(1),prc(2));        
+        [x,fx] = ker1boun(theta(:,i),hh,step,prc(1),prc(2));
         if tipo{i} == 'BE'
             s = prior(i,1);
             v = prior(i,2);
             a = prior(i,3);
             b = prior(i,4);
-            y = [a:(b-a)/200:b]';            
-            fy = dmmprior((y-a)/(b-a),s,v,tipo{i});            
+            y = [a:(b-a)/200:b]';
+            fy = dmmprior((y-a)/(b-a),s,v,tipo{i});
             fy = fy/(b-a);
         elseif tipo{i} == 'IG'
             s = prior(i,1);
             v = prior(i,2);
             Med = s/(v-2);
             y  = [0:5*Med/200:5*Med]';
-            fy = dmmprior(y,s,v,tipo{i});            
+            fy = dmmprior(y,s,v,tipo{i});
         elseif tipo{i} == 'NT'
             med = prior(i,1);
             va  = prior(i,2);
             lb  = prior(i,3);
             ub  = prior(i,4);
             y   = (lb:(ub-lb)/200:ub)';
-            fy  = dmmprior(y,med,va,tipo{i});            
+            fy  = dmmprior(y,med,va,tipo{i});
 %           plb = normcdf(lb,med,sd);
 %           pub = normcdf(ub,med,sd);
 %           fy  = normpdf(y,med,sd)/(pub-plb);
@@ -148,16 +148,16 @@ for i = 1:nt
     end
 end
 for i = 1:np
-    [prc,iqr] = myprc(psi(:,i),NHIST,.01,.99);    
+    [prc,iqr] = myprc(psi(:,i),NHIST,.01,.99);
     hh = 0.79*length(psi(:,i))^(-1/5)*iqr;
     step = (prc(2)-prc(1))/200;
     [x,fx] = ker1boun(psi(:,i),hh,step,prc(1),prc(2));
-    
+
     s  = psimarg(i,1);
     v  = psimarg(i,2);
     y  = (1/200:1/200:1-1/200)';
     fy = dmmprior(y,s,v,'BE');
-    
+
     subplot(nr,nc,i+nt)
     plot(x,fx,'b',y,fy,'r--')
     axis([prc(1) prc(2) min(fx) max(fx)])
@@ -218,11 +218,11 @@ for i = 1:nx
     stato = bstate(:,(i-1)*nobs+1:i*nobs);
     if nf > 0
         stato = [stato fore(:,nf*ny+nf*(i-1)+1:nf*ny+nf*i)];
-    end 
+    end
     statomed = mean(stato);
     for j = 1:nobs+nf
         [prc(j,:),iqr] = myprc(stato(:,j),NHIST,.10,.90);
-    end    
+    end
     subplot(nr,nc,i)
     plot(1:nobs+nf,statomed,'k',1:nobs+nf,prc(:,1),'b--',1:nobs+nf,prc(:,2),'b--')
     axis([1 nobs+nf min(prc(:,1)) max(prc(:,2))])
@@ -234,7 +234,7 @@ for i = 1:nx
         hold off;
     end
     set(gca,'xtick',ind);
-    set(gca,'xticklabel',lab(ind));    
+    set(gca,'xticklabel',lab(ind));
 end
 
 % Innovations
@@ -256,8 +256,8 @@ if nv > 0
     Z = load([path,file,seed,'.DIS']);
     if nf > 0
         Z(:,nobs+1:nobs+nf) = fore(:,end-nf+1:end);
-    end    
-    medS = zeros(nobs+nf,nv);    
+    end
+    medS = zeros(nobs+nf,nv);
     for j = 1:nobs+nf
         for k=1:NS
             medS(j,k) = numel(find(Z(:,j)==k));
