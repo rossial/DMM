@@ -29,7 +29,6 @@ NHIST     = 200;                % to compute percentiles
 % -------------------------------------------------------------------------
 
 % Load metadata, priors, observations
-close all
 fid = fopen([path,file,'.PRI']);
 nt     = str2double(fscanf(fid,'%s',1));
 np     = str2double(fscanf(fid,'%s',1));
