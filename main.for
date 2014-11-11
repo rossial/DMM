@@ -35,7 +35,9 @@ C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C --------------------------------------------------------------------------------------
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+#if defined(MATLAB_MEX_FILE)
 #include "fintrf.h"
+#endif
       SUBROUTINE DMMMAIN(FILEIN)
 #else
       PROGRAM DMM
