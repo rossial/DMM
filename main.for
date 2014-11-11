@@ -82,8 +82,7 @@ C LOCALS
       CHARACTER*200 DMMTITLE
 #endif
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-      CHARACTER(len=200) :: MEXPRINT
-      INTEGER*4 mexPrintf
+      CHARACTER(len=200) :: toprint
       INTEGER*4 mpfout
 #endif
 
@@ -495,12 +494,12 @@ C MCMC BURN-IN
 	   CALL system('cls')
 #endif
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-       WRITE(MEXPRINT,11131) jjj
-       mpfout = mexPrintf(MEXPRINT//achar(13))
-       WRITE(MEXPRINT,11132) ntf
-       mpfout = mexPrintf(MEXPRINT//achar(13))
-       WRITE(MEXPRINT,11133) IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
-       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(toprint,11131) jjj
+       mpfout = mexPrint(toprint)
+       WRITE(toprint,11132) ntf
+       mpfout = mexPrint(toprint)
+       WRITE(toprint,11133) IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
+       mpfout = mexPrint(toprint)
 #else
 	   WRITE(6,1113) jjj,ntf,IMIN(1)/dfloat(jjj),
      #             IMAX(1)/dfloat(jjj)
@@ -535,12 +534,12 @@ C MCMC BURN-IN
 	   CALL system('cls')
 #endif
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-       WRITE(MEXPRINT,11131) jjj
-       mpfout = mexPrintf(MEXPRINT//achar(13))
-       WRITE(MEXPRINT,11132) ntf
-       mpfout = mexPrintf(MEXPRINT//achar(13))
-       WRITE(MEXPRINT,11133) IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
-       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(toprint,11131) jjj
+       mpfout = mexPrint(toprint)
+       WRITE(toprint,11132) ntf
+       mpfout = mexPrint(toprint)
+       WRITE(toprint,11133) IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
+       mpfout = mexPrint(toprint)
 #else
 	   WRITE(6,1113) jjj,ntf,IMIN(1)/dfloat(jjj),
      #             IMAX(1)/dfloat(jjj)
@@ -623,37 +622,37 @@ C MCMC RECORDING phase
 	   CALL system('cls')
 #endif
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-       WRITE(MEXPRINT,11131) BURNIN
-       mpfout = mexPrintf(MEXPRINT//achar(13))
-       WRITE(MEXPRINT,11132) ntf
-       mpfout = mexPrintf(MEXPRINT//achar(13))
-       WRITE(MEXPRINT,11133) lastl,lasth
-       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(toprint,11131) BURNIN
+       mpfout = mexPrint(toprint)
+       WRITE(toprint,11132) ntf
+       mpfout = mexPrint(toprint)
+       WRITE(toprint,11133) lastl,lasth
+       mpfout = mexPrint(toprint)
 #else
 	   WRITE(6,1113) BURNIN,ntf,lastl,lasth
 #endif
 	   IF ((HBL.EQ.1).OR.(nv.EQ.0)) THEN
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-          WRITE(MEXPRINT,11141) jjj
-          mpfout = mexPrintf(MEXPRINT//achar(13))
-          WRITE(MEXPRINT,11142) ntf
-          mpfout = mexPrintf(MEXPRINT//achar(13))
-          WRITE(MEXPRINT,11143) IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
-          mpfout = mexPrintf(MEXPRINT//achar(13))
+          WRITE(toprint,11141) jjj
+          mpfout = mexPrint(toprint)
+          WRITE(toprint,11142) ntf
+          mpfout = mexPrint(toprint)
+          WRITE(toprint,11143) IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
+          mpfout = mexPrint(toprint)
 #else
 	    WRITE(6,1114) jjj,ntf,IMIN(1)/dfloat(jjj),
      #           IMAX(1)/dfloat(jjj)
 #endif
          ELSEIF ((HBL.GT.1).AND.(nv.GT.0)) THEN
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-            WRITE(MEXPRINT,11151) jjj
-            mpfout = mexPrintf(MEXPRINT//achar(13))
-            WRITE(MEXPRINT,11152) ntf
-            mpfout = mexPrintf(MEXPRINT//achar(13))
-            WRITE(MEXPRINT,11153) IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
-            mpfout = mexPrintf(MEXPRINT//achar(13))
-            WRITE(MEXPRINT,11154) SUM(1.D0-ACCRATE(1:nobs)/DFLOAT(jjj))/DFLOAT(nobs)
-            mpfout = mexPrintf(MEXPRINT//achar(13))
+            WRITE(toprint,11151) jjj
+            mpfout = mexPrint(toprint)
+            WRITE(toprint,11152) ntf
+            mpfout = mexPrint(toprint)
+            WRITE(toprint,11153) IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
+            mpfout = mexPrint(toprint)
+            WRITE(toprint,11154) SUM(1.D0-ACCRATE(1:nobs)/DFLOAT(jjj))/DFLOAT(nobs)
+            mpfout = mexPrint(toprint)
 #else
 	    WRITE(6,1115) jjj,ntf,IMIN(1)/dfloat(jjj),
      #           IMAX(1)/dfloat(jjj),
@@ -756,37 +755,37 @@ C MCMC RECORDING phase
 	   CALL system('cls')
 #endif
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-       WRITE(MEXPRINT,11131) BURNIN
-       mpfout = mexPrintf(MEXPRINT//achar(13))
-       WRITE(MEXPRINT,11132) ntf
-       mpfout = mexPrintf(MEXPRINT//achar(13))
-       WRITE(MEXPRINT,11133) lastl,lasth
-       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(toprint,11131) BURNIN
+       mpfout = mexPrint(toprint)
+       WRITE(toprint,11132) ntf
+       mpfout = mexPrint(toprint)
+       WRITE(toprint,11133) lastl,lasth
+       mpfout = mexPrint(toprint)
 #else
 	   WRITE(6,1113) BURNIN,ntf,lastl,lasth
 #endif
 	   IF ((HBL.EQ.1).OR.(nv.EQ.0)) THEN
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-          WRITE(MEXPRINT,11141) jjj
-          mpfout = mexPrintf(MEXPRINT//achar(13))
-          WRITE(MEXPRINT,11142) ntf
-          mpfout = mexPrintf(MEXPRINT//achar(13))
-          WRITE(MEXPRINT,11143) IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
-          mpfout = mexPrintf(MEXPRINT//achar(13))
+          WRITE(toprint,11141) jjj
+          mpfout = mexPrint(toprint)
+          WRITE(toprint,11142) ntf
+          mpfout = mexPrint(toprint)
+          WRITE(toprint,11143) IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
+          mpfout = mexPrint(toprint)
 #else
 	    WRITE(6,1114) jjj,ntf,IMIN(1)/dfloat(jjj),
      #           IMAX(1)/dfloat(jjj)
 #endif
          ELSEIF ((HBL.GT.1).AND.(nv.GT.0)) THEN
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-            WRITE(MEXPRINT,11151) jjj
-            mpfout = mexPrintf(MEXPRINT//achar(13))
-            WRITE(MEXPRINT,11152) ntf
-            mpfout = mexPrintf(MEXPRINT//achar(13))
-            WRITE(MEXPRINT,11153) IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
-            mpfout = mexPrintf(MEXPRINT//achar(13))
-            WRITE(MEXPRINT,11154) SUM(1.D0-ACCRATE(1:nobs)/DFLOAT(jjj))/DFLOAT(nobs)
-            mpfout = mexPrintf(MEXPRINT//achar(13))
+            WRITE(toprint,11151) jjj
+            mpfout = mexPrint(toprint)
+            WRITE(toprint,11152) ntf
+            mpfout = mexPrint(toprint)
+            WRITE(toprint,11153) IMIN(1)/dfloat(jjj),IMAX(1)/dfloat(jjj)
+            mpfout = mexPrint(toprint)
+            WRITE(toprint,11154) SUM(1.D0-ACCRATE(1:nobs)/DFLOAT(jjj))/DFLOAT(nobs)
+            mpfout = mexPrint(toprint)
 #else
 	    WRITE(6,1115) jjj,ntf,IMIN(1)/dfloat(jjj),
      #           IMAX(1)/dfloat(jjj),
@@ -858,10 +857,10 @@ C MCMC RECORDING phase
 C MARGINAL LIKELIHOOD
 	IF ((MargLik.EQ.'Y').OR.(MargLik.EQ.'y')) THEN
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-       WRITE(MEXPRINT,*) ' '
-       mpfout = mexPrintf(MEXPRINT//achar(13))
-       WRITE(MEXPRINT,*) 'Computing the marginal likelihood. Please wait ...'
-       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(toprint,*) ' '
+       mpfout = mexPrint(toprint)
+       WRITE(toprint,*) 'Computing the marginal likelihood. Please wait ...'
+       mpfout = mexPrint(toprint)
 #else
 	 WRITE(*,*) ' '
        WRITE(*,*) 'Computing the marginal likelihood. Please wait ...'
@@ -871,8 +870,8 @@ C MARGINAL LIKELIHOOD
 	1                INFOS,yk(1:nobs,:),IYK(1:nobs,:),gibtheta,gibZ,
      2                thetaprior,psiprior,pdftheta,MLHM)
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-       WRITE(MEXPRINT,*) 'Modified harmonic mean: done!'
-       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(toprint,*) 'Modified harmonic mean: done!'
+       mpfout = mexPrint(toprint)
 #else
 	  WRITE(*,*) 'Modified harmonic mean: done!'
 #endif
@@ -880,10 +879,10 @@ C MARGINAL LIKELIHOOD
 	1                INFOS,yk(1:nobs,:),IYK(1:nobs,:),gibtheta,gibZ,
      2                thetaprior,psiprior,pdftheta,MLHM(5,1),MLMW)
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-       WRITE(MEXPRINT,*) 'Bridge sampling: done!'
-       mpfout = mexPrintf(MEXPRINT//achar(13))
-       WRITE(MEXPRINT,*) ' '
-       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(toprint,*) 'Bridge sampling: done!'
+       mpfout = mexPrint(toprint)
+       WRITE(toprint,*) ' '
+       mpfout = mexPrint(toprint)
 #else
         WRITE(*,*) 'Bridge sampling: done!'
 	  WRITE(*,*) ' '
@@ -893,8 +892,8 @@ C MARGINAL LIKELIHOOD
 	1                 INFOS,yk(1:nobs,:),gibtheta,gibZ,thetaprior,
      2                 psiprior,pdftheta,MLHM)
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-       WRITE(MEXPRINT,*) 'Modified harmonic mean: done!'
-       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(toprint,*) 'Modified harmonic mean: done!'
+       mpfout = mexPrint(toprint)
 #else
 	  WRITE(*,*) 'Modified harmonic mean: done!'
 #endif
@@ -902,10 +901,10 @@ C MARGINAL LIKELIHOOD
 	1                 INFOS,yk(1:nobs,:),gibtheta,gibZ,thetaprior,
      2                 psiprior,pdftheta,MLHM(5,1),MLMW)
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-       WRITE(MEXPRINT,*) 'Bridge sampling: done!'
-       mpfout = mexPrintf(MEXPRINT//achar(13))
-       WRITE(MEXPRINT,*) ' '
-       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(toprint,*) 'Bridge sampling: done!'
+       mpfout = mexPrint(toprint)
+       WRITE(toprint,*) ' '
+       mpfout = mexPrint(toprint)
 #else
         WRITE(*,*) 'Bridge sampling: done!'
 	  WRITE(*,*) ' '
@@ -942,20 +941,20 @@ C MARGINAL LIKELIHOOD
 	IT=(IT2(4)-IT1(4))*3600+(IT2(5)-IT1(5))*60+(IT2(6)-IT1(6))
       IF ((check.EQ.'Y').OR.(check.EQ.'y')) THEN
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-       WRITE(MEXPRINT,11171)
-       mpfout = mexPrintf(MEXPRINT//achar(13))
-       WRITE(MEXPRINT,11172) TRIM(PATH)
-       mpfout = mexPrintf(MEXPRINT//achar(13))
+       WRITE(toprint,11171)
+       mpfout = mexPrint(toprint)
+       WRITE(toprint,11172) TRIM(PATH)
+       mpfout = mexPrint(toprint)
 #else
         WRITE(6,1117) TRIM(PATH)
 #endif
       ELSE
           IF ((datasim.EQ.'Y').OR.(datasim.EQ.'y')) THEN
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-             WRITE(MEXPRINT,11181)
-             mpfout = mexPrintf(MEXPRINT//achar(13))
-             WRITE(MEXPRINT,11182) TRIM(PATH)
-             mpfout = mexPrintf(MEXPRINT//achar(13))
+             WRITE(toprint,11181)
+             mpfout = mexPrint(toprint)
+             WRITE(toprint,11182) TRIM(PATH)
+             mpfout = mexPrint(toprint)
 #else
             WRITE(6,1118) TRIM(PATH)
 #endif
@@ -963,23 +962,23 @@ C MARGINAL LIKELIHOOD
             IF ((estimation.EQ.'ML').OR.(estimation.EQ.'ml').OR.
      &          (estimation.EQ.'Ml').OR.(estimation.EQ.'mL')) THEN
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-               WRITE(MEXPRINT,11191)
-               mpfout = mexPrintf(MEXPRINT//achar(13))
-               WRITE(MEXPRINT,11192) IT
-               mpfout = mexPrintf(MEXPRINT//achar(13))
-               WRITE(MEXPRINT,11193) TRIM(PATH)
-               mpfout = mexPrintf(MEXPRINT//achar(13))
+               WRITE(toprint,11191)
+               mpfout = mexPrint(toprint)
+               WRITE(toprint,11192) IT
+               mpfout = mexPrint(toprint)
+               WRITE(toprint,11193) TRIM(PATH)
+               mpfout = mexPrint(toprint)
 #else
               WRITE(6,1119) IT,TRIM(PATH)
 #endif
             ELSE
 #if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
-               WRITE(MEXPRINT,11161)
-               mpfout = mexPrintf(MEXPRINT//achar(13))
-               WRITE(MEXPRINT,11162) IT
-               mpfout = mexPrintf(MEXPRINT//achar(13))
-               WRITE(MEXPRINT,11163) TRIM(PATH)
-               mpfout = mexPrintf(MEXPRINT//achar(13))
+               WRITE(toprint,11161)
+               mpfout = mexPrint(toprint)
+               WRITE(toprint,11162) IT
+               mpfout = mexPrint(toprint)
+               WRITE(toprint,11163) TRIM(PATH)
+               mpfout = mexPrint(toprint)
 #else
               WRITE(6,1116) IT,TRIM(PATH)
 #endif
