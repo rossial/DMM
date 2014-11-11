@@ -43,6 +43,9 @@ C ----------------------------------------------------------------------
 	1                     MEDT,SIGT,yk,IYK,Z,thetaprior,tipo,pdll,
      2                     theta0,theta,NEVAL)
 C INPUT
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+	  USE MEXINTERFACE
+#endif
 	CHARACTER*1 fittizia
 	POINTER (pdll,fittizia)
 	INTEGER nobs,d(2),ny,nz,nx,nu,nv,ns(6),nt,Z(nobs),

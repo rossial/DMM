@@ -29,6 +29,9 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C -------------------------------------------------------------
 	SUBROUTINE FINDINPUT(STR1,N1,STR2,N2,NUM)
 C INPUT
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+	  USE MEXINTERFACE
+#endif
 	INTEGER N1,N2
 #ifdef __GFORTRAN__
       CHARACTER(len=N1) :: STR1

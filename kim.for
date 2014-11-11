@@ -60,6 +60,9 @@ C -------------------------------------------------------------------------
       SUBROUTINE KIM(nobs,d,ny,nz,nx,nu,ns,nk,nv,np,INFOS,yk,IYK,
      1 c,H,G,a,F,R,psi,ismoother,XSMOOTH,XSSE,SSMOOTH,INN,LIKE)
 C INPUT
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+	  USE MEXINTERFACE
+#endif
 	INTEGER nobs,ny,nz,nx,nu,ns(6),nk,nv,np,ismoother,
      1 d(2),IYK(nobs,ny+1),INFOS(9,6)
 	DOUBLE PRECISION yk(nobs,ny+nz),c(ny,max(nz,1),ns(1)),

@@ -24,6 +24,9 @@ C -----------------------------------------------------------------------
 	1 nstot,np,nf,INFOS,seed,thin,burnin,simulrec,sampler,
      2 datasim,dllname,check,estimation,nt,pdftheta,hyptheta,
      3 hypS,T,obs,Ssampler,hbl,MargLik)
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+	  USE MEXINTERFACE
+#endif
 
 C	INCLUDE 'iosdef.for'
 	INTEGER IERR

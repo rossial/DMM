@@ -25,6 +25,9 @@ C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C -------------------------------------------------------------
 	SUBROUTINE LYAP(nx,nu,compt,F,R,Ps)
 C INPUT
+#if defined(MATLAB_MEX_FILE) || defined(OCTAVE_MEX_FILE)
+	  USE MEXINTERFACE
+#endif
 	INTEGER nx,nu
 	DOUBLE PRECISION compt,F(nx,nx),R(nx,nu)
 C OUTPUT

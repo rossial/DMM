@@ -39,6 +39,7 @@ C ------------------------------------------------------------------------------
 #include "fintrf.h"
 #endif
       SUBROUTINE DMMMAIN(FILEIN)
+      USE MEXINTERFACE
 #else
       PROGRAM DMM
 #endif
