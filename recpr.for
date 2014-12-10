@@ -23,9 +23,6 @@ C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C ------------------------------------------------------------------------
 	SUBROUTINE RECPR(N,NS,nobs,S,SW,PM,PTR)
-#ifdef __GFORTRAN__
-      USE gfortran
-#endif
 ! INPUT
 	INTEGER N,NS,nobs
 	INTEGER S(nobs),SW(2*nobs)

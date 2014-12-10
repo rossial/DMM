@@ -40,9 +40,6 @@ C -------------------------------------------------------------
       USE dfwin
 #endif
 #else
-#ifdef __GFORTRAN__
-      USE gfortran
-#endif
       USE ISO_C_BINDING
       USE ISO_C_UTILITIES
       USE DLFCN
