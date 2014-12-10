@@ -35,9 +35,6 @@ C -------------------------------------------------------------------
 	SUBROUTINE MENGWONG2(G,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                     INFOS,yk,gibpar,gibZ,thetaprior,psiprior,
      2                     tipo,MLSTART,MLMW)
-#ifdef __GFORTRAN__
-      USE gfortran
-#endif
 C INPUT
       INTEGER G,nobs,d(2),ny,nz,nx,nu,nv,ns(6),nstot,nt,np(3),
 	1 INFOS(9,6),gibZ(G,nobs)
@@ -73,6 +70,10 @@ C EXTERNAL SUBROUTINES
 
 C EXTERNAL FUNCTIONS
       DOUBLE PRECISION PTHETA2,PRIOR,PRIORDIR,genunf,gengam
+#ifdef __GFORTRAN__
+	  EXTERNAL LOGICAL2INTEGER
+	  INTEGER ARR(G)
+#endif
 
       PAR(:) = GIBPAR(1,:) ! set constant values
 	NPARTH = 0
@@ -102,7 +103,8 @@ C EXTERNAL FUNCTIONS
 C Transition prob for QS
 	 DO I = 1,nstot-1
 #ifdef __GFORTRAN__
-        PTR(1,I,1) = SUM(ABS(LOGICAL2INTEGER(gibZ(1:G,1).EQ.I)))/DFLOAT(G)
+		CALL LOGICAL2INTEGER(gibZ(1:G,1).EQ.I,G,ARR)
+        PTR(1,I,1) = SUM(ABS(ARR))/DFLOAT(G)
 #else
 	  PTR(1,I,1) = SUM(ABS(gibZ(1:G,1).EQ.I))/DFLOAT(G)
 #endif
@@ -113,13 +115,15 @@ C Transition prob for QS
 	  DO 50 I = 1,nstot-1
 	   DO 50 J = 1,nstot
 #ifdef __GFORTRAN__
-          COM(1,1) = SUM(ABS(LOGICAL2INTEGER(gibZ(1:G,K-1).EQ.J)))
+		  CALL LOGICAL2INTEGER(gibZ(1:G,K-1).EQ.J,G,ARR)
+          COM(1,1) = SUM(ABS(ARR))
 #else
 	    COM(1,1) = SUM(ABS(gibZ(1:G,K-1).EQ.J))
 #endif
 	    IF (COM(1,1).GT.ZERO) THEN
 #ifdef __GFORTRAN__
-           PTR(K,I,J) = SUM(ABS(LOGICAL2INTEGER((gibZ(1:G,K).EQ.I).AND.(gibZ(1:G,K-1).EQ.J))))/COM(1,1)
+		   CALL LOGICAL2INTEGER((gibZ(1:G,K).EQ.I).AND.(gibZ(1:G,K-1).EQ.J),G,ARR)
+           PTR(K,I,J) = SUM(ABS(ARR))/COM(1,1)
 #else
 	     PTR(K,I,J) = SUM(ABS((gibZ(1:G,K).EQ.I).AND.
      #		          (gibZ(1:G,K-1).EQ.J)))/COM(1,1)

@@ -14,24 +14,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
 !
-
-MODULE GFORTRAN
-  IMPLICIT NONE
-CONTAINS
-  FUNCTION LOGICAL2INTEGER(V)
-#if defined(OCTAVE_MEX_FILE)
-    LOGICAL*4, DIMENSION(:), INTENT(IN) :: V
-#else
-    LOGICAL, DIMENSION(:), INTENT(IN) :: V
-#endif
-    INTEGER :: I
-    INTEGER, DIMENSION(SIZE(V)) :: LOGICAL2INTEGER
-    DO I=1,SIZE(V)
-       IF (V(I)) THEN
-          LOGICAL2INTEGER(I) = 1
-       ELSE
-          LOGICAL2INTEGER(I) = 0
-       END IF
-    END DO
-  END FUNCTION LOGICAL2INTEGER
-END MODULE GFORTRAN
+      SUBROUTINE LOGICAL2INTEGER(INV, dim, OUTV)
+      IMPLICIT NONE
+      INTEGER, INTENT(IN) :: dim
+      LOGICAL, DIMENSION(dim), INTENT(IN) :: INV
+      INTEGER, DIMENSION(dim), INTENT(OUT) :: OUTV
+      INTEGER :: I
+      DO I=1,dim
+         IF (INV(I)) THEN
+            OUTV(I) = 1
+         ELSE
+            OUTV(I) = 0
+         END IF
+      END DO
+      END SUBROUTINE LOGICAL2INTEGER

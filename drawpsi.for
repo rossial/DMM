@@ -55,9 +55,6 @@ C You should have received a copy of the GNU General Public License
 C along with DMM.  If not, see <http://www.gnu.org/licenses/>.
 C ----------------------------------------------------------------------
 	SUBROUTINE DRAWPSI(nobs,nv,np,INFOS,Z,psiprior,psi0,psi)
-#ifdef __GFORTRAN__
-      USE gfortran
-#endif
 C INPUT
 	INTEGER nobs,nv,np(3),Z(nobs),INFOS(9,6)
 	DOUBLE PRECISION psiprior(np(2),np(3)),psi0(np(1))
@@ -72,7 +69,11 @@ C LOCALS
 	DOUBLE PRECISION uv,v,AG
       DOUBLE PRECISION genunf,gengam
 C	DOUBLE PRECISION G05CAF
-
+#ifdef __GFORTRAN__
+	  EXTERNAL LOGICAL2INTEGER
+	  INTEGER ARR(nobs)
+	  INTEGER ARR1(nobs-1)
+#endif
 	ALLOCATE(P1(INFOS(8,1),INFOS(8,1)),
 	1 P2(INFOS(8,2),INFOS(8,2)),P3(INFOS(8,3),INFOS(8,3)),
      2 P4(INFOS(8,4),INFOS(8,4)),P5(INFOS(8,5),INFOS(8,5)),
@@ -91,7 +92,8 @@ C	DOUBLE PRECISION G05CAF
 C SAMPLING FROM DIRICHLET
 	   DO 5 ii = 1,NSI
 #ifdef __GFORTRAN__
-          AG = SUM(ABS(LOGICAL2INTEGER(SEQ(1:nobs,I).EQ.ii)))
+		  CALL LOGICAL2INTEGER(SEQ(1:nobs,I).EQ.ii,nobs,ARR)
+          AG = SUM(ABS(ARR))
      #  +psiprior(K+1,ii)
 #else
          AG = SUM(ABS((SEQ(1:nobs,I).EQ.ii)))+psiprior(K+1,ii)
@@ -108,8 +110,8 @@ C 5      CALL G05FFF(AG,1.D0,1,GAM(ii),IFAIL)
 	   DO 50 jj = 1,NSI
 	    DO 10 ii = 1,NSI
 #ifdef __GFORTRAN__
-10        NIJ(ii,jj) = SUM(ABS(LOGICAL2INTEGER((
-     # SEQ(2:nobs,I).EQ.ii).AND.(SEQ(1:nobs-1,I).EQ.jj))))
+		   CALL LOGICAL2INTEGER((SEQ(2:nobs,I).EQ.ii).AND.(SEQ(1:nobs-1,I).EQ.jj),nobs-1,ARR1)
+ 10		   NIJ(ii,jj) = SUM(ABS(ARR1))
 #else
 10        NIJ(ii,jj) = SUM(ABS((SEQ(2:nobs,I).EQ.ii).AND.
      #(SEQ(1:nobs-1,I).EQ.jj)))

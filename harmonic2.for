@@ -29,9 +29,6 @@ C --------------------------------------------------------------------------
 	SUBROUTINE HARMONIC2(G,nobs,d,ny,nz,nx,nu,nv,ns,nstot,nt,np,
 	1                     INFOS,yk,gibpar,gibZ,thetaprior,psiprior,
      2                     tipo,MLH)
-#ifdef __GFORTRAN__
-      USE gfortran
-#endif
 C INPUT
       INTEGER G,nobs,d(2),ny,nz,nx,nu,nv,ns(6),nstot,nt,np(3),
 	1 INFOS(9,6),gibZ(G,nobs)
@@ -63,6 +60,10 @@ C EXTERNAL FUNCTIONS
       DOUBLE PRECISION PTHETA2,PRIOR,PRIORDIR,CHI2INV !PPCHI2,G01FCF
 C EXTERNAL SUBROUTINES
       EXTERNAL NEWEYWESTCOV2,DPOTRF,DPOTRI,DESIGNZ,PPROD,ERGODIC,INT2SEQ
+#ifdef __GFORTRAN__
+	  EXTERNAL LOGICAL2INTEGER
+	  INTEGER ARR(G)
+#endif
 
 	NPARTH = 0
 	DO I = 1,nt
@@ -120,7 +121,8 @@ C40	 ub(I)   = PPCHI2(pval(I),DFLOAT(NPARTH),IFAIL) ! G01FCF(pval(I),DFLOAT(NPAR
 C Transition prob for QS
 	 DO 55 I = 1,nstot-1
 #ifdef __GFORTRAN__
-55	 PTR(1,I,1)=SUM(ABS(LOGICAL2INTEGER(gibZ(1:G,1).EQ.I)))/DFLOAT(G)
+		CALL LOGICAL2INTEGER(gibZ(1:G,1).EQ.I,G,ARR)
+ 55		PTR(1,I,1)=SUM(ABS(ARR))/DFLOAT(G)
 #else
 55	 PTR(1,I,1)=SUM(ABS(gibZ(1:G,1).EQ.I))/DFLOAT(G)
 #endif
@@ -130,15 +132,15 @@ C Transition prob for QS
 	 DO 57 I = 1,nstot-1
 	 DO 57 J = 1,nstot
 #ifdef __GFORTRAN__
-	  COM(1,1) = SUM(ABS(LOGICAL2INTEGER(gibZ(1:G,K-1).EQ.J)))
+		CALL LOGICAL2INTEGER(gibZ(1:G,K-1).EQ.J,G,ARR)
+		COM(1,1) = SUM(ABS(ARR))
 #else
       COM(1,1) = SUM(ABS(gibZ(1:G,K-1).EQ.J))
 #endif
 	  IF (COM(1,1).GT.ZERO) THEN
 #ifdef __GFORTRAN__
-	   PTR(K,I,J) = SUM(ABS(LOGICAL2INTEGER(
-     +(gibZ(1:G,K).EQ.I).AND.(gibZ(1:G,K-1).EQ.J
-     +))))/COM(1,1)
+		 CALL LOGICAL2INTEGER((gibZ(1:G,K).EQ.I).AND.(gibZ(1:G,K-1).EQ.J),G,ARR)
+		 PTR(K,I,J) = SUM(ABS(ARR))/COM(1,1)
 #else
 	   PTR(K,I,J) = SUM(ABS((gibZ(1:G,K).EQ.I).AND.(gibZ(1:G,K-1).EQ.J
      #                )))/COM(1,1)

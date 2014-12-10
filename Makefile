@@ -3,7 +3,6 @@ FCFLAGS = -cpp -fcray-pointer -ffixed-line-length-none -fdefault-integer-8
 FFFLAGS = $(FCFLAGS) -std=legacy
 
 MOD_OBJS = \
-	gfortran.o \
 	iso_c_utilities.o \
 	dlfcn.o
 
@@ -75,7 +74,8 @@ OBJS = \
 	input.o \
 	logmvnpdf.o \
 	openfiles.o \
-	schollu.o
+	schollu.o \
+	logical2integer.o
 
 RANDLIB_OBJS = \
 	advnst.o \
